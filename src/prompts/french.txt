@@ -1,0 +1,385 @@
+<ul class="results">
+<li class="navlink grayed">
+<a class="link" href="/ebooks/bookshelf/313?sort_order=title" accesskey="0">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_alpha"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort Alphabetically by Title</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/bookshelf/313?sort_order=author" accesskey="1">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_alpha"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort Alphabetically by Author</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/bookshelf/313?sort_order=release_date" accesskey="2">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_date"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort by Release Date</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+<span>Displaying results 1–25</span>
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/bookshelf/313?start_index=26">Next</a>
+</span>
+</div>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/17489" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/17489/pg17489.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Les misérables Tome I: Fantine (French)</span>
+<span class="subtitle">Victor Hugo</span>
+<span class="extra">20007 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/2650" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/2650/pg2650.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Du côté de chez Swann (French)</span>
+<span class="subtitle">Marcel Proust</span>
+<span class="extra">17109 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/28718" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/28718/pg28718.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Les crimes de l'amour
+ (French)</span>
+<span class="subtitle">marquis de Sade</span>
+<span class="extra">12310 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/13951" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/13951/pg13951.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Les trois mousquetaires (French)</span>
+<span class="subtitle">Alexandre Dumas and Auguste Maquet</span>
+<span class="extra">7332 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/17989" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/17989/pg17989.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Le comte de Monte-Cristo, Tome I (French)</span>
+<span class="subtitle">Alexandre Dumas and Auguste Maquet</span>
+<span class="extra">7316 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/4791" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/4791/pg4791.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Voyage au Centre de la Terre (French)</span>
+<span class="subtitle">Jules Verne</span>
+<span class="extra">7001 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/14287" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/14287/pg14287.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">L'île mystérieuse (French)</span>
+<span class="subtitle">Jules Verne</span>
+<span class="extra">6998 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/5097" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/5097/pg5097.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Vingt mille Lieues Sous Les Mers — Complete (French)</span>
+<span class="subtitle">Jules Verne</span>
+<span class="extra">6363 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/799" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/799/pg799.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">De la terre à la lune: trajet direct en 97 heures 20 minutes (French)</span>
+<span class="subtitle">Jules Verne</span>
+<span class="extra">5276 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/38674" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/38674/pg38674.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">De la terre à la lune, trajet direct en 97 heures 20 minutes (French)</span>
+<span class="subtitle">Jules Verne</span>
+<span class="extra">5125 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/20973" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/20973/pg20973.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Le tour du monde en quatre-vingts jours (French)</span>
+<span class="subtitle">Jules Verne</span>
+<span class="extra">3394 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/32854" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/32854/pg32854.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Arsène Lupin, gentleman-cambrioleur (French)</span>
+<span class="subtitle">Maurice Leblanc</span>
+<span class="extra">2128 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/14155" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/14155/pg14155.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Madame Bovary (French)</span>
+<span class="subtitle">Gustave Flaubert</span>
+<span class="extra">2037 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/798" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/798/pg798.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Le rouge et le noir: chronique du XIXe siècle (French)</span>
+<span class="subtitle">Stendhal</span>
+<span class="extra">1541 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/19657" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/19657/pg19657.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Notre-Dame de Paris (French)</span>
+<span class="subtitle">Victor Hugo</span>
+<span class="extra">1252 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/16816" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/16816/pg16816.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Le roman de la rose - Tome I (French)</span>
+<span class="subtitle">de Lorris Guillaume and de Meun Jean</span>
+<span class="extra">1177 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/16885" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/16885/pg16885.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Aline et Valcour, ou Le Roman Philosophique. Tome 1 (French)</span>
+<span class="subtitle">marquis de Sade</span>
+<span class="extra">1142 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/40877" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/40877/pg40877.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Caprices d'un Bibliophile (French)</span>
+<span class="subtitle">Octave Uzanne</span>
+<span class="extra">1121 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/43851" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/43851/pg43851.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">La Comédie humaine - Volume 02 (French)</span>
+<span class="subtitle">Honoré de Balzac</span>
+<span class="extra">1102 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/26685" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/26685/pg26685.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Aphrodite: Moeurs antiques (French)</span>
+<span class="subtitle">Pierre Louÿs</span>
+<span class="extra">1091 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/16820" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/16820/pg16820.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Le Journal d'une Femme de Chambre (French)</span>
+<span class="subtitle">Octave Mirbeau</span>
+<span class="extra">1078 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/61239" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/61239/pg61239.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Contes pour les bibliophiles (French)</span>
+<span class="subtitle">Octave Uzanne</span>
+<span class="extra">1078 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/62215" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/62215/pg62215.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Le Fantôme de l'Opéra (French)</span>
+<span class="subtitle">Gaston Leroux</span>
+<span class="extra">1076 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/54873" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/54873/pg54873.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Vingt mille lieues sous les mers (French)</span>
+<span class="subtitle">Jules Verne</span>
+<span class="extra">1004 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/17519" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/17519/pg17519.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Les misérables Tome V: Jean Valjean (French)</span>
+<span class="subtitle">Victor Hugo</span>
+<span class="extra">960 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+Displaying results 1–25
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/bookshelf/313?start_index=26">Next</a>
+</span>
+</div>
+</li>
+</ul>

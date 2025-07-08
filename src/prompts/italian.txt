@@ -1,0 +1,389 @@
+<ul class="results">
+<li class="navlink grayed">
+<a class="link" href="/ebooks/subjects/search/?query=italian+literature" accesskey="0">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_subject"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Subjects</span>
+<span class="subtitle">20 subject headings match your search.</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/search/?query=italian+literature&amp;sort_order=title" accesskey="1">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_alpha"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort Alphabetically by Title</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/search/?query=italian+literature&amp;sort_order=release_date" accesskey="2">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_date"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort by Release Date</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+<span>Displaying results 1–25</span>
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/search/?query=italian+literature&amp;start_index=26">Next</a>
+</span>
+</div>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/8800" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/8800/pg8800.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The divine comedy</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">19528 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3618" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3618/pg3618.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Arms and the Man</span>
+<span class="subtitle">Bernard Shaw</span>
+<span class="extra">7270 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/1001" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/1001/pg1001.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Divine Comedy, Longfellow's Translation, Hell</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">4532 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/48776" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/48776/pg48776.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Petrarch, the First Modern Scholar and Man of Letters
+</span>
+<span class="subtitle">Francesco Petrarca</span>
+<span class="extra">3023 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/41537" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/41537/pg41537.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Divine Comedy of Dante Alighieri: The Inferno</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">2755 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/57303" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/57303/pg57303.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">La Divina Comedia (Spanish)</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">2752 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/50306" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/50306/pg50306.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Rinaldo ardito: Frammenti inediti pubblicati sul manoscritto originale (Italian)</span>
+<span class="subtitle">Lodovico Ariosto</span>
+<span class="extra">2380 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/61262" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/61262/pg61262.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Poirot Investigates</span>
+<span class="subtitle">Agatha Christie</span>
+<span class="extra">2274 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/50307" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/50307/pg50307.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Fifteen sonnets of Petrarch</span>
+<span class="subtitle">Francesco Petrarca</span>
+<span class="extra">1766 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/1012" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/1012/pg1012.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">La Divina Commedia di Dante (Italian)</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">1538 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/1004" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/1004/pg1004.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Divine Comedy, Longfellow's Translation, Complete</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">1526 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/8795" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/8795/pg8795.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Divine Comedy by Dante, Illustrated, Purgatory, Complete</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">1452 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/41085" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/41085/pg41085.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The New Life (La Vita Nuova)</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">1450 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/997" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/997/pg997.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Divina Commedia di Dante: Inferno (Italian)</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">1403 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/8799" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/8799/pg8799.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Divine Comedy by Dante, Illustrated, Paradise, Complete</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">1381 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/8789" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/8789/pg8789.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The vision of hell. 
+</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">1308 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/38578" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/38578/pg38578.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Fame usurpate (Italian)</span>
+<span class="subtitle">Vittorio Imbriani</span>
+<span class="extra">1042 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/48943" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/48943/pg48943.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">L'isola dei baci: Romanzo erotico-sociale (Italian)</span>
+<span class="subtitle">F. T. Marinetti and Bruno Corra</span>
+<span class="extra">998 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/142" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/142/pg142.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The $30,000 Bequest, and Other Stories</span>
+<span class="subtitle">Mark Twain</span>
+<span class="extra">964 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/18459" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/18459/pg18459.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Hypnerotomachia: The Strife of Loue in a Dreame</span>
+<span class="subtitle">Francesco Colonna</span>
+<span class="extra">954 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/36448" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/36448/pg36448.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Renaissance in Italy, Volume 5 (of 7)
+</span>
+<span class="subtitle">John Addington Symonds</span>
+<span class="extra">914 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/35792" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/35792/pg35792.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Renaissance in Italy, Volume 4 (of 7)
+</span>
+<span class="subtitle">John Addington Symonds</span>
+<span class="extra">895 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/28961" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/28961/pg28961.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Cuore (Heart): An Italian Schoolboy's Journal</span>
+<span class="subtitle">Edmondo De Amicis</span>
+<span class="extra">894 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/17650" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/17650/pg17650.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Sonnets, Triumphs, and Other Poems of Petrarch</span>
+<span class="subtitle">Francesco Petrarca</span>
+<span class="extra">891 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/4253" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/4253/pg4253.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Dramatic Romances</span>
+<span class="subtitle">Robert Browning</span>
+<span class="extra">857 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+Displaying results 1–25
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/search/?query=italian+literature&amp;start_index=26">Next</a>
+</span>
+</div>
+</li>
+</ul>

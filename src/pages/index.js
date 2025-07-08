@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import Head from "next/head";
 import TextPanel from '@/components/TextPanel';
 import ChatPanel from '@/components/ChatPanel';
@@ -9,7 +9,16 @@ export default function Home() {
   const [leftWidth, setLeftWidth] = useState(50);
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [bookTitle, setBookTitle] = useState("Romeo and Juliet");
   const textPanelRef = useRef();
+
+  // Load book title from localStorage on mount
+  useEffect(() => {
+    const savedTitle = localStorage.getItem('explainer:bookTitle');
+    if (savedTitle) {
+      setBookTitle(savedTitle);
+    }
+  }, []);
 
   const handleResize = useCallback((newWidth) => {
     setLeftWidth(newWidth);
@@ -36,13 +45,27 @@ export default function Home() {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
+    // Get book info from localStorage
+    const savedTitle = localStorage.getItem('explainer:bookTitle');
+    const bookTitle = savedTitle || 'Romeo and Juliet';
+    
+    // Extract author from title if available (format: "Title by Author")
+    let bookAuthor = 'William Shakespeare'; // default
+    if (savedTitle && savedTitle.includes(' by ')) {
+      bookAuthor = savedTitle.split(' by ').pop();
+    }
+
     try {
       const response = await fetch('/api/explain', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: selectedText }),
+        body: JSON.stringify({ 
+          text: selectedText,
+          bookTitle: bookTitle,
+          bookAuthor: bookAuthor
+        }),
       });
 
       if (!response.ok) {
@@ -92,13 +115,27 @@ export default function Home() {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
+    // Get book info from localStorage
+    const savedTitle = localStorage.getItem('explainer:bookTitle');
+    const bookTitle = savedTitle || 'Romeo and Juliet';
+    
+    // Extract author from title if available (format: "Title by Author")
+    let bookAuthor = 'William Shakespeare'; // default
+    if (savedTitle && savedTitle.includes(' by ')) {
+      bookAuthor = savedTitle.split(' by ').pop();
+    }
+
     try {
       const response = await fetch('/api/explain', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: question }),
+        body: JSON.stringify({ 
+          text: question,
+          bookTitle: bookTitle,
+          bookAuthor: bookAuthor
+        }),
       });
 
       if (!response.ok) {
@@ -149,7 +186,7 @@ export default function Home() {
             ref={textPanelRef}
             width={leftWidth} 
             onTextSelection={handleTextSelection}
-            title="Romeo and Juliet"
+            title={bookTitle}
           />
           <DraggableSeparator 
             onResize={handleResize} 

@@ -1,0 +1,399 @@
+<ul class="results">
+<li class="navlink grayed">
+<a class="link" href="/ebooks/subjects/search/?query=poetry" accesskey="0">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_subject"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Subjects</span>
+<span class="subtitle">1145 subject headings match your search.</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/bookshelves/search/?query=poetry" accesskey="1">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_bookshelf"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Bookshelves</span>
+<span class="subtitle">4 bookshelves match your search.</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/search/?query=poetry&amp;sort_order=title" accesskey="2">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_alpha"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort Alphabetically by Title</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/search/?query=poetry&amp;sort_order=release_date" accesskey="3">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_date"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort by Release Date</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+<span>Displaying results 1–25</span>
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/search/?query=poetry&amp;start_index=26">Next</a>
+</span>
+</div>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/1513" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/1513/pg1513.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Romeo and Juliet</span>
+<span class="subtitle">William Shakespeare</span>
+<span class="extra">69600 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/100" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/100/pg100.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Complete Works of William Shakespeare</span>
+<span class="subtitle">William Shakespeare</span>
+<span class="extra">63321 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3011" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3011/pg3011.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Lady of the Lake</span>
+<span class="subtitle">Walter Scott</span>
+<span class="extra">25711 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/24571" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/24571/pg24571.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Der Struwwelpeter (German)</span>
+<span class="subtitle">Heinrich Hoffmann</span>
+<span class="extra">21533 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/6130" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/6130/pg6130.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Iliad</span>
+<span class="subtitle">Homer</span>
+<span class="extra">20993 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/8800" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/8800/pg8800.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The divine comedy</span>
+<span class="subtitle">Dante Alighieri</span>
+<span class="extra">19528 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/16328" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/16328/pg16328.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Beowulf: An Anglo-Saxon Epic Poem</span>
+<span class="extra">19266 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/2147" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/2147/pg2147.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Works of Edgar Allan Poe — Volume 1</span>
+<span class="subtitle">Edgar Allan Poe</span>
+<span class="extra">17959 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/26471" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/26471/pg26471.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Spoon River Anthology</span>
+<span class="subtitle">Edgar Lee Masters</span>
+<span class="extra">17822 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/61521" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/61521/pg61521.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Modern Traveller</span>
+<span class="subtitle">Hilaire Belloc</span>
+<span class="extra">16527 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/1727" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/1727/pg1727.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Odyssey
+</span>
+<span class="subtitle">Homer</span>
+<span class="extra">16514 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/14591" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/14591/pg14591.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Faust [part 1]. Translated Into English in the Original Metres</span>
+<span class="subtitle">Johann Wolfgang von Goethe</span>
+<span class="extra">16279 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/2199" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/2199/pg2199.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Iliad</span>
+<span class="subtitle">Homer</span>
+<span class="extra">13338 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/56712" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/56712/pg56712.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Comic Poems of Thomas Hood</span>
+<span class="subtitle">Thomas Hood</span>
+<span class="extra">12776 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/6122" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/6122/pg6122.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Tobogganing on Parnassus</span>
+<span class="subtitle">Franklin P. Adams</span>
+<span class="extra">12105 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/17161" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/17161/pg17161.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Max und Moritz: Eine Bubengeschichte in sieben Streichen (German)</span>
+<span class="subtitle">Wilhelm Busch</span>
+<span class="extra">11952 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/31036" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/31036/pg31036.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Lovers Assistant; Or, New Art of Love</span>
+<span class="subtitle">Henry Fielding and Ovid</span>
+<span class="extra">11150 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/21700" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/21700/pg21700.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Don Juan</span>
+<span class="subtitle">Baron George Gordon Byron Byron</span>
+<span class="extra">10426 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/24869" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/24869/pg24869.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Rámáyan of Válmíki, translated into English verse</span>
+<span class="subtitle">Valmiki</span>
+<span class="extra">10383 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/12116" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/12116/pg12116.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Struwwelpeter: Merry Stories and Funny Pictures</span>
+<span class="subtitle">Heinrich Hoffmann</span>
+<span class="extra">10113 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/15272" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/15272/pg15272.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Spenser's The Faerie Queene, Book I</span>
+<span class="subtitle">Edmund Spenser</span>
+<span class="extra">9953 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/12242" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/12242/pg12242.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Poems by Emily Dickinson, Three Series, Complete</span>
+<span class="subtitle">Emily Dickinson</span>
+<span class="extra">9511 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/5131" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/5131/pg5131.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Childe Harold's Pilgrimage</span>
+<span class="subtitle">Baron George Gordon Byron Byron</span>
+<span class="extra">9464 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/1934" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/1934/pg1934.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Songs of Innocence and of Experience</span>
+<span class="subtitle">William Blake</span>
+<span class="extra">9295 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/1322" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/1322/pg1322.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Leaves of Grass</span>
+<span class="subtitle">Walt Whitman</span>
+<span class="extra">9065 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+Displaying results 1–25
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/search/?query=poetry&amp;start_index=26">Next</a>
+</span>
+</div>
+</li>
+</ul>
