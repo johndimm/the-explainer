@@ -36,8 +36,8 @@
   color: #475569;
 }
 
-/* Mobile responsive */
-@media (max-width: 768px) {
+/* Mobile responsive - portrait mode */
+@media (max-width: 768px) and (orientation: portrait) {
   .separator {
     width: 100%;
     height: 12px; /* Increased height for better touch target */
@@ -66,5 +66,38 @@
   
   .separator.dragging .handle {
     color: #1e293b;
+  }
+}
+
+/* Mobile responsive - landscape mode */
+@media (max-width: 768px) and (orientation: landscape) {
+  .separator {
+    width: 8px;
+    height: 100%;
+    cursor: col-resize;
+    background: #f1f5f9;
+    border-left: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+  }
+  
+  .separator:hover {
+    background: #e2e8f0;
+  }
+  
+  .separator.dragging {
+    background: #cbd5e1;
+  }
+  
+  .handle {
+    transform: none;
+    padding: 8px 0;
+  }
+  
+  .separator:hover .handle {
+    color: #64748b;
+  }
+  
+  .separator.dragging .handle {
+    color: #475569;
   }
 } 
