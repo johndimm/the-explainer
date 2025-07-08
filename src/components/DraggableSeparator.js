@@ -44,26 +44,43 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     const threshold = 10;
     if (!dragMode.current) {
       if (absDx > threshold || absDy > threshold) {
-        dragMode.current = (absDy > absDx) ? 'scroll' : 'resize';
-        console.log('Gesture detected:', dragMode.current, 'dx:', dx, 'dy:', dy);
+        if (orientation === 'portrait') {
+          // Portrait: vertical = resize, horizontal = scroll
+          dragMode.current = (absDy > absDx) ? 'resize' : 'scroll';
+        } else {
+          // Landscape: vertical = scroll, horizontal = resize
+          dragMode.current = (absDy > absDx) ? 'scroll' : 'resize';
+        }
+        console.log('Gesture detected:', dragMode.current, 'dx:', dx, 'dy:', dy, 'orientation:', orientation);
       } else {
         // Not enough movement yet
         return;
       }
     }
     if (dragMode.current === 'scroll') {
-      // Always use vertical drag (Y) for scrolling on mobile
+      // Scroll logic
       const containerHeight = window.innerHeight;
-      let ratio = touch.clientY / containerHeight;
+      let ratio;
+      if (orientation === 'portrait') {
+        // Portrait: left/right drag scrolls
+        ratio = touch.clientX / window.innerWidth;
+      } else {
+        // Landscape: up/down drag scrolls
+        ratio = touch.clientY / containerHeight;
+      }
       ratio = Math.max(0, Math.min(1, ratio));
-      console.log('handleTouchMove (scroll) called, isMobile:', isMobile(), 'orientation:', orientation, 'ratio:', ratio);
       if (onScrollDivider) onScrollDivider(ratio);
     } else if (dragMode.current === 'resize') {
-      // Use horizontal drag for resizing
-      const containerWidth = window.innerWidth;
-      const newLeftWidth = (touch.clientX / containerWidth) * 100;
+      // Resize logic
+      let newLeftWidth;
+      if (orientation === 'portrait') {
+        // Portrait: up/down drag resizes
+        newLeftWidth = (touch.clientY / window.innerHeight) * 100;
+      } else {
+        // Landscape: left/right drag resizes
+        newLeftWidth = (touch.clientX / window.innerWidth) * 100;
+      }
       const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
-      console.log('handleTouchMove (resize) called, isMobile:', isMobile(), 'orientation:', orientation, 'leftWidth:', constrainedWidth);
       onResize(constrainedWidth);
     }
   }, [isDragging, onResize, onScrollDivider]);
