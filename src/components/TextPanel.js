@@ -23,6 +23,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const lastTouchTimeRef = useRef(0);
   const clickTimeoutRef = useRef(null);
   const listRef = useRef();
+  const touchSlop = 10;
+  const touchStartPos = useRef({ x: 0, y: 0 });
+  const touchMoved = useRef(false);
 
   useImperativeHandle(ref, () => ({
     scrollToRatio: (ratio) => {
@@ -133,20 +136,36 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Mobile touch handlers - only expand selection, never submit directly
   const handleLineTouchStart = useCallback((event) => {
     if (!isMobile) return;
-    
     setTouchInProgress(true);
     const index = parseInt(event.currentTarget.dataset.index);
-    
+    const touch = event.touches[0];
+    touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+    touchMoved.current = false;
+    // Do not select yet; wait for touchend
+  }, [isMobile]);
+
+  const handleLineTouchMove = useCallback((event) => {
+    if (!isMobile) return;
+    const touch = event.touches[0];
+    const dx = Math.abs(touch.clientX - touchStartPos.current.x);
+    const dy = Math.abs(touch.clientY - touchStartPos.current.y);
+    if (dx > touchSlop || dy > touchSlop) {
+      touchMoved.current = true;
+    }
+  }, [isMobile]);
+
+  const handleLineTouchEnd = useCallback((event) => {
+    if (!isMobile) return;
+    setTimeout(() => setTouchInProgress(false), 100);
+    if (touchMoved.current) return; // User was scrolling, not tapping
+    const index = parseInt(event.currentTarget.dataset.index);
     if (firstClickIndex === null) {
-      // First touch - just highlight
       setFirstClickIndex(index);
       setSelectedLines(new Set([index]));
     } else if (firstClickIndex === index) {
-      // Second touch on same line - just show submit button, don't auto-submit
       setSelectedLines(new Set([index]));
       setSubmitButtonVisible(true);
     } else {
-      // Touch different line - expand selection
       const start = Math.min(firstClickIndex, index);
       const end = Math.max(firstClickIndex, index);
       const newSelection = new Set();
@@ -157,12 +176,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       setSubmitButtonVisible(true);
     }
   }, [isMobile, firstClickIndex]);
-
-  const handleLineTouchEnd = useCallback(() => {
-    if (isMobile) {
-      setTimeout(() => setTouchInProgress(false), 100);
-    }
-  }, [isMobile]);
 
   // Submit selected text (for mobile)
   const handleSubmitSelection = useCallback(() => {
@@ -272,6 +285,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         onMouseUp={!isMobile ? handleMouseUp : undefined}
         {...(isMobile ? {
           onTouchStart: handleLineTouchStart,
+          onTouchMove: handleLineTouchMove,
           onTouchEnd: handleLineTouchEnd
         } : {})}
       >
