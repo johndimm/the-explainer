@@ -1,0 +1,176 @@
+
+<goal>
+Make a progressive nextjs app to help people grasp the meaning of a difficult text, line by line.
+</goal>
+
+<example>
+The plays of Shakespeare are difficult for a modern English-speaking reader.  There are words we no longer use, words that we continue to use but have a different meaning, and syntax and modes of expression that are no longer used in common speech, if they ever were.
+</example>
+
+<example>
+A classical work in another language like Le Misanthrope by Moliere.  Here the user may want explanations in English or French or in some other language.
+</example>
+
+<core_features>
+
+<layout>
+The app shows a left and right panel.  The left panel has the source text and the right panel has a custom chat interface.  
+
+When you select lines of text in the source panel on the left, the selected text appears in the chat window on the right and is submitted to an LLM to get a response which is written to the chat panel.
+</layout>
+
+<left_panel>
+On first time use, the left panel displays Romeo and Juliet from the app's public directory:
+
+  public/public-domain-texts/shakespeare-romeo-and-juliet.txt
+
+The left panel scrolls independently of the right panel, so you can browse the entire document and still see the contents of the right panel.  a scrollbar is completely visible so you can jump anywhere immediately.
+
+<selecting_text>
+You can click a line to select the whole line.  If you then drag, the lines you drag over also become highlighted.  When you release the mouse button, the selected text is copied to the chat interface, and the highlight in source text goes away.  A click down and up over the same line submits it.
+
+If possible, use the same approach with touch for mobile.   If not, click once to start the selection, then move to another line and click again to end the selection and submit the series of lines to the chat UI.
+</selecting_text>
+
+<requirement>
+The text may be large, so we have to virtualize it.
+</requirement>
+
+</left_panel>
+
+<right_panel>
+The right panel has the custom chat interface. The text panel drives the chat panel.  Selected text from the text panel is pushed to the chat UI and to the LLM with an actual prompt the user does not see.  
+
+The response from the LLM is the "explanation" of the text.  There is a text box to ask a follow-up question and take control of the chat.  There is a button to save the chat history.
+</right_panel>
+
+<system_prompt>
+
+What do we want in an "explanation"?  The LLM should be prompted to provide help in various ways:
+
+- explain difficult or archaic words and what they mean
+- explain familiar words that had a different meaning before
+- what does this selection mean? 
+- what essential background info about characters or story is required to understand what's happening?
+- what is happening at this point in the story?
+- why does this moment matter?
+
+Try to make it compelling, not boring.  Make a little joke sometimes.  Have a personality maybe.
+
+</system_prompt>
+
+</right_panel>
+
+</core_features>
+
+<addon_features>
+
+Currently, it'S
+
+- draggable separator
+- table of contents for this text
+- form to select a new source text
+- connect quotes in chat to positions in text
+- authenticate using google
+- track useage
+- free plan: allow 3 per hour
+- page to describe free and paid plans 
+- if you have used your 3, there is a link to buy the premium plan
+  - $5 for any single work
+  - $10 a year for full app 
+- sign-in button / sign-out button
+
+
+
+<requirement>
+Foreign language support:  the language of the input is used to generate the response.   So if the input text is Le Misanthrope, which is in French, then the LLM response will be in French.  But that is only by default.  You can change it to English or any other of a large selection of languages of the world.  The tool works for reading any book in a language you do not read well.
+</requirement>
+
+
+<feature name="Table of Contents">
+It adds a table of contents by scanning the source, looking for a pattern that identifies sections of the doc.   For plays, the sections will have an Act number and Scene number.  The stage direction in the next line is helpful.  It generates a table of contents, allowing the user to jump to a spot in the text display.  
+
+For Shakespeare, this is a section title:
+
+ACT 1
+=====
+
+Scene 1
+=======
+[Enter Sampson and Gregory, with swords and bucklers,
+of the house of Capulet.]
+
+In the ToC, that would be one line:
+
+ACT 1, Scene 1, [Enter Sampson and Gregory, with swords and bucklers,
+of the house of Capulet.]
+
+</feature>
+
+<feature name="separator">
+Between the two panels is a draggable separator to resize them.  You may want to give more screen space to the text or the chat depending on your attention.
+</feature>
+
+<feature name="Scrollbar">
+The input text may be large so a scrollbar is essential.  It must have a big enough thumb that it can be selected on a mobile device.  The entire scrollbar is visible on screen.
+</feature>
+
+<feature name="input_forms">
+There are several ways to input text to the app.  You can click on one of several public domain docs that are included in the public directory.  You can input a URL that contains a document in some format the app can convert to plain text.  You can paste text into a text box.  You can upload a file.
+</feature>
+
+<feature name="backlinks">
+A quote in the chat can be clicked to cause the text panel to scroll to that position in the text.
+</feature>
+
+<feature name="SINGLE_WORK">
+If the env param SINGLE_WORK is specified, then the app is restricted to only that text.  The value of the param is the name of a text file in the app's public directory.
+
+The idea is to offer a $5 app to read Macbeth alone, no other work.  Do the same for a huge library of classic books.
+</feature>
+
+<feature name="adaptive">
+The app works on desktop and mobile.  Mobile can be zoomed in or out to see more or less text.  The normal mode is landscape but it also works in portrait, where the two divs are stacked.
+</feature>
+
+<feature name="authenticate">
+add a sign-in link.  Create tables in the postgres database to track usage.  Allow 3 free explanations without signing up.  Then prompt the user to sign up.  That gives 3 free explanations each hour.   When you use yours up, you are encouraged to go the premium plan.  
+</feature>
+
+<feature name="authentication_display">
+The sign-in button should go above the chat div.  In the same spot, put the count of remaining explanations or time to come back to get awarded more credits.  
+</feature>
+
+<feature name="pricing">
+
+To use with a single work, like Macbeth, it is $5 for unlimited usage.  This version does not show a link to select a different input text.  The input forms are not included so it is restricted to Macbeth.  
+
+But there is a link to the unconstrained version.  That's the one that has the input forms and can be used on anything.  That is $25 for unlimited use.  
+
+I hope I am not causing problems for myself with unlimited use forever.
+
+</feature>
+
+</addon_features>
+
+<resources>
+The .env.local file has keys for needed services.
+
+  - openAI
+  - postgres
+  - google auth
+
+For database access, do not use prisma or any other orm.  Put all SQL statements in a single source file.  Use the pg package to connect.
+</resources>
+
+<requirement>
+We want to make this a progressive app.  Not sure if that is a step for the start or the end of the project.
+</requirement>
+
+<requirement>
+the left side div should be 100% height with scrollbar, so the right side with the chat is always visible.
+</requirement>
+
+<requirement>
+In the prompt, add the name of the author and the name of the book or play, so the LLM doesn' t have to guess.
+</requirement>
