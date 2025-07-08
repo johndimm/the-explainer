@@ -76,7 +76,7 @@ const shakespeareWorks = [
   { id: '1531', title: 'Othello, the Moor of Venice' },
   { id: '1537', title: 'Pericles' },
   { id: '1513', title: 'Romeo and Juliet' },
-  { id: '1041', title: 'Shakespeare’s Sonnets' },
+  { id: '1041', title: "Shakespeare's Sonnets", directUrl: 'https://www.gutenberg.org/cache/epub/1041/pg1041.txt' },
   { id: '1547', title: 'Sir Thomas More' },
   { id: '1546', title: 'Sonnets To Sundry Notes of Music' },
   { id: '1504', title: 'The Comedy of Errors' },
@@ -463,16 +463,22 @@ export default function Library() {
   // In the handler for Poetry, use the Gutenberg plain text URL pattern
   const handleReadPoetry = async (work) => {
     setLoadingPoetry(work.id);
-    const gutenbergUrl1 = `https://www.gutenberg.org/files/${work.id}/${work.id}-0.txt`;
-    const gutenbergUrl2 = `https://www.gutenberg.org/cache/epub/${work.id}/pg${work.id}.txt`;
     let text = null;
     try {
-      let res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl1)}`);
-      if (res.ok) {
-        text = await res.text();
-      } else {
-        res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl2)}`);
+      if (work.directUrl) {
+        // Use the direct link if present
+        const res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(work.directUrl)}`);
         if (res.ok) text = await res.text();
+      } else {
+        const gutenbergUrl1 = `https://www.gutenberg.org/files/${work.id}/${work.id}-0.txt`;
+        const gutenbergUrl2 = `https://www.gutenberg.org/cache/epub/${work.id}/pg${work.id}.txt`;
+        let res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl1)}`);
+        if (res.ok) {
+          text = await res.text();
+        } else {
+          res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl2)}`);
+          if (res.ok) text = await res.text();
+        }
       }
       if (!text) throw new Error('Failed to fetch Poetry work');
       localStorage.setItem('explainer:bookText', text);
