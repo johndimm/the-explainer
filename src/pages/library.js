@@ -514,7 +514,7 @@ export default function Library() {
   // Responsive grid: 2 columns desktop, 1 column mobile
   const gridStyle = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
     gap: 32,
     marginTop: 24,
   };
