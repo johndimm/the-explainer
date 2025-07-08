@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { FixedSizeList as List } from 'react-window';
+import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import styles from '@/styles/TextPanel.module.css';
 
-const TextPanel = ({ width, onTextSelection, title = "Source Text" }) => {
+const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" }, ref) => {
   const [textLines, setTextLines] = useState([]);
   const [selectedLines, setSelectedLines] = useState(new Set());
   const [listHeight, setListHeight] = useState(600);
@@ -15,10 +14,20 @@ const TextPanel = ({ width, onTextSelection, title = "Source Text" }) => {
   const [submitButtonVisible, setSubmitButtonVisible] = useState(false);
   const [touchInProgress, setTouchInProgress] = useState(false);
   const [flyingText, setFlyingText] = useState(null);
-  const listRef = useRef();
   const containerRef = useRef();
+  const textContainerRef = useRef();
   const lastTouchTimeRef = useRef(0);
   const clickTimeoutRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    scrollToRatio: (ratio) => {
+      const el = textContainerRef.current;
+      if (!el) return;
+      const maxScroll = el.scrollHeight - el.clientHeight;
+      el.scrollTop = Math.round(ratio * maxScroll);
+      console.log('TextPanel scrollToRatio called, ratio:', ratio, 'scrollTop:', el.scrollTop);
+    }
+  }), []);
 
   // Calculate list height based on available space
   const calculateListHeight = useCallback(() => {
@@ -74,8 +83,6 @@ const TextPanel = ({ width, onTextSelection, title = "Source Text" }) => {
       window.removeEventListener('resize', checkMobile);
     };
   }, []);
-
-
 
   // Load Romeo and Juliet by default
   useEffect(() => {
@@ -261,74 +268,6 @@ const TextPanel = ({ width, onTextSelection, title = "Source Text" }) => {
     }
   }, [isDragging, selectedLines, textLines, onTextSelection]);
 
-  const Row = useCallback(({ index, style }) => {
-    const isSelected = selectedLines.has(index);
-    const line = textLines[index] || '';
-    
-    return (
-      <div
-        className={`${styles.line} ${isSelected ? styles.selected : ''}`}
-        style={{ ...style, pointerEvents: 'auto !important', cursor: 'pointer' }}
-        data-index={index}
-        onClick={!isMobile ? (event) => {
-          console.log('Click on line:', index, 'firstClickIndex:', firstClickIndex);
-          
-          if (firstClickIndex === null) {
-            // First click - highlight
-            console.log('First click - highlighting');
-            setFirstClickIndex(index);
-            setSelectedLines(new Set([index]));
-          } else if (firstClickIndex === index) {
-            // Second click on same line - submit
-            console.log('Second click - submitting');
-            // Show selection briefly before submitting
-            setSelectedLines(new Set([index]));
-            setTimeout(() => {
-              // Trigger animation before submitting
-              animateTextToChat(textLines[index], event.currentTarget);
-              setTimeout(() => {
-                onTextSelection(textLines[index]);
-              }, 100);
-              setFirstClickIndex(null);
-              setSelectedLines(new Set());
-            }, 200);
-          } else {
-            // Click different line - submit range
-            console.log('Different line - submitting range');
-            const start = Math.min(firstClickIndex, index);
-            const end = Math.max(firstClickIndex, index);
-            const newSelection = new Set();
-            for (let i = start; i <= end; i++) {
-              newSelection.add(i);
-            }
-            // Show full range selection briefly before submitting
-            setSelectedLines(newSelection);
-            setTimeout(() => {
-              const selectedText = textLines.slice(start, end + 1).join('\n');
-              // Trigger animation before submitting
-              animateTextToChat(selectedText, event.currentTarget);
-              setTimeout(() => {
-                onTextSelection(selectedText);
-              }, 100);
-              setFirstClickIndex(null);
-              setSelectedLines(new Set());
-            }, 200);
-          }
-        } : undefined}
-        onMouseDown={!isMobile ? (e) => handleLineMouseDown(index, e) : undefined}
-        onMouseEnter={!isMobile ? () => handleLineMouseEnter(index) : undefined}
-        onMouseUp={!isMobile ? handleMouseUp : undefined}
-        {...(isMobile ? {
-          onTouchStart: handleLineTouchStart,
-          onTouchEnd: handleLineTouchEnd
-        } : {})}
-      >
-        <span className={styles.lineNumber}>{index + 1}</span>
-        <span className={styles.lineContent}>{line}</span>
-      </div>
-    );
-  }, [selectedLines, textLines, handleLineClick, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, handleLineTouchStart, handleLineTouchEnd]);
-
   if (textLines.length === 0) {
     return (
       <div className={styles.panel} style={{ width: `${width}%` }}>
@@ -367,18 +306,30 @@ const TextPanel = ({ width, onTextSelection, title = "Source Text" }) => {
       </div>
       <div 
         className={styles.textContainer}
+        ref={textContainerRef}
       >
-        <List
-          ref={listRef}
-          height={listHeight}
-          itemCount={textLines.length}
-          itemSize={24}
-          width="100%"
-        >
-          {Row}
-        </List>
+        {textLines.map((line, index) => {
+          const isSelected = selectedLines.has(index);
+          return (
+            <div
+              key={index}
+              className={`${styles.line} ${isSelected ? styles.selected : ''}`}
+              data-index={index}
+              onClick={!isMobile ? (event) => handleLineClick(index, event) : undefined}
+              onMouseDown={!isMobile ? (e) => handleLineMouseDown(index, e) : undefined}
+              onMouseEnter={!isMobile ? () => handleLineMouseEnter(index) : undefined}
+              onMouseUp={!isMobile ? handleMouseUp : undefined}
+              {...(isMobile ? {
+                onTouchStart: handleLineTouchStart,
+                onTouchEnd: handleLineTouchEnd
+              } : {})}
+            >
+              <span className={styles.lineNumber}>{index + 1}</span>
+              <span className={styles.lineContent}>{line}</span>
+            </div>
+          );
+        })}
       </div>
-      
       {/* Flying text animation */}
       {flyingText && (
         <div 
@@ -398,6 +349,6 @@ const TextPanel = ({ width, onTextSelection, title = "Source Text" }) => {
       )}
     </div>
   );
-};
+});
 
 export default TextPanel; 

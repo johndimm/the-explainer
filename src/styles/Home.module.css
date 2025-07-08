@@ -134,6 +134,10 @@ a.secondary {
     flex-direction: column;
     height: 100vh;
   }
+  .container > * {
+    width: 100% !important;
+    min-width: 0;
+  }
 }
 
 /* Landscape mode on mobile - maintain side-by-side layout */
@@ -146,12 +150,6 @@ a.secondary {
 
 /* Ensure proper height on mobile browsers */
 @media (max-width: 768px) and (orientation: landscape) {
-  .container {
-    height: 100vh;
-  }
-}
-
-@media (max-width: 768px) and (orientation: portrait) {
   .container {
     height: 100vh;
   }

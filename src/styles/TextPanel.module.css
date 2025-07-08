@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: width 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .header {
@@ -207,7 +208,7 @@
     height: 50vh;
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
   
   .header {
@@ -229,7 +230,7 @@
   
   .textContainer {
     flex: 1;
-    overflow: auto;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
   }
   
@@ -265,7 +266,7 @@
     height: 100vh;
     border-right: 1px solid #e2e8f0;
     border-bottom: none;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
   
   .header {
@@ -286,7 +287,7 @@
   
   .textContainer {
     flex: 1;
-    overflow: auto;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
   }
   

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Head from "next/head";
 import TextPanel from '@/components/TextPanel';
 import ChatPanel from '@/components/ChatPanel';
@@ -9,9 +9,18 @@ export default function Home() {
   const [leftWidth, setLeftWidth] = useState(50);
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const textPanelRef = useRef();
 
   const handleResize = useCallback((newWidth) => {
     setLeftWidth(newWidth);
+  }, []);
+
+  // Mobile: scroll callback for divider
+  const handleDividerScroll = useCallback((ratio) => {
+    console.log('handleDividerScroll called, ratio:', ratio);
+    if (textPanelRef.current && textPanelRef.current.scrollToRatio) {
+      textPanelRef.current.scrollToRatio(ratio);
+    }
   }, []);
 
   const handleTextSelection = useCallback(async (selectedText) => {
@@ -137,6 +146,7 @@ export default function Home() {
       <div className={styles.page}>
         <div className={styles.container}>
           <TextPanel 
+            ref={textPanelRef}
             width={leftWidth} 
             onTextSelection={handleTextSelection}
             title="Romeo and Juliet"
@@ -144,6 +154,7 @@ export default function Home() {
           <DraggableSeparator 
             onResize={handleResize} 
             leftWidth={leftWidth}
+            onScrollDivider={handleDividerScroll}
           />
           <ChatPanel 
             width={100 - leftWidth}
