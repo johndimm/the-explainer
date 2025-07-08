@@ -45,7 +45,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
   };
 
   return (
-    <div className={styles.panel} style={{ width: `${width}%` }}>
+    <div className={styles.panel} style={{ flex: '1 1 0%' }}>
       <div className={styles.header}>
         <h2>Chat</h2>
         <button 

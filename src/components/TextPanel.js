@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { FixedSizeList as List } from 'react-window';
 import styles from '@/styles/TextPanel.module.css';
+
+const ROW_HEIGHT = 28; // Compact, but readable
+const HEADER_HEIGHT = 56; // Adjust if your header is a different height
 
 const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" }, ref) => {
   const [textLines, setTextLines] = useState([]);
   const [selectedLines, setSelectedLines] = useState(new Set());
-  const [listHeight, setListHeight] = useState(600);
   const [firstClickIndex, setFirstClickIndex] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartIndex, setDragStartIndex] = useState(null);
@@ -14,54 +17,32 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const [submitButtonVisible, setSubmitButtonVisible] = useState(false);
   const [touchInProgress, setTouchInProgress] = useState(false);
   const [flyingText, setFlyingText] = useState(null);
+  const [listHeight, setListHeight] = useState(400);
   const containerRef = useRef();
   const textContainerRef = useRef();
   const lastTouchTimeRef = useRef(0);
   const clickTimeoutRef = useRef(null);
+  const listRef = useRef();
 
   useImperativeHandle(ref, () => ({
     scrollToRatio: (ratio) => {
-      const el = textContainerRef.current;
-      if (!el) return;
-      const maxScroll = el.scrollHeight - el.clientHeight;
-      el.scrollTop = Math.round(ratio * maxScroll);
-      console.log('TextPanel scrollToRatio called, ratio:', ratio, 'scrollTop:', el.scrollTop);
+      if (!listRef.current || !textLines.length) return;
+      const targetIndex = Math.floor(ratio * (textLines.length - 1));
+      listRef.current.scrollToItem(targetIndex, 'start');
     }
-  }), []);
+  }), [textLines]);
 
-  // Calculate list height based on available space
-  const calculateListHeight = useCallback(() => {
-    if (typeof window === 'undefined') return 600;
-    
-    const isMobile = window.innerWidth <= 768;
-    const windowHeight = window.innerHeight;
-    
-    if (isMobile) {
-      // On mobile, the panel is 50vh, so we need to calculate the available height
-      // Subtract header height (approximately 60px) and some padding
-      const availableHeight = (windowHeight * 0.5) - 80;
-      return Math.max(200, availableHeight); // Minimum height of 200px
-    } else {
-      // On desktop, use the full window height minus header and padding
-      return windowHeight - 120;
-    }
-  }, []);
-
-  // Update height on window resize
+  // Update listHeight on mount and resize
   useEffect(() => {
-    const updateHeight = () => {
-      setListHeight(calculateListHeight());
-    };
-
+    function updateHeight() {
+      if (containerRef.current) {
+        setListHeight(containerRef.current.offsetHeight - HEADER_HEIGHT);
+      }
+    }
     updateHeight();
     window.addEventListener('resize', updateHeight);
-    window.addEventListener('orientationchange', updateHeight);
-
-    return () => {
-      window.removeEventListener('resize', updateHeight);
-      window.removeEventListener('orientationchange', updateHeight);
-    };
-  }, [calculateListHeight]);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
 
   // Detect mobile device
   useEffect(() => {
@@ -276,10 +257,34 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     );
   }
 
+  // Virtualized row renderer
+  const Row = ({ index, style }) => {
+    const isSelected = selectedLines.has(index);
+    const line = textLines[index] || '';
+    return (
+      <div
+        className={`${styles.line} ${isSelected ? styles.selected : ''}`}
+        style={{ ...style, width: '100%' }}
+        data-index={index}
+        onClick={!isMobile ? (event) => handleLineClick(index, event) : undefined}
+        onMouseDown={!isMobile ? (e) => handleLineMouseDown(index, e) : undefined}
+        onMouseEnter={!isMobile ? () => handleLineMouseEnter(index) : undefined}
+        onMouseUp={!isMobile ? handleMouseUp : undefined}
+        {...(isMobile ? {
+          onTouchStart: handleLineTouchStart,
+          onTouchEnd: handleLineTouchEnd
+        } : {})}
+      >
+        <span className={styles.lineNumber}>{index + 1}</span>
+        <span className={styles.lineContent}>{line}</span>
+      </div>
+    );
+  };
+
   return (
     <div 
-      className={`${styles.panel}`} 
-      style={{ width: `${width}%` }} 
+      className={styles.panel}
+      style={{ '--panel-width': `${width}%` }}
       ref={containerRef}
     >
       <div className={styles.header}>
@@ -304,31 +309,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
           </div>
         )}
       </div>
-      <div 
-        className={styles.textContainer}
-        ref={textContainerRef}
-      >
-        {textLines.map((line, index) => {
-          const isSelected = selectedLines.has(index);
-          return (
-            <div
-              key={index}
-              className={`${styles.line} ${isSelected ? styles.selected : ''}`}
-              data-index={index}
-              onClick={!isMobile ? (event) => handleLineClick(index, event) : undefined}
-              onMouseDown={!isMobile ? (e) => handleLineMouseDown(index, e) : undefined}
-              onMouseEnter={!isMobile ? () => handleLineMouseEnter(index) : undefined}
-              onMouseUp={!isMobile ? handleMouseUp : undefined}
-              {...(isMobile ? {
-                onTouchStart: handleLineTouchStart,
-                onTouchEnd: handleLineTouchEnd
-              } : {})}
-            >
-              <span className={styles.lineNumber}>{index + 1}</span>
-              <span className={styles.lineContent}>{line}</span>
-            </div>
-          );
-        })}
+      <div className={styles.textContainer}>
+        <List
+          ref={listRef}
+          height={listHeight}
+          itemCount={textLines.length}
+          itemSize={ROW_HEIGHT}
+          width={'100%'}
+        >
+          {Row}
+        </List>
       </div>
       {/* Flying text animation */}
       {flyingText && (
