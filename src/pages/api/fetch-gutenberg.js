@@ -1,9 +1,9 @@
 export default async function handler(req, res) {
   const { url } = req.query;
 
-  // Basic validation: must be a gutenberg.org URL
-  if (!url || typeof url !== 'string' || !/^https:\/\/www\.gutenberg\.org\//.test(url)) {
-    res.status(400).json({ error: 'Invalid or missing URL. Only gutenberg.org URLs are allowed.' });
+  // Basic validation: must be a valid http(s) URL
+  if (!url || typeof url !== 'string' || !/^https?:\/\//.test(url)) {
+    res.status(400).json({ error: 'Invalid or missing URL.' });
     return;
   }
 

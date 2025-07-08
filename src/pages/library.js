@@ -288,6 +288,9 @@ export default function Library() {
   const [loadingPoetry, setLoadingPoetry] = useState(null);
   const [expanded, setExpanded] = useState({});
   const [lang, setLang] = useState('en');
+  const [customUrl, setCustomUrl] = useState('');
+  const [customLoading, setCustomLoading] = useState(false);
+  const [customError, setCustomError] = useState('');
 
   useEffect(() => {
     setLang(getUserLanguage());
@@ -489,6 +492,26 @@ export default function Library() {
     poetry: loadingPoetry,
   };
 
+  const handleCustomUrl = async (e) => {
+    e.preventDefault();
+    setCustomError('');
+    if (!customUrl.trim()) return;
+    setCustomLoading(true);
+    try {
+      const res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(customUrl.trim())}`);
+      if (!res.ok) throw new Error('Failed to fetch text from the provided URL.');
+      const text = await res.text();
+      if (!text || text.length < 100) throw new Error('The file appears to be empty or too short.');
+      localStorage.setItem('explainer:bookText', text);
+      localStorage.setItem('explainer:bookTitle', customUrl.trim());
+      router.push('/');
+    } catch (err) {
+      setCustomError(err.message || 'Failed to load the text.');
+    } finally {
+      setCustomLoading(false);
+    }
+  };
+
   // Responsive grid for the whole page: up to 3 columns if space allows
   const pageGridStyle = {
     display: 'grid',
@@ -516,6 +539,26 @@ export default function Library() {
         <p style={{ color: 'black', fontSize: 18, marginBottom: 32 }}>
           {t('exploreLibrary', lang)}
         </p>
+        {/* Custom URL input UI */}
+        <form onSubmit={handleCustomUrl} style={{ display: 'flex', gap: 8, marginBottom: 24, alignItems: 'center' }}>
+          <input
+            type="url"
+            value={customUrl}
+            onChange={e => setCustomUrl(e.target.value)}
+            placeholder="Paste a URL to a plain text file (e.g. Project Gutenberg)"
+            style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16 }}
+            disabled={customLoading}
+            required
+          />
+          <button
+            type="submit"
+            style={{ background: '#3b82f6', color: 'white', border: 'none', borderRadius: 8, padding: '10px 22px', fontWeight: 600, fontSize: 16, cursor: 'pointer', minWidth: 90 }}
+            disabled={customLoading}
+          >
+            {customLoading ? t('loading', lang) : 'Load'}
+          </button>
+        </form>
+        {customError && <div style={{ color: '#dc2626', marginBottom: 16, fontWeight: 500 }}>{customError}</div>}
         <div style={{ ...pageGridStyle, marginLeft: 0, marginRight: 0 }}>
           {collections.map((col) => {
             const meta = collectionMeta[col.key] || {};
