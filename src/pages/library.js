@@ -515,7 +515,7 @@ export default function Library() {
   // Responsive grid for the whole page: up to 3 columns if space allows
   const pageGridStyle = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: 32,
     marginTop: 24,
     maxWidth: 1200,
@@ -546,7 +546,7 @@ export default function Library() {
             value={customUrl}
             onChange={e => setCustomUrl(e.target.value)}
             placeholder="Paste a URL to a plain text file (e.g. Project Gutenberg)"
-            style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16 }}
+            style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fffbe8' }}
             disabled={customLoading}
             required
           />
