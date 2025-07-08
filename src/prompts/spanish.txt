@@ -1,0 +1,383 @@
+<ul class="results">
+<li class="navlink grayed">
+<a class="link" href="/ebooks/subjects/search/?query=spanish+literature" accesskey="0">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_subject"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Subjects</span>
+<span class="subtitle">13 subject headings match your search.</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/search/?query=spanish+literature&amp;sort_order=title" accesskey="1">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_alpha"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort Alphabetically by Title</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/search/?query=spanish+literature&amp;sort_order=release_date" accesskey="2">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_date"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort by Release Date</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+<span>Displaying results 1–25</span>
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/search/?query=spanish+literature&amp;sort_order=downloads&amp;start_index=26">Next</a>
+</span>
+</div>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/10676" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/10676/pg10676.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Reign of Greed</span>
+<span class="subtitle">José Rizal</span>
+<span class="extra">28420 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/2000" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/2000/pg2000.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Don Quijote (Spanish)</span>
+<span class="subtitle">Miguel de Cervantes Saavedra</span>
+<span class="extra">19636 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/5921" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/5921/pg5921.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The History of Don Quixote, Volume 1, Complete</span>
+<span class="subtitle">Miguel de Cervantes Saavedra</span>
+<span class="extra">13340 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/67961" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/67961/pg67961.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">El arte de amar (Spanish)</span>
+<span class="subtitle">Ovid</span>
+<span class="extra">6507 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/58221" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/58221/pg58221.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">La Odisea (Spanish)</span>
+<span class="subtitle">Homer</span>
+<span class="extra">4201 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/21144" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/21144/pg21144.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Las Fábulas de Esopo, Vol. 03 (Spanish)</span>
+<span class="subtitle">Aesop and George Fyler Townsend</span>
+<span class="extra">3649 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/39647" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/39647/pg39647.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Heath's Modern Language Series: The Spanish American Reader (Spanish)</span>
+<span class="subtitle">Ernesto Nelson</span>
+<span class="extra">3595 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/20029" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/20029/pg20029.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Las Fábulas de Esopo, Vol. 02 (Spanish)</span>
+<span class="subtitle">Aesop and George Fyler Townsend</span>
+<span class="extra">3433 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/36805" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/36805/pg36805.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Spanish Tales for Beginners (Spanish)</span>
+<span class="extra">3432 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/21143" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/21143/pg21143.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Las Fábulas de Esopo, Vol. 01 (Spanish)</span>
+<span class="subtitle">Aesop and George Fyler Townsend</span>
+<span class="extra">3171 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/28842" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/28842/pg28842.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Don Quixote, Volume 1</span>
+<span class="subtitle">Miguel de Cervantes Saavedra</span>
+<span class="extra">2965 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/16059" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/16059/pg16059.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Modern Spanish Lyrics (Spanish)</span>
+<span class="extra">2888 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/5946" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/5946/pg5946.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The History of Don Quixote, Volume 2, Complete</span>
+<span class="subtitle">Miguel de Cervantes Saavedra</span>
+<span class="extra">2565 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/47629" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/47629/pg47629.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Ang "Filibusterismo" (Karugtóng ng Noli Me Tangere) (Tagalog)</span>
+<span class="subtitle">José Rizal</span>
+<span class="extra">2450 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/61851" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/61851/pg61851.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">El crimen y el castigo (Spanish)</span>
+<span class="subtitle">Fyodor Dostoyevsky</span>
+<span class="extra">1997 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/15725" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/15725/pg15725.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Doña Perfecta (Spanish)</span>
+<span class="subtitle">Benito Pérez Galdós</span>
+<span class="extra">1890 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/69552" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/69552/pg69552.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">El libro de las tierras vírgenes (Spanish)</span>
+<span class="subtitle">Rudyard Kipling</span>
+<span class="extra">1840 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/51090" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/51090/pg51090.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">A Polyglot of Foreign Proverbs
+</span>
+<span class="extra">1721 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/73257" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/73257/pg73257.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Historia de la lengua y literatura castellana, Tomo 2 :  Época de Carlos V (Spanish)</span>
+<span class="subtitle">Julio Cejador y Frauca</span>
+<span class="extra">1681 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/49836" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/49836/pg49836.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Niebla (Nivola) (Spanish)</span>
+<span class="subtitle">Miguel de Unamuno</span>
+<span class="extra">1533 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/50352" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/50352/pg50352.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Spanish Papers</span>
+<span class="subtitle">Washington Irving</span>
+<span class="extra">1493 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/73255" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/73255/pg73255.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Historia de la lengua y literatura castellana, Tomo 1 :  Desde los orígenes hasta Carlos V (Spanish)</span>
+<span class="subtitle">Julio Cejador y Frauca</span>
+<span class="extra">1462 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/53489" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/53489/pg53489.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Life of Lazarillo de Tormes</span>
+<span class="subtitle">Anonymous</span>
+<span class="extra">1426 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/55829" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/55829/pg55829.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">History of Spanish and Portuguese Literature (Vol 1 of 2)</span>
+<span class="subtitle">Friedrich Bouterwek</span>
+<span class="extra">1336 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/60464" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/60464/pg60464.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">El árbol de la ciencia: novela (Spanish)</span>
+<span class="subtitle">Pío Baroja</span>
+<span class="extra">1334 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+Displaying results 1–25
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/search/?query=spanish+literature&amp;sort_order=downloads&amp;start_index=26">Next</a>
+</span>
+</div>
+</li>
+</ul>

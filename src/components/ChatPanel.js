@@ -48,14 +48,44 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
     <div className={styles.panel} style={{ flex: '1 1 0%' }}>
       <div className={styles.header}>
         <h2>Chat</h2>
-        <button 
-          className={styles.saveButton}
-          onClick={handleSaveChat}
-          disabled={messages.length === 0}
-        >
-          <Save size={16} />
-          Save Chat
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button 
+            className={styles.saveButton}
+            onClick={handleSaveChat}
+            disabled={messages.length === 0}
+          >
+            <Save size={16} />
+            Save Chat
+          </button>
+          <a
+            href="/library"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              color: '#3b82f6',
+              textDecoration: 'none',
+              fontSize: 15,
+              fontWeight: 500,
+              padding: '7px 16px',
+              borderRadius: 6,
+              border: '1px solid #3b82f6',
+              background: 'white',
+              transition: 'all 0.2s',
+              marginLeft: 0,
+              height: 36
+            }}
+            onMouseEnter={e => {
+              e.target.style.background = '#3b82f6';
+              e.target.style.color = 'white';
+            }}
+            onMouseLeave={e => {
+              e.target.style.background = 'white';
+              e.target.style.color = '#3b82f6';
+            }}
+          >
+            Library
+          </a>
+        </div>
       </div>
       
       <div className={styles.messagesContainer}>

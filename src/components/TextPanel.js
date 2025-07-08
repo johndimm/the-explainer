@@ -68,24 +68,38 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     };
   }, []);
 
-  // Load Romeo and Juliet by default
+  // Load text from localStorage if available, otherwise load Romeo and Juliet
   useEffect(() => {
-    fetch('/public-domain-texts/shakespeare-romeo-and-juliet.txt')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-      })
-      .then(text => {
-        const lines = text.split('\n').filter(line => line.trim() !== '');
-        setTextLines(lines);
-      })
-      .catch(error => {
-        console.error('Error loading text:', error);
-        setTextLines(['Error loading text. Please try again.']);
-      });
-  }, []);
+    const savedText = localStorage.getItem('explainer:bookText');
+    const savedTitle = localStorage.getItem('explainer:bookTitle');
+    
+    if (savedText) {
+      const lines = savedText.split('\n').filter(line => line.trim() !== '');
+      setTextLines(lines);
+      // Update the title if it's passed as a prop
+      if (title === "Source Text" && savedTitle) {
+        // Note: We can't update the title prop directly, but the parent component
+        // can check localStorage for the title when rendering
+      }
+    } else {
+      // Fallback to Romeo and Juliet
+      fetch('/public-domain-texts/shakespeare-romeo-and-juliet.txt')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(text => {
+          const lines = text.split('\n').filter(line => line.trim() !== '');
+          setTextLines(lines);
+        })
+        .catch(error => {
+          console.error('Error loading text:', error);
+          setTextLines(['Error loading text. Please try again.']);
+        });
+    }
+  }, [title]);
 
   // Desktop selection handler - maintains original behavior
   const handleLineSelection = useCallback((index) => {

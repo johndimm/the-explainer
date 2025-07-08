@@ -1,0 +1,113 @@
+Let's build a new page, the Library, that lists books you might want to read in The Explainer.  A click brings them into the app.
+
+Let's start with the top 100 from Project Gutenberg.
+
+This list has the number and title of each book.  Use the number as in this example to get the text file.
+
+https://www.gutenberg.org/ebooks/2701
+https://www.gutenberg.org/cache/epub/2701/pg2701.txt
+
+Generate a nice webpage that lists these books and links to load the text into our app.  
+
+<ol><a href="#authors-last30">
+</a><li><a href="#authors-last30"></a><a href="/ebooks/2701">Moby Dick; Or, The Whale by Herman Melville (106660)</a></li>
+<li><a href="/ebooks/84">Frankenstein; Or, The Modern Prometheus by Mary Wollstonecraft Shelley (80765)</a></li>
+<li><a href="/ebooks/2641">A Room with a View by E. M.  Forster (73195)</a></li>
+<li><a href="/ebooks/7142">The History of the Peloponnesian War by Thucydides (71156)</a></li>
+<li><a href="/ebooks/1513">Romeo and Juliet by William Shakespeare (69600)</a></li>
+<li><a href="/ebooks/12474">Write It Right: A Little Blacklist of Literary Faults by Ambrose Bierce (67846)</a></li>
+<li><a href="/ebooks/2707">The History of Herodotus — Volume 1 by Herodotus (67151)</a></li>
+<li><a href="/ebooks/200">The Project Gutenberg Encyclopedia, Volume 1 of 28 by Project Gutenberg (64781)</a></li>
+<li><a href="/ebooks/100">The Complete Works of William Shakespeare by William Shakespeare (63321)</a></li>
+<li><a href="/ebooks/54279">A history of the Peninsular War, Vol. 2, Jan.-Sep. 1809 : by Charles Oman (62688)</a></li>
+<li><a href="/ebooks/46303">South Africa and the Transvaal War, Vol. 6 (of 8) by Louis Creswicke (62679)</a></li>
+<li><a href="/ebooks/62291">A history of the Peninsular War, Vol. 5, Oct. 1811-Aug. 31, 1812 : by Charles Oman (62638)</a></li>
+<li><a href="/ebooks/7255">Cambridge Sketches by Frank Preston Stearns (62609)</a></li>
+<li><a href="/ebooks/26198">South Africa and the Transvaal War, Vol. 2 (of 8) by Louis Creswicke (62593)</a></li>
+<li><a href="/ebooks/55231">A history of the Peninsular War, Vol. 3, Sep. 1809-Dec. 1810 : by Charles Oman (62575)</a></li>
+<li><a href="/ebooks/22914">The Sceptical Chymist by Robert Boyle (62519)</a></li>
+<li><a href="/ebooks/23692">South Africa and the Transvaal War, Vol. 1 (of 8) by Louis Creswicke (62502)</a></li>
+<li><a href="/ebooks/52026">Matthew Calbraith Perry: A Typical American Naval Officer by William Elliot Griffis (62410)</a></li>
+<li><a href="/ebooks/56812">A history of the Peninsular War, Vol. 4, Dec. 1810-Dec. 1811 : by Charles Oman (62404)</a></li>
+<li><a href="/ebooks/1342">Pride and Prejudice by Jane Austen (57234)</a></li>
+<li><a href="/ebooks/16389">The Enchanted April by Elizabeth Von Arnim (55708)</a></li>
+<li><a href="/ebooks/394">Cranford by Elizabeth Cleghorn Gaskell (52302)</a></li>
+<li><a href="/ebooks/145">Middlemarch by George Eliot (51870)</a></li>
+<li><a href="/ebooks/11">Alice's Adventures in Wonderland by Lewis Carroll (51751)</a></li>
+<li><a href="/ebooks/2160">The Expedition of Humphry Clinker by T.  Smollett (50991)</a></li>
+<li><a href="/ebooks/6593">History of Tom Jones, a Foundling by Henry Fielding (50723)</a></li>
+<li><a href="/ebooks/37106">Little Women; Or, Meg, Jo, Beth, and Amy by Louisa May Alcott (49787)</a></li>
+<li><a href="/ebooks/1080">A Modest Proposal by Jonathan Swift (49225)</a></li>
+<li><a href="/ebooks/158">Emma by Jane Austen (47352)</a></li>
+<li><a href="/ebooks/67979">The Blue Castle: a novel by L. M.  Montgomery (45846)</a></li>
+<li><a href="/ebooks/174">The Picture of Dorian Gray by Oscar Wilde (43444)</a></li>
+<li><a href="/ebooks/2554">Crime and Punishment by Fyodor Dostoyevsky (41836)</a></li>
+<li><a href="/ebooks/6761">The Adventures of Ferdinand Count Fathom — Complete by T.  Smollett (41521)</a></li>
+<li><a href="/ebooks/4085">The Adventures of Roderick Random by T.  Smollett (40453)</a></li>
+<li><a href="/ebooks/1259">Twenty years after by Alexandre Dumas and Auguste Maquet (39797)</a></li>
+<li><a href="/ebooks/17157">Gulliver's Travels into Several Remote Regions of the World by Jonathan Swift (38730)</a></li>
+<li><a href="/ebooks/2542">A Doll's House : a play by Henrik Ibsen (35530)</a></li>
+<li><a href="/ebooks/345">Dracula by Bram Stoker (35528)</a></li>
+<li><a href="/ebooks/3186">The Mysterious Stranger, and Other Stories by Mark Twain (35411)</a></li>
+<li><a href="/ebooks/5197">My Life — Volume 1 by Richard Wagner (35249)</a></li>
+<li><a href="/ebooks/10554">Right Ho, Jeeves by P. G.  Wodehouse (33958)</a></li>
+<li><a href="/ebooks/580">The Pickwick Papers by Charles Dickens (33107)</a></li>
+<li><a href="/ebooks/9070">The Imaginary Invalid by Molière (33051)</a></li>
+<li><a href="/ebooks/289">The Wind in the Willows by Kenneth Grahame (32342)</a></li>
+<li><a href="/ebooks/74">The Adventures of Tom Sawyer, Complete by Mark Twain (32308)</a></li>
+<li><a href="/ebooks/10676">The Reign of Greed by José Rizal (28420)</a></li>
+<li><a href="/ebooks/28054">The Brothers Karamazov by Fyodor Dostoyevsky (27886)</a></li>
+<li><a href="/ebooks/5225">The Satyricon — Complete by Petronius Arbiter (27232)</a></li>
+<li><a href="/ebooks/18857">A Journey to the Centre of the Earth by Jules Verne (27053)</a></li>
+<li><a href="/ebooks/26184">Simple Sabotage Field Manual by United States. Office of Strategic Services (26923)</a></li>
+<li><a href="/ebooks/4352">Laughter: An Essay on the Meaning of the Comic by Henri Bergson (25887)</a></li>
+<li><a href="/ebooks/3011">The Lady of the Lake by Walter Scott (25711)</a></li>
+<li><a href="/ebooks/31516">The Eyes Have It by Philip K. Dick (25634)</a></li>
+<li><a href="/ebooks/13415">The Lady with the Dog and Other Stories by Anton Pavlovich Chekhov (25556)</a></li>
+<li><a href="/ebooks/164">Twenty Thousand Leagues under the Sea by Jules Verne (25544)</a></li>
+<li><a href="/ebooks/308">Three men in a boat (to say nothing of the dog) by Jerome K.  Jerome (25533)</a></li>
+<li><a href="/ebooks/43">The Strange Case of Dr. Jekyll and Mr. Hyde by Robert Louis Stevenson (25511)</a></li>
+<li><a href="/ebooks/8525">Eve's Diary, Complete by Mark Twain (25040)</a></li>
+<li><a href="/ebooks/4300">Ulysses by James Joyce (25037)</a></li>
+<li><a href="/ebooks/24151">The Sky Trap by Frank Belknap Long (24491)</a></li>
+<li><a href="/ebooks/1661">The Adventures of Sherlock Holmes by Arthur Conan Doyle (24426)</a></li>
+<li><a href="/ebooks/41445">Frankenstein; Or, The Modern Prometheus by Mary Wollstonecraft Shelley (24335)</a></li>
+<li><a href="/ebooks/76">Adventures of Huckleberry Finn by Mark Twain (24274)</a></li>
+<li><a href="/ebooks/98">A Tale of Two Cities by Charles Dickens (24273)</a></li>
+<li><a href="/ebooks/383">She Stoops to Conquer; Or, The Mistakes of a Night: A Comedy by Oliver Goldsmith (23858)</a></li>
+<li><a href="/ebooks/1952">The Yellow Wallpaper by Charlotte Perkins Gilman (23571)</a></li>
+<li><a href="/ebooks/2643">The History of John Bull by John Arbuthnot (23385)</a></li>
+<li><a href="/ebooks/3189">Sketches New and Old by Mark Twain (22772)</a></li>
+<li><a href="/ebooks/1260">Jane Eyre: An Autobiography by Charlotte Brontë (22173)</a></li>
+<li><a href="/ebooks/73144">Lady Chatterley's lover by D. H.  Lawrence (22170)</a></li>
+<li><a href="/ebooks/5200">Metamorphosis by Franz Kafka (22089)</a></li>
+<li><a href="/ebooks/2600">War and Peace by graf Leo Tolstoy (21920)</a></li>
+<li><a href="/ebooks/64317">The Great Gatsby by F. Scott  Fitzgerald (21907)</a></li>
+<li><a href="/ebooks/1998">Thus Spake Zarathustra: A Book for All and None by Friedrich Wilhelm Nietzsche (21869)</a></li>
+<li><a href="/ebooks/215">The call of the wild by Jack London (21599)</a></li>
+<li><a href="/ebooks/844">The Importance of Being Earnest: A Trivial Comedy for Serious People by Oscar Wilde (21599)</a></li>
+<li><a href="/ebooks/24571">Der Struwwelpeter by Heinrich Hoffmann (21533)</a></li>
+<li><a href="/ebooks/36034">White Nights and Other Stories by Fyodor Dostoyevsky (21489)</a></li>
+<li><a href="/ebooks/57333">Project Gutenberg Compilation of Short Stories by Chekhov by Anton Pavlovich Chekhov (21396)</a></li>
+<li><a href="/ebooks/21279">2 B R 0 2 B by Kurt Vonnegut (21332)</a></li>
+<li><a href="/ebooks/1184">The Count of Monte Cristo by Alexandre Dumas and Auguste Maquet (21222)</a></li>
+<li><a href="/ebooks/35">The Time Machine by H. G.  Wells (21076)</a></li>
+<li><a href="/ebooks/6130">The Iliad by Homer (20993)</a></li>
+<li><a href="/ebooks/1250">Anthem by Ayn Rand (20972)</a></li>
+<li><a href="/ebooks/5611">The Satyricon of Petronius Arbiter by Petronius Arbiter (20899)</a></li>
+<li><a href="/ebooks/2591">Grimms' Fairy Tales by Jacob Grimm and Wilhelm Grimm (20726)</a></li>
+<li><a href="/ebooks/69087">The murder of Roger Ackroyd by Agatha Christie (20446)</a></li>
+<li><a href="/ebooks/14323">Là-bas by J.-K.  Huysmans (20259)</a></li>
+<li><a href="/ebooks/25305">Memoirs of Fanny Hill by John Cleland (20137)</a></li>
+<li><a href="/ebooks/17489">Les misérables Tome I: Fantine by Victor Hugo (20007)</a></li>
+<li><a href="/ebooks/30254">The Romance of Lust: A classic Victorian erotic novel by Anonymous (19983)</a></li>
+<li><a href="/ebooks/1400">Great Expectations by Charles Dickens (19840)</a></li>
+<li><a href="/ebooks/2911">Justice by John Galsworthy (19838)</a></li>
+<li><a href="/ebooks/766">David Copperfield by Charles Dickens (19821)</a></li>
+<li><a href="/ebooks/768">Wuthering Heights by Emily Brontë (19813)</a></li>
+<li><a href="/ebooks/2000">Don Quijote by Miguel de Cervantes Saavedra (19636)</a></li>
+<li><a href="/ebooks/29418">The Man from Time by Frank Belknap Long (19545)</a></li>
+<li><a href="/ebooks/27673">Oedipus King of Thebes by Sophocles (19532)</a></li>
+<li><a href="/ebooks/8800">The divine comedy by Dante Alighieri (19528)</a></li>
+<li><a href="/ebooks/3201">Moby Word Lists by Grady Ward (19452)</a></li>
+</ol>

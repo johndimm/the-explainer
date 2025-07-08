@@ -4,11 +4,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { text } = req.body;
+    const { text, bookTitle, bookAuthor } = req.body;
 
     if (!text || typeof text !== 'string') {
       return res.status(400).json({ error: 'Text is required' });
     }
+
+    // Default to Romeo and Juliet if no book info provided
+    const title = bookTitle || 'Romeo and Juliet';
+    const author = bookAuthor || 'William Shakespeare';
 
     // Check if OpenAI API key is available
     const openaiApiKey = process.env.OPENAI_API_KEY;
@@ -35,7 +39,7 @@ For now, here's what this text might mean:
     console.log('OpenAI API key found, attempting to call OpenAI API...');
 
     // System prompt for text explanation, now including author and title
-    const systemPrompt = `You are a helpful assistant that explains difficult texts in an engaging and educational way. The user is reading "Romeo and Juliet" by William Shakespeare. When explaining text, you should:
+    const systemPrompt = `You are a helpful assistant that explains difficult texts in an engaging and educational way. The user is reading "${title}" by ${author}. When explaining text, you should:
 
 1. Explain difficult or archaic words and what they mean
 2. Explain familiar words that had different meanings in the past
@@ -60,7 +64,7 @@ Respond in the same language as the input text unless specifically asked otherwi
           model: 'gpt-4-turbo',
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: `Please explain this text from Romeo and Juliet:\n\n${text}` }
+            { role: 'user', content: `Please explain this text from "${title}":\n\n${text}` }
           ],
           max_tokens: 1000,
           temperature: 0.7
