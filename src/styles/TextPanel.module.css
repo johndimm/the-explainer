@@ -208,6 +208,10 @@
   .line * {
     pointer-events: auto;
   }
+  
+  .textContainer {
+    margin-right: 4px;
+  }
 }
 
 /* Mobile responsive - portrait mode */

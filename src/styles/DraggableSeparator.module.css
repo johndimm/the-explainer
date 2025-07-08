@@ -72,7 +72,8 @@
 /* Mobile responsive - landscape mode */
 @media (max-width: 768px) and (orientation: landscape) {
   .separator {
-    width: 8px;
+    width: 24px;
+    min-width: 24px;
     height: 100%;
     cursor: col-resize;
     background: #f1f5f9;
@@ -99,5 +100,12 @@
   
   .separator.dragging .handle {
     color: #475569;
+  }
+}
+
+@media (max-width: 768px) and (orientation: portrait) {
+  .separator {
+    height: 24px;
+    min-height: 24px;
   }
 } 
