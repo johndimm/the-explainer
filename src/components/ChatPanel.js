@@ -1,10 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Save, MessageSquare } from 'lucide-react';
+import { Send, Save, MessageSquare, Settings } from 'lucide-react';
 import styles from '@/styles/ChatPanel.module.css';
+import { t, getUserLanguage } from '@/i18n';
 
 const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedText }) => {
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const messagesEndRef = useRef(null);
+  const [lang, setLang] = useState('en');
+
+  useEffect(() => {
+    setLang(getUserLanguage());
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,7 +53,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
   return (
     <div className={styles.panel} style={{ flex: '1 1 0%' }}>
       <div className={styles.header}>
-        <h2>Chat</h2>
+        <h2>{t('chat', lang)}</h2>
         <div style={{ display: 'flex', gap: 8 }}>
           <button 
             className={styles.saveButton}
@@ -55,7 +61,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
             disabled={messages.length === 0}
           >
             <Save size={16} />
-            Save Chat
+            {t('saveChat', lang)}
           </button>
           <a
             href="/library"
@@ -83,7 +89,35 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
               e.target.style.color = '#3b82f6';
             }}
           >
-            Library
+            {t('library', lang)}
+          </a>
+          <a
+            href="/profile"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#3b82f6',
+              textDecoration: 'none',
+              padding: '7px',
+              borderRadius: 6,
+              border: '1px solid #3b82f6',
+              background: 'white',
+              transition: 'all 0.2s',
+              height: 36,
+              width: 36
+            }}
+            title={t('profileSettings', lang)}
+            onMouseEnter={e => {
+              e.target.style.background = '#3b82f6';
+              e.target.style.color = 'white';
+            }}
+            onMouseLeave={e => {
+              e.target.style.background = 'white';
+              e.target.style.color = '#3b82f6';
+            }}
+          >
+            <Settings size={16} />
           </a>
         </div>
       </div>
@@ -92,7 +126,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
         {messages.length === 0 ? (
           <div className={styles.emptyState}>
             <MessageSquare size={48} />
-            <p>Select text from the left panel to start a conversation</p>
+            <p>{t('selectTextPrompt', lang)}</p>
           </div>
         ) : (
           <div className={styles.messages}>
@@ -126,7 +160,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
                     <span></span>
                     <span></span>
                   </div>
-                  Thinking...
+                  {t('thinking', lang)}
                 </div>
               </div>
             )}
@@ -141,7 +175,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
           type="text"
           value={followUpQuestion}
           onChange={(e) => setFollowUpQuestion(e.target.value)}
-          placeholder="Ask a follow-up question..."
+          placeholder={t('askFollowup', lang)}
           disabled={isLoading}
           className={styles.input}
         />

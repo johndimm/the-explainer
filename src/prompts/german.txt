@@ -1,0 +1,400 @@
+<ul class="results">
+<li class="navlink grayed">
+<a class="link" href="/ebooks/subjects/search/?query=in+the+german+language" accesskey="0">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_subject"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Subjects</span>
+<span class="subtitle">23 subject headings match your search.</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/bookshelves/search/?query=in+the+german+language" accesskey="1">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_bookshelf"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Bookshelves</span>
+<span class="subtitle">One bookshelf matches your query.</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/search/?query=in+the+german+language&amp;sort_order=title" accesskey="2">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_alpha"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort Alphabetically by Title</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="navlink grayed">
+<a class="link" href="/ebooks/search/?query=in+the+german+language&amp;sort_order=release_date" accesskey="3">
+<span class="cell leftcell without-cover">
+<span class="icon-wrapper">
+<span class="icon icon_date"></span>
+</span>
+</span>
+<span class="cell content">
+<span class="title">Sort by Release Date</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+<span>Displaying results 1–25</span>
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/search/?query=in+the+german+language&amp;start_index=26">Next</a>
+</span>
+</div>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/2591" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/2591/pg2591.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Grimms' Fairy Tales</span>
+<span class="subtitle">Jacob Grimm and Wilhelm Grimm</span>
+<span class="extra">20726 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/14075" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/14075/pg14075.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Die Frauenfrage: ihre geschichtliche Entwicklung und wirtschaftliche Seite (German)</span>
+<span class="subtitle">Lily Braun</span>
+<span class="extra">5586 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3221" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3221/pg3221.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Mr. Honey's Large Business Dictionary (English-German) (German)</span>
+<span class="subtitle">Winfried Honig</span>
+<span class="extra">2549 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/58804" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/58804/pg58804.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Die Deutschen Familiennamen, geschichtlich, geographisch, sprachlich (German)</span>
+<span class="subtitle">Albert Heintze</span>
+<span class="extra">2380 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3213" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3213/pg3213.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Mr. Honey's Beginner's Dictionary (English-German) (German)</span>
+<span class="subtitle">Winfried Honig</span>
+<span class="extra">1976 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/43759" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/43759/pg43759.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Geflügelte Worte: Der Citatenschatz des deutschen Volkes (German)</span>
+<span class="subtitle">Georg Büchmann and Walter Robert-tornow</span>
+<span class="extra">1876 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/39762" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/39762/pg39762.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Etymologisches Wörterbuch der deutschen Seemannssprache (German)</span>
+<span class="subtitle">Gustav Goedel</span>
+<span class="extra">1866 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/51090" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/51090/pg51090.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">A Polyglot of Foreign Proverbs
+</span>
+<span class="extra">1721 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3220" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3220/pg3220.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Mr. Honey's Large Business Dictionary (German-English) (German)</span>
+<span class="subtitle">Winfried Honig</span>
+<span class="extra">1579 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/74870" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/74870/pg74870.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Slang and its analogues past and present, volume 3 (of 7) :  A dictionary, historical and comparative, of the heterodox speech of all classes of society for more than three hundred years. With synonyms in English, French, German, Italian, etc.</span>
+<span class="subtitle">William Ernest Henley and John Stephen Farmer</span>
+<span class="extra">1236 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3188" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3188/pg3188.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Mark Twain's Speeches</span>
+<span class="subtitle">Mark Twain</span>
+<span class="extra">1149 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/61948" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/61948/pg61948.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Mittelniederdeutsches Handwörterbuch (German)</span>
+<span class="subtitle">August Lübben</span>
+<span class="extra">1143 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3208" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3208/pg3208.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Mr. Honey's Medium Business Dictionary (German-English) (German)</span>
+<span class="subtitle">Winfried Honig</span>
+<span class="extra">1137 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3212" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3212/pg3212.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Mr. Honey's Beginner's Dictionary (German-English) (German)</span>
+<span class="subtitle">Winfried Honig</span>
+<span class="extra">1086 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/19460" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/19460/pg19460.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Handbuch der deutschen Kunstdenkmäler, Bd.1, Mitteldeutschland, 1914 (German)</span>
+<span class="subtitle">Georg Dehio</span>
+<span class="extra">985 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/75007" accesskey="0">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/75007/pg75007.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Vollständiges Orthographisches Wörterbuch der deutschen Sprache :  mit etymologischen Angaben, kurzen Sacherklärungen und Verdeutschungen der Fremdwörter (German)</span>
+<span class="subtitle">Konrad Duden</span>
+<span class="extra">919 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/3298" accesskey="1">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/3298/pg3298.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Mr. Honey's Banking Dictionary (German-English) (German)</span>
+<span class="subtitle">Winfried Honig</span>
+<span class="extra">870 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/58782" accesskey="2">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/58782/pg58782.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Neues Spanisch-Deutsches Wörterbuch
+ (German)</span>
+<span class="subtitle">Theodor Stromer</span>
+<span class="extra">860 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/49503" accesskey="3">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/49503/pg49503.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Ährenlese: A German Reader with Practical Exercises (German)</span>
+<span class="extra">760 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/33435" accesskey="4">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/33435/pg33435.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">The Dramatic Works of G. E. Lessing</span>
+<span class="subtitle">Gotthold Ephraim Lessing</span>
+<span class="extra">726 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/33670" accesskey="5">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/33670/pg33670.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Maxims and Reflections</span>
+<span class="subtitle">Johann Wolfgang von Goethe</span>
+<span class="extra">725 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/22636" accesskey="6">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/22636/pg22636.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">A Middle High German Primer</span>
+<span class="subtitle">Joseph Wright</span>
+<span class="extra">715 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/6343" accesskey="7">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/6343/pg6343.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Kritik der reinen Vernunft
+ (German)</span>
+<span class="subtitle">Immanuel Kant</span>
+<span class="extra">714 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/22160" accesskey="8">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/22160/pg22160.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Studien und Plaudereien. First Series (German)</span>
+<span class="subtitle">Sigmon M. Stern</span>
+<span class="extra">669 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="booklink">
+<a class="link" href="/ebooks/22492" accesskey="9">
+<span class="cell leftcell with-cover">
+<img class="cover-thumb" src="/cache/epub/22492/pg22492.cover.small.jpg" alt="">
+</span>
+<span class="cell content">
+<span class="title">Reise in die Aequinoctial-Gegenden des neuen Continents. Band 1. (German)</span>
+<span class="subtitle">Alexander von Humboldt</span>
+<span class="extra">648 downloads</span>
+</span>
+<span class="hstrut"></span>
+</a>
+</li>
+<li class="statusline">
+<div class="padded">
+Displaying results 1–25
+<span class="links">
+|
+<a title="Go to the next page of results." accesskey="+" href="/ebooks/search/?query=in+the+german+language&amp;start_index=26">Next</a>
+</span>
+</div>
+</li>
+</ul>

@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { text, bookTitle, bookAuthor } = req.body;
+    const { text, bookTitle, bookAuthor, userLanguage } = req.body;
 
     if (!text || typeof text !== 'string') {
       return res.status(400).json({ error: 'Text is required' });
@@ -39,6 +39,8 @@ For now, here's what this text might mean:
     console.log('OpenAI API key found, attempting to call OpenAI API...');
 
     // System prompt for text explanation, now including author and title
+    const languageInstruction = userLanguage ? `Please respond in ${userLanguage}.` : 'Respond in the same language as the input text unless specifically asked otherwise.';
+    
     const systemPrompt = `You are a helpful assistant that explains difficult texts in an engaging and educational way. The user is reading "${title}" by ${author}. When explaining text, you should:
 
 1. Explain difficult or archaic words and what they mean
@@ -50,7 +52,7 @@ For now, here's what this text might mean:
 
 Make your explanations compelling and not boring. Feel free to make occasional jokes and have a personality. Be conversational and helpful while being informative.
 
-Respond in the same language as the input text unless specifically asked otherwise.`;
+${languageInstruction}`;
 
     try {
       console.log('Making request to OpenAI API...');

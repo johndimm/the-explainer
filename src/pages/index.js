@@ -55,6 +55,18 @@ export default function Home() {
       bookAuthor = savedTitle.split(' by ').pop();
     }
 
+    // Get user language preference from localStorage
+    const userProfile = localStorage.getItem('explainer:profile');
+    let userLanguage = null;
+    if (userProfile) {
+      try {
+        const profile = JSON.parse(userProfile);
+        userLanguage = profile.language;
+      } catch (e) {
+        console.error('Error parsing user profile:', e);
+      }
+    }
+
     try {
       const response = await fetch('/api/explain', {
         method: 'POST',
@@ -64,7 +76,8 @@ export default function Home() {
         body: JSON.stringify({ 
           text: selectedText,
           bookTitle: bookTitle,
-          bookAuthor: bookAuthor
+          bookAuthor: bookAuthor,
+          userLanguage: userLanguage
         }),
       });
 
@@ -125,6 +138,18 @@ export default function Home() {
       bookAuthor = savedTitle.split(' by ').pop();
     }
 
+    // Get user language preference from localStorage
+    const userProfile = localStorage.getItem('explainer:profile');
+    let userLanguage = null;
+    if (userProfile) {
+      try {
+        const profile = JSON.parse(userProfile);
+        userLanguage = profile.language;
+      } catch (e) {
+        console.error('Error parsing user profile:', e);
+      }
+    }
+
     try {
       const response = await fetch('/api/explain', {
         method: 'POST',
@@ -134,7 +159,8 @@ export default function Home() {
         body: JSON.stringify({ 
           text: question,
           bookTitle: bookTitle,
-          bookAuthor: bookAuthor
+          bookAuthor: bookAuthor,
+          userLanguage: userLanguage
         }),
       });
 

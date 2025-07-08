@@ -1,3 +1,6 @@
 The page display on a phone is cramped.  I want to be able to shrink the text so more of it is visible.  
 
 No, you can pinch to grow text.  That does not change the layout.  I want the layout to change, showing more or less text by growing or shrinking the size of the app's main div.
+
+
+

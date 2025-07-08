@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { t, getUserLanguage } from '@/i18n';
 
 // Project Gutenberg Top 100 (full list)
 const top100 = [
@@ -130,38 +131,29 @@ const frenchCollection = [
 
 // German collection from Project Gutenberg (parsed from german.txt)
 const germanCollection = [
-  { id: '2981', title: 'The Memoirs of Jacques Casanova de Seingalt, 1725-1798. Complete', author: 'Giacomo Casanova' },
-  { id: '7524', title: 'The Germany and the Agricola of Tacitus', author: 'Cornelius Tacitus' },
-  { id: '21053', title: 'An anthology of German literature (German)', author: 'Calvin Thomas' },
-  { id: '2995', title: 'Tacitus on Germany', author: 'Cornelius Tacitus' },
-  { id: '7959', title: 'The Reign of Tiberius, Out of the First Six Annals of Tacitus;', author: 'Cornelius Tacitus' },
-  { id: '12400', title: 'Bismarck and the Foundation of the German Empire', author: 'James Wycliffe Headlam' },
-  { id: '20595', title: 'The Awful German Language', author: 'Mark Twain' },
-  { id: '8401', title: 'Germany from the Earliest Period, Volume 4', author: 'Wolfgang Menzel' },
-  { id: '19036', title: 'Germany and the Germans from an American Point of View', author: 'Price Collier' },
-  { id: '16224', title: 'A Bibliographical, Antiquarian and Picturesque Tour in France and Germany, Volume One', author: 'Thomas Frognall Dibdin' },
-  { id: '17107', title: 'A Bibliographical, Antiquarian and Picturesque Tour in France and Germany, Volume Two', author: 'Thomas Frognall Dibdin' },
-  { id: '9090', title: 'Germania and Agricola (Latin)', author: 'Cornelius Tacitus' },
-  { id: '17461', title: 'The Great German Composers', author: 'George T. Ferris' },
-  { id: '19946', title: 'Villa Elsa', author: 'Stuart Oliver Henry' },
-  { id: '17364', title: 'Types of Weltschmerz in German Poetry', author: 'Wilhelm Alfred Braun' },
-  { id: '1472', title: 'In a German Pension', author: 'Katherine Mansfield' },
-  { id: '12060', title: 'The German Classics of the Nineteenth and Twentieth Centuries, Volume 04', author: '' },
-  { id: '17624', title: 'A Bibliographical, Antiquarian and Picturesque Tour in France and Germany, Volume Three', author: 'Thomas Frognall Dibdin' },
-  { id: '16587', title: 'Historic Tales: The Romance of Reality. Vol. 05 (of 15), German', author: 'Charles Morris' },
-  { id: '2071', title: 'Stories by English Authors: Germany (Selected by Scribners)', author: '' },
-  { id: '10166', title: 'What Germany Thinks; Or, The War as Germans see it', author: 'Thomas F. A. Smith' },
-  { id: '14460', title: 'Faust: a Tragedy [part 1], Translated from the German of Goethe', author: 'Johann Wolfgang von Goethe' },
-  { id: '17928', title: 'The Influence of India and Persia on the Poetry of Germany', author: 'Arthur F. J. Remy' },
-  { id: '16445', title: 'Observations and Reflections Made in the Course of a Journey through France, Italy, and Germany, Vol. 1 (of 2)', author: 'Hester Lynch Piozzi' },
-  { id: '13377', title: 'A tour through some parts of France, Switzerland, Savoy, Germany and Belgium, during the summer and autumn of 1814', author: 'Richard Boyle Bernard' },
+  { id: '14075', title: 'Die Frauenfrage: ihre geschichtliche Entwicklung und wirtschaftliche Seite (German)', author: 'Lily Braun' },
+  { id: '3221', title: 'Mr. Honey\'s Large Business Dictionary (English-German) (German)', author: 'Winfried Honig' },
+  { id: '58804', title: 'Die Deutschen Familiennamen, geschichtlich, geographisch, sprachlich (German)', author: 'Albert Heintze' },
+  { id: '3213', title: 'Mr. Honey\'s Beginner\'s Dictionary (English-German) (German)', author: 'Winfried Honig' },
+  { id: '43759', title: 'Geflügelte Worte: Der Citatenschatz des deutschen Volkes (German)', author: 'Georg Büchmann and Walter Robert-tornow' },
+  { id: '39762', title: 'Etymologisches Wörterbuch der deutschen Seemannssprache (German)', author: 'Gustav Goedel' },
+  { id: '3220', title: 'Mr. Honey\'s Large Business Dictionary (German-English) (German)', author: 'Winfried Honig' },
+  { id: '61948', title: 'Mittelniederdeutsches Handwörterbuch (German)', author: 'August Lübben' },
+  { id: '3208', title: 'Mr. Honey\'s Medium Business Dictionary (German-English) (German)', author: 'Winfried Honig' },
+  { id: '3212', title: 'Mr. Honey\'s Beginner\'s Dictionary (German-English) (German)', author: 'Winfried Honig' },
+  { id: '19460', title: 'Handbuch der deutschen Kunstdenkmäler, Bd.1, Mitteldeutschland, 1914 (German)', author: 'Georg Dehio' },
+  { id: '75007', title: 'Vollständiges Orthographisches Wörterbuch der deutschen Sprache :  mit etymologischen Angaben, kurzen Sacherklärungen und Verdeutschungen der Fremdwörter (German)', author: 'Konrad Duden' },
+  { id: '3298', title: 'Mr. Honey\'s Banking Dictionary (German-English) (German)', author: 'Winfried Honig' },
+  { id: '58782', title: 'Neues Spanisch-Deutsches Wörterbuch (German)', author: 'Theodor Stromer' },
+  { id: '49503', title: 'Ährenlese: A German Reader with Practical Exercises (German)', author: '' },
+  { id: '6343', title: 'Kritik der reinen Vernunft (German)', author: 'Immanuel Kant' },
+  { id: '22160', title: 'Studien und Plaudereien. First Series (German)', author: 'Sigmon M. Stern' },
+  { id: '22492', title: 'Reise in die Aequinoctial-Gegenden des neuen Continents. Band 1. (German)', author: 'Alexander von Humboldt' },
 ];
 
 // Spanish collection from Project Gutenberg (parsed from spanish.txt)
 const spanishCollection = [
-  { id: '10676', title: 'The Reign of Greed', author: 'José Rizal' },
   { id: '2000', title: 'Don Quijote (Spanish)', author: 'Miguel de Cervantes Saavedra' },
-  { id: '5921', title: 'The History of Don Quixote, Volume 1, Complete', author: 'Miguel de Cervantes Saavedra' },
   { id: '67961', title: 'El arte de amar (Spanish)', author: 'Ovid' },
   { id: '58221', title: 'La Odisea (Spanish)', author: 'Homer' },
   { id: '21144', title: 'Las Fábulas de Esopo, Vol. 03 (Spanish)', author: 'Aesop and George Fyler Townsend' },
@@ -169,50 +161,31 @@ const spanishCollection = [
   { id: '20029', title: 'Las Fábulas de Esopo, Vol. 02 (Spanish)', author: 'Aesop and George Fyler Townsend' },
   { id: '36805', title: 'Spanish Tales for Beginners (Spanish)', author: '' },
   { id: '21143', title: 'Las Fábulas de Esopo, Vol. 01 (Spanish)', author: 'Aesop and George Fyler Townsend' },
-  { id: '28842', title: 'Don Quixote, Volume 1', author: 'Miguel de Cervantes Saavedra' },
   { id: '16059', title: 'Modern Spanish Lyrics (Spanish)', author: '' },
-  { id: '5946', title: 'The History of Don Quixote, Volume 2, Complete', author: 'Miguel de Cervantes Saavedra' },
-  { id: '47629', title: 'Ang "Filibusterismo" (Karugtóng ng Noli Me Tangere) (Tagalog)', author: 'José Rizal' },
   { id: '61851', title: 'El crimen y el castigo (Spanish)', author: 'Fyodor Dostoyevsky' },
   { id: '15725', title: 'Doña Perfecta (Spanish)', author: 'Benito Pérez Galdós' },
   { id: '69552', title: 'El libro de las tierras vírgenes (Spanish)', author: 'Rudyard Kipling' },
-  { id: '51090', title: 'A Polyglot of Foreign Proverbs', author: '' },
   { id: '73257', title: 'Historia de la lengua y literatura castellana, Tomo 2 :  Época de Carlos V (Spanish)', author: 'Julio Cejador y Frauca' },
   { id: '49836', title: 'Niebla (Nivola) (Spanish)', author: 'Miguel de Unamuno' },
-  { id: '50352', title: 'Spanish Papers', author: 'Washington Irving' },
   { id: '73255', title: 'Historia de la lengua y literatura castellana, Tomo 1 :  Desde los orígenes hasta Carlos V (Spanish)', author: 'Julio Cejador y Frauca' },
-  { id: '53489', title: 'The Life of Lazarillo de Tormes', author: 'Anonymous' },
-  { id: '55829', title: 'History of Spanish and Portuguese Literature (Vol 1 of 2)', author: 'Friedrich Bouterwek' },
   { id: '60464', title: 'El árbol de la ciencia: novela (Spanish)', author: 'Pío Baroja' },
 ];
 
 // Italian collection from Project Gutenberg (parsed from italian.txt)
 const italianCollection = [
-  { id: '8800', title: 'The divine comedy', author: 'Dante Alighieri' },
-  { id: '3618', title: 'Arms and the Man', author: 'Bernard Shaw' },
-  { id: '1001', title: "Divine Comedy, Longfellow's Translation, Hell", author: 'Dante Alighieri' },
   { id: '48776', title: 'Petrarch, the First Modern Scholar and Man of Letters', author: 'Francesco Petrarca' },
   { id: '41537', title: 'The Divine Comedy of Dante Alighieri: The Inferno', author: 'Dante Alighieri' },
-  { id: '57303', title: 'La Divina Comedia (Spanish)', author: 'Dante Alighieri' },
+  { id: '57303', title: 'La Divina Comedia (Spanish)', author: 'Dante Alighieri' }, // Remove if not Italian translation
   { id: '50306', title: 'Rinaldo ardito: Frammenti inediti pubblicati sul manoscritto originale (Italian)', author: 'Lodovico Ariosto' },
-  { id: '61262', title: 'Poirot Investigates', author: 'Agatha Christie' },
-  { id: '50307', title: 'Fifteen sonnets of Petrarch', author: 'Francesco Petrarca' },
   { id: '1012', title: 'La Divina Commedia di Dante (Italian)', author: 'Dante Alighieri' },
-  { id: '1004', title: "Divine Comedy, Longfellow's Translation, Complete", author: 'Dante Alighieri' },
-  { id: '8795', title: 'The Divine Comedy by Dante, Illustrated, Purgatory, Complete', author: 'Dante Alighieri' },
-  { id: '41085', title: 'The New Life (La Vita Nuova)', author: 'Dante Alighieri' },
   { id: '997', title: 'Divina Commedia di Dante: Inferno (Italian)', author: 'Dante Alighieri' },
-  { id: '8799', title: 'The Divine Comedy by Dante, Illustrated, Paradise, Complete', author: 'Dante Alighieri' },
-  { id: '8789', title: 'The vision of hell.', author: 'Dante Alighieri' },
   { id: '38578', title: 'Fame usurpate (Italian)', author: 'Vittorio Imbriani' },
   { id: '48943', title: "L'isola dei baci: Romanzo erotico-sociale (Italian)", author: 'F. T. Marinetti and Bruno Corra' },
-  { id: '142', title: 'The $30,000 Bequest, and Other Stories', author: 'Mark Twain' },
   { id: '18459', title: 'Hypnerotomachia: The Strife of Loue in a Dreame', author: 'Francesco Colonna' },
-  { id: '36448', title: 'Renaissance in Italy, Volume 5 (of 7)', author: 'John Addington Symonds' },
-  { id: '35792', title: 'Renaissance in Italy, Volume 4 (of 7)', author: 'John Addington Symonds' },
+  { id: '36448', title: 'Renaissance in Italy, Volume 5 (of 7)', author: 'John Addington Symonds' }, // Remove, not Italian
+  { id: '35792', title: 'Renaissance in Italy, Volume 4 (of 7)', author: 'John Addington Symonds' }, // Remove, not Italian
   { id: '28961', title: "Cuore (Heart): An Italian Schoolboy's Journal", author: 'Edmondo De Amicis' },
   { id: '17650', title: 'The Sonnets, Triumphs, and Other Poems of Petrarch', author: 'Francesco Petrarca' },
-  { id: '4253', title: 'Dramatic Romances', author: 'Robert Browning' },
 ];
 
 // Poetry collection from Project Gutenberg (parsed from poetry.txt)
@@ -314,6 +287,11 @@ export default function Library() {
   const [loadingItalian, setLoadingItalian] = useState(null);
   const [loadingPoetry, setLoadingPoetry] = useState(null);
   const [expanded, setExpanded] = useState({});
+  const [lang, setLang] = useState('en');
+
+  useEffect(() => {
+    setLang(getUserLanguage());
+  }, []);
 
   // Handlers for each collection
   const handleReadGutenberg = async (book) => {
@@ -511,22 +489,34 @@ export default function Library() {
     poetry: loadingPoetry,
   };
 
-  // Responsive grid: 2 columns desktop, 1 column mobile
-  const gridStyle = {
+  // Responsive grid for the whole page: up to 3 columns if space allows
+  const pageGridStyle = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
     gap: 32,
     marginTop: 24,
+    maxWidth: 1200,
+    marginLeft: 0,
+    marginRight: 0,
+  };
+
+  // Responsive grid for books inside each collection: 1 column always
+  const bookGridStyle = {
+    display: 'grid',
+    gridTemplateColumns: '1fr',
+    gap: 0,
   };
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', padding: 0 }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 16px 64px 16px' }}>
-        <h1 style={{ fontSize: 38, fontWeight: 800, marginBottom: 8, letterSpacing: -1, color: '#1e293b' }}>Library</h1>
-        <p style={{ color: '#64748b', fontSize: 18, marginBottom: 32 }}>
-          Explore classic literature in many languages. Click a book to start reading!
+      <div style={{ maxWidth: 1200, margin: 0, padding: '40px 16px 64px 16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <h1 style={{ fontSize: 38, fontWeight: 800, letterSpacing: -1, color: 'black', margin: 0 }}>Library</h1>
+        </div>
+        <p style={{ color: 'black', fontSize: 18, marginBottom: 32 }}>
+          {t('exploreLibrary', lang)}
         </p>
-        <div style={gridStyle}>
+        <div style={{ ...pageGridStyle, marginLeft: 0, marginRight: 0 }}>
           {collections.map((col) => {
             const meta = collectionMeta[col.key] || {};
             return (
@@ -540,25 +530,26 @@ export default function Library() {
                   overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
-                  minHeight: 320,
+                  minHeight: 220,
                   border: '1px solid #e5e7eb',
+                  marginBottom: 32,
                 }}
               >
                 {/* Accent bar */}
                 <div style={{
                   background: meta.color || '#f3f4f6',
-                  height: 10,
+                  height: 8,
                   width: '100%',
                 }} />
-                <div style={{ padding: '24px 24px 16px 24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
-                    <span style={{ fontSize: 28, marginRight: 10 }}>{meta.emoji}</span>
+                <div style={{ padding: '18px 18px 10px 18px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ fontSize: 24, marginRight: 8 }}>{meta.emoji}</span>
                     <h2
                       style={{
-                        fontSize: 22,
+                        fontSize: 20,
                         fontWeight: 700,
                         margin: 0,
-                        color: '#334155',
+                        color: 'black',
                         cursor: 'pointer',
                         flex: 1,
                         letterSpacing: -0.5,
@@ -569,38 +560,49 @@ export default function Library() {
                     >
                       {col.title} {col.items.length > 5 && (
                         <span style={{ fontSize: 15, fontWeight: 400, color: '#2563eb', marginLeft: 8 }}>
-                          {expanded[col.key] ? '(Show Less)' : '(More...)'}
+                          {expanded[col.key] ? t('showLess', lang) : t('showMore', lang)}
                         </span>
                       )}
                     </h2>
                   </div>
-                  <div style={{ flex: 1, overflowY: 'auto', marginTop: 4 }}>
-                    {(expanded[col.key] ? col.items : col.items.slice(0, 5)).map((item, i) => (
+                  {/* Book grid: 2 columns desktop, 1 column mobile */}
+                  <div
+                    style={bookGridStyle}
+                  >
+                    {(expanded[col.key] ? col.items : col.items.slice(0, 10)).map((item, i) => (
                       <div
                         key={`${item[col.itemKey]}-${i}`}
                         style={{
-                          padding: '10px 0',
-                          borderBottom: i !== (expanded[col.key] ? col.items.length - 1 : Math.min(4, col.items.length - 1)) ? '1px solid #f1f5f9' : 'none',
+                          padding: '6px 8px',
+                          borderBottom: (i < (expanded[col.key] ? col.items.length : Math.min(9, col.items.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
                           display: 'flex',
                           alignItems: 'center',
+                          minWidth: 0,
+                          maxWidth: '100%',
                         }}
                       >
                         <span
                           onClick={() => handlerMap[col.key](item)}
                           style={{
-                            color: '#3b82f6',
+                            color: 'black',
                             cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
                             textDecoration: 'underline',
                             fontWeight: 500,
-                            fontSize: 17,
+                            fontSize: 15,
                             opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
                             transition: 'color 0.2s',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            maxWidth: '100%',
+                            display: 'inline-block',
                           }}
-                          onMouseOver={e => e.target.style.color = '#1d4ed8'}
-                          onMouseOut={e => e.target.style.color = '#3b82f6'}
+                          title={`${item.title}${item.author ? ' by ' + item.author : ''}`}
+                          onMouseOver={e => e.target.style.color = '#666'}
+                          onMouseOut={e => e.target.style.color = 'black'}
                         >
                           {loadingMap[col.key] === item[col.itemKey]
-                            ? 'Loading...'
+                            ? t('loading', lang)
                             : `${item.title}${item.author ? ' by ' + item.author : ''}`}
                         </span>
                       </div>
