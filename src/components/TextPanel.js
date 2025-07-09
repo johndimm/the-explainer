@@ -105,13 +105,57 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     };
   }, []);
 
+  // Function to split long lines at word boundaries
+  const splitLongLines = useCallback((text, maxWidth = 80) => {
+    const lines = text.split('\n');
+    const processedLines = [];
+    
+    for (const line of lines) {
+      if (line.trim() === '') {
+        processedLines.push('');
+        continue;
+      }
+      
+      // If line is already short enough, keep it as is
+      if (line.length <= maxWidth) {
+        processedLines.push(line);
+        continue;
+      }
+      
+      // Split long lines at word boundaries
+      const words = line.split(' ');
+      let currentLine = '';
+      
+      for (const word of words) {
+        if ((currentLine + ' ' + word).length <= maxWidth) {
+          currentLine = currentLine ? currentLine + ' ' + word : word;
+        } else {
+          if (currentLine) {
+            processedLines.push(currentLine);
+            currentLine = word;
+          } else {
+            // If a single word is longer than maxWidth, split it
+            processedLines.push(word.substring(0, maxWidth));
+            currentLine = word.substring(maxWidth);
+          }
+        }
+      }
+      
+      if (currentLine) {
+        processedLines.push(currentLine);
+      }
+    }
+    
+    return processedLines.filter(line => line.trim() !== '');
+  }, []);
+
   // Load text from localStorage if available, otherwise load Romeo and Juliet
   useEffect(() => {
     const savedText = localStorage.getItem('explainer:bookText');
     const savedTitle = localStorage.getItem('explainer:bookTitle');
     
     if (savedText) {
-      const lines = savedText.split('\n').filter(line => line.trim() !== '');
+      const lines = splitLongLines(savedText);
       setTextLines(lines);
       // Update the title if it's passed as a prop
       if (title === "Source Text" && savedTitle) {
@@ -128,7 +172,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
           return response.text();
         })
         .then(text => {
-          const lines = text.split('\n').filter(line => line.trim() !== '');
+          const lines = splitLongLines(text);
           setTextLines(lines);
         })
         .catch(error => {
@@ -136,7 +180,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
           setTextLines(['Error loading text. Please try again.']);
         });
     }
-  }, [title]);
+  }, [title, splitLongLines]);
 
   // Desktop selection handler - maintains original behavior
   const handleLineSelection = useCallback((index) => {
@@ -370,7 +414,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         onMouseUp={!isMobile ? handleMouseUp : undefined}
       >
         <span className={styles.lineNumber}>{index + 1}</span>
-        <span className={styles.lineContent}>{line}</span>
+        <span 
+          className={styles.lineContent} 
+          title={line.length > 100 ? line : undefined}
+        >
+          {line}
+        </span>
       </div>
     );
   };

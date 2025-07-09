@@ -17,6 +17,7 @@ export default function Profile() {
   const [nationality, setNationality] = useState('');
   const [lang, setLang] = useState('en');
   const [showSaved, setShowSaved] = useState(false);
+  const [translations, setTranslations] = useState({});
 
   useEffect(() => {
     setLang(getUserLanguage());
@@ -24,15 +25,57 @@ export default function Profile() {
     setLanguage(profile.language || '');
     setAge(profile.age || '');
     setNationality(profile.nationality || '');
+    // Load translations for the current language
+    loadTranslations();
   }, []);
+
+  const loadTranslations = async () => {
+    const currentLang = getUserLanguage();
+    if (currentLang === 'en') {
+      setTranslations({
+        profileSettings: 'Profile Settings',
+        aboutYourInfo: 'About Your Information',
+        aboutYourInfoDesc: 'This information is stored locally on your device (no accounts or servers). It helps the AI craft age-appropriate responses and make cultural references relevant to your background. For example, a 6-year-old will get simpler explanations than an adult, and someone from France might get different cultural context than someone from Japan.',
+        language: 'Language',
+        age: 'Age',
+        nationality: 'Nationality',
+        selectLanguage: 'Select language',
+        selectNationality: 'Select nationality',
+        yourAge: 'Your age',
+        profileSaved: 'Settings saved automatically'
+      });
+    } else {
+      try {
+        const keys = ['profileSettings', 'aboutYourInfo', 'aboutYourInfoDesc', 'language', 'age', 'nationality', 'selectLanguage', 'selectNationality', 'yourAge', 'profileSaved'];
+        const translationPromises = keys.map(key => t(key, currentLang));
+        const results = await Promise.all(translationPromises);
+        const newTranslations = {};
+        keys.forEach((key, index) => {
+          newTranslations[key] = results[index];
+        });
+        setTranslations(newTranslations);
+      } catch (error) {
+        setTranslations({
+          profileSettings: 'Profile Settings',
+          aboutYourInfo: 'About Your Information',
+          aboutYourInfoDesc: 'This information is stored locally on your device (no accounts or servers). It helps the AI craft age-appropriate responses and make cultural references relevant to your background. For example, a 6-year-old will get simpler explanations than an adult, and someone from France might get different cultural context than someone from Japan.',
+          language: 'Language',
+          age: 'Age',
+          nationality: 'Nationality',
+          selectLanguage: 'Select language',
+          selectNationality: 'Select nationality',
+          yourAge: 'Your age',
+          profileSaved: 'Settings saved automatically'
+        });
+      }
+    }
+  };
 
   // Auto-save function
   const autoSave = (updates) => {
     const currentProfile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
     const newProfile = { ...currentProfile, ...updates };
     localStorage.setItem('explainer:profile', JSON.stringify(newProfile));
-    
-    // Show saved indicator
     setShowSaved(true);
     setTimeout(() => setShowSaved(false), 2000);
   };
@@ -40,6 +83,15 @@ export default function Profile() {
   const handleClose = () => {
     router.back();
   };
+
+  // Guard: Only render UI if translations are loaded
+  if (!translations.profileSettings || !translations.aboutYourInfo || !translations.aboutYourInfoDesc) {
+    return (
+      <div style={{ padding: 32, textAlign: 'center' }}>
+        <span>Loading translations...</span>
+      </div>
+    );
+  }
 
   return (
     <div style={{ 
@@ -94,17 +146,35 @@ export default function Profile() {
         </button>
 
         <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 24, color: '#1e293b', paddingRight: 40 }}>
-          {t('profileSettings', lang)}
+          {translations.profileSettings || 'Profile Settings'}
         </h1>
+
+        <div style={{ 
+          background: '#f8fafc', 
+          padding: 16, 
+          borderRadius: 8, 
+          marginBottom: 24, 
+          border: '1px solid #e2e8f0',
+          fontSize: 14,
+          lineHeight: 1.5,
+          color: '#475569'
+        }}>
+          <strong style={{ color: '#1e293b', display: 'block', marginBottom: 8 }}>
+            {translations.aboutYourInfo || 'About Your Information'}
+          </strong>
+          {translations.aboutYourInfoDesc || 'This information is stored locally on your device (no accounts or servers). It helps the AI craft age-appropriate responses and make cultural references relevant to your background. For example, a 6-year-old will get simpler explanations than an adult, and someone from France might get different cultural context than someone from Japan.'}
+        </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-            {t('language', lang) || 'Language'}
+            {translations.language || 'Language'}
             <select 
               value={language} 
               onChange={e => {
                 setLanguage(e.target.value);
                 autoSave({ language: e.target.value });
+                // Reload translations when language changes
+                setTimeout(() => loadTranslations(), 100);
               }} 
               style={{ 
                 width: '100%', 
@@ -119,13 +189,13 @@ export default function Profile() {
               onFocus={e => e.target.style.borderColor = '#3b82f6'}
               onBlur={e => e.target.style.borderColor = '#cbd5e1'}
             >
-              <option value="">{t('selectLanguage', lang) || 'Select language'}</option>
+              <option value="">{translations.selectLanguage || 'Select language'}</option>
               {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           </label>
 
           <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-            {t('age', lang) || 'Age'}
+            {translations.age || 'Age'}
             <input 
               type="number" 
               min="1" 
@@ -135,7 +205,7 @@ export default function Profile() {
                 setAge(e.target.value);
                 autoSave({ age: e.target.value });
               }} 
-              placeholder={t('yourAge', lang) || 'Your age'} 
+              placeholder={translations.yourAge || 'Your age'} 
               style={{ 
                 width: '100%', 
                 marginTop: 8, 
@@ -152,7 +222,7 @@ export default function Profile() {
           </label>
 
           <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-            {t('nationality', lang) || 'Nationality'}
+            {translations.nationality || 'Nationality'}
             <select 
               value={nationality} 
               onChange={e => {
@@ -172,7 +242,7 @@ export default function Profile() {
               onFocus={e => e.target.style.borderColor = '#3b82f6'}
               onBlur={e => e.target.style.borderColor = '#cbd5e1'}
             >
-              <option value="">{t('selectNationality', lang) || 'Select nationality'}</option>
+              <option value="">{translations.selectNationality || 'Select nationality'}</option>
               {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>
@@ -190,7 +260,7 @@ export default function Profile() {
             borderRadius: 8,
             border: '1px solid #bbf7d0'
           }}>
-            ✓ {t('profileSaved', lang) || 'Settings saved automatically'}
+            ✓ {translations.profileSaved || 'Settings saved automatically'}
           </div>
         )}
       </div>

@@ -11,14 +11,16 @@ const translations = {
     selectTextPrompt: 'Select text from the left panel to start a conversation',
     loading: 'Loading...',
     thinking: 'Thinking...',
-    exploreLibrary: 'Explore classic literature in many languages. Click a book to start reading!',
-    showMore: '(More...)',
-    showLess: '(Show Less)',
     back: 'Back',
-    
-    // User Guide translations
-    backToApp: 'Back to App',
-    userGuide: 'User Guide',
+    language: 'Language',
+    age: 'Age',
+    nationality: 'Nationality',
+    selectLanguage: 'Select language',
+    selectNationality: 'Select nationality',
+    yourAge: 'Your age',
+    profileSaved: 'Settings saved automatically',
+    aboutYourInfo: 'About Your Information',
+    aboutYourInfoDesc: 'This information is stored locally on your device (no accounts or servers). It helps the AI craft age-appropriate responses and make cultural references relevant to your background. For example, a 6-year-old will get simpler explanations than an adult, and someone from France might get different cultural context than someone from Japan.',
     gettingStarted: 'Getting Started',
     gettingStartedDesc: 'The Explainer helps you understand difficult texts by providing AI-powered explanations. Here\'s how to get started:',
     chooseText: 'Choose Your Text',
@@ -27,7 +29,6 @@ const translations = {
     selectTextDesc: 'Use the selection tools to highlight the text you want explained. See the Text Selection section below for detailed instructions.',
     getExplanation: 'Get Your Explanation',
     getExplanationDesc: 'The AI will analyze your selected text and provide a clear, detailed explanation tailored to your understanding level.',
-    
     textSelection: 'Text Selection',
     desktopSelection: 'Desktop Selection',
     singleLine: 'Single Line',
@@ -36,14 +37,11 @@ const translations = {
     multipleLinesDesc: 'Click one line, then click another line to select the range between them.',
     dragSelection: 'Drag Selection',
     dragSelectionDesc: 'Click and drag across multiple lines to select them all at once.',
-    
     mobileSelection: 'Mobile Selection',
     singleLineMobile: 'Single Line',
     singleLineMobileDesc: 'Long press on any line to select and submit it immediately.',
     rangeSelectionMobile: 'Range Selection',
     rangeSelectionMobileDesc: 'Long press and drag to select multiple lines, then release to submit the selection.',
-    
-    libraryDesc: 'The Library contains carefully curated collections of classic literature from around the world:',
     top100: 'Project Gutenberg Top 100',
     top100Desc: 'The most popular and influential books from Project Gutenberg, including works by Jane Austen, Charles Dickens, and more.',
     shakespeare: 'Complete Works of Shakespeare',
@@ -54,32 +52,17 @@ const translations = {
     italianDesc: 'Timeless Italian works including Dante\'s Divine Comedy and Petrarch\'s poetry.',
     poetry: 'Poetry Collection',
     poetryDesc: 'A diverse collection of poetry from different cultures and time periods.',
-    
     customText: 'Custom Text Files',
     customTextDesc: 'You can also load your own text files by pasting a URL to a plain text file. The URL must be publicly accessible.',
-    
     chatFeatures: 'Chat Features',
     followUpQuestions: 'Follow-up Questions',
     followUpQuestionsDesc: 'Ask additional questions about the text or request clarification on any explanation.',
-    saveChat: 'Save Conversations',
     saveChatDesc: 'Download your chat history as a JSON file to keep a record of your learning sessions.',
     multilingual: 'Multilingual Support',
     multilingualDesc: 'The AI can explain texts in multiple languages and adapt explanations to your language preference.',
-    
     settings: 'Settings & Profile',
-    language: 'Language Preference',
     languageDesc: 'Set your preferred language for explanations. The AI will provide explanations in your chosen language.',
-    age: 'Age Setting',
     ageDesc: 'Specify your age to get explanations tailored to your reading level and understanding.',
-    nationality: 'Nationality',
-    nationalityDesc: 'Help the AI provide culturally relevant explanations and context.',
-    
-    tips: 'Tips for Best Results',
-    tip1: 'Select complete sentences or paragraphs for more comprehensive explanations.',
-    tip2: 'Use follow-up questions to dive deeper into specific aspects of the text.',
-    tip3: 'Try different text selections to explore various interpretations.',
-    tip4: 'Save interesting conversations for future reference.',
-    tip5: 'Experiment with different books and genres to expand your understanding.',
   },
   fr: {
     chat: 'Discussion',
@@ -91,14 +74,16 @@ const translations = {
     selectTextPrompt: 'Sélectionnez du texte dans le panneau de gauche pour commencer une conversation',
     loading: 'Chargement...',
     thinking: 'Réflexion...',
-    exploreLibrary: 'Explorez la littérature classique dans de nombreuses langues. Cliquez sur un livre pour commencer à lire !',
-    showMore: '(Plus...)',
-    showLess: '(Moins...)',
     back: 'Retour',
-    
-    // User Guide translations
-    backToApp: 'Retour à l\'App',
-    userGuide: 'Guide Utilisateur',
+    language: 'Langue',
+    age: 'Âge',
+    nationality: 'Nationalité',
+    selectLanguage: 'Choisir la langue',
+    selectNationality: 'Choisir la nationalité',
+    yourAge: 'Votre âge',
+    profileSaved: 'Paramètres enregistrés automatiquement',
+    aboutYourInfo: 'À Propos de Vos Informations',
+    aboutYourInfoDesc: 'Ces informations sont stockées localement sur votre appareil (aucun compte ni serveur). Elles aident l\'IA à créer des réponses adaptées à l\'âge et à faire des références culturelles pertinentes pour votre contexte. Par exemple, un enfant de 6 ans recevra des explications plus simples qu\'un adulte, et quelqu\'un de France pourrait recevoir un contexte culturel différent de quelqu\'un du Japon.',
     gettingStarted: 'Pour Commencer',
     gettingStartedDesc: 'L\'Explainer vous aide à comprendre les textes difficiles en fournissant des explications alimentées par l\'IA. Voici comment commencer :',
     chooseText: 'Choisissez Votre Texte',
@@ -107,7 +92,6 @@ const translations = {
     selectTextDesc: 'Utilisez les outils de sélection pour mettre en surbrillance le texte que vous voulez expliquer. Voir la section Sélection de Texte ci-dessous pour des instructions détaillées.',
     getExplanation: 'Obtenez Votre Explication',
     getExplanationDesc: 'L\'IA analysera votre texte sélectionné et fournira une explication claire et détaillée adaptée à votre niveau de compréhension.',
-    
     textSelection: 'Sélection de Texte',
     desktopSelection: 'Sélection sur Ordinateur',
     singleLine: 'Ligne Unique',
@@ -116,14 +100,11 @@ const translations = {
     multipleLinesDesc: 'Cliquez sur une ligne, puis cliquez sur une autre ligne pour sélectionner la plage entre elles.',
     dragSelection: 'Sélection par Glissement',
     dragSelectionDesc: 'Cliquez et faites glisser sur plusieurs lignes pour toutes les sélectionner.',
-    
     mobileSelection: 'Sélection sur Mobile',
     singleLineMobile: 'Ligne Unique',
     singleLineMobileDesc: 'Appuyez longuement sur n\'importe quelle ligne pour la sélectionner et l\'envoyer immédiatement.',
     rangeSelectionMobile: 'Sélection de Plage',
     rangeSelectionMobileDesc: 'Appuyez longuement et faites glisser pour sélectionner plusieurs lignes, puis relâchez pour envoyer la sélection.',
-    
-    libraryDesc: 'La Bibliothèque contient des collections soigneusement sélectionnées de littérature classique du monde entier :',
     top100: 'Top 100 de Project Gutenberg',
     top100Desc: 'Les livres les plus populaires et influents de Project Gutenberg, incluant des œuvres de Jane Austen, Charles Dickens, et plus encore.',
     shakespeare: 'Œuvres Complètes de Shakespeare',
@@ -134,33 +115,18 @@ const translations = {
     italianDesc: 'Œuvres intemporelles italiennes incluant la Divine Comédie de Dante et la poésie de Pétrarque.',
     poetry: 'Collection de Poésie',
     poetryDesc: 'Une collection diverse de poésie de différentes cultures et époques.',
-    
     customText: 'Fichiers Texte Personnalisés',
     customTextDesc: 'Vous pouvez également charger vos propres fichiers texte en collant une URL vers un fichier texte brut. L\'URL doit être publiquement accessible.',
-    
     chatFeatures: 'Fonctionnalités de Discussion',
     followUpQuestions: 'Questions de Suivi',
     followUpQuestionsDesc: 'Posez des questions supplémentaires sur le texte ou demandez des clarifications sur toute explication.',
-    saveChat: 'Sauvegarder les Conversations',
     saveChatDesc: 'Téléchargez votre historique de discussion sous forme de fichier JSON pour conserver un enregistrement de vos sessions d\'apprentissage.',
     multilingual: 'Support Multilingue',
     multilingualDesc: 'L\'IA peut expliquer des textes dans plusieurs langues et adapter les explications à votre préférence linguistique.',
-    
     settings: 'Paramètres et Profil',
-    language: 'Préférence Linguistique',
     languageDesc: 'Définissez votre langue préférée pour les explications. L\'IA fournira des explications dans votre langue choisie.',
-    age: 'Paramètre d\'Âge',
     ageDesc: 'Spécifiez votre âge pour obtenir des explications adaptées à votre niveau de lecture et de compréhension.',
-    nationality: 'Nationalité',
-    nationalityDesc: 'Aidez l\'IA à fournir des explications et un contexte culturellement pertinents.',
-    
-    tips: 'Conseils pour de Meilleurs Résultats',
-    tip1: 'Sélectionnez des phrases ou paragraphes complets pour des explications plus complètes.',
-    tip2: 'Utilisez des questions de suivi pour approfondir des aspects spécifiques du texte.',
-    tip3: 'Essayez différentes sélections de texte pour explorer diverses interprétations.',
-    tip4: 'Sauvegardez les conversations intéressantes pour référence future.',
-    tip5: 'Expérimentez avec différents livres et genres pour élargir votre compréhension.',
-  },
+  }
 };
 
 function getUserLanguage() {
@@ -171,7 +137,6 @@ function getUserLanguage() {
         const lang = JSON.parse(profile).language;
         if (lang && lang.toLowerCase().startsWith('fr')) return 'fr';
         if (lang && lang.toLowerCase().startsWith('en')) return 'en';
-        // Add more language checks as needed
       } catch {}
     }
   }

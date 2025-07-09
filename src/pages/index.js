@@ -55,13 +55,17 @@ export default function Home() {
       bookAuthor = savedTitle.split(' by ').pop();
     }
 
-    // Get user language preference from localStorage
+    // Get user profile from localStorage
     const userProfile = localStorage.getItem('explainer:profile');
     let userLanguage = null;
+    let userAge = null;
+    let userNationality = null;
     if (userProfile) {
       try {
         const profile = JSON.parse(userProfile);
         userLanguage = profile.language;
+        userAge = profile.age;
+        userNationality = profile.nationality;
       } catch (e) {
         console.error('Error parsing user profile:', e);
       }
@@ -77,7 +81,9 @@ export default function Home() {
           text: selectedText,
           bookTitle: bookTitle,
           bookAuthor: bookAuthor,
-          userLanguage: userLanguage
+          userLanguage: userLanguage,
+          userAge: userAge,
+          userNationality: userNationality
         }),
       });
 
@@ -138,13 +144,17 @@ export default function Home() {
       bookAuthor = savedTitle.split(' by ').pop();
     }
 
-    // Get user language preference from localStorage
+    // Get user profile from localStorage
     const userProfile = localStorage.getItem('explainer:profile');
     let userLanguage = null;
+    let userAge = null;
+    let userNationality = null;
     if (userProfile) {
       try {
         const profile = JSON.parse(userProfile);
         userLanguage = profile.language;
+        userAge = profile.age;
+        userNationality = profile.nationality;
       } catch (e) {
         console.error('Error parsing user profile:', e);
       }
@@ -160,7 +170,9 @@ export default function Home() {
           text: question,
           bookTitle: bookTitle,
           bookAuthor: bookAuthor,
-          userLanguage: userLanguage
+          userLanguage: userLanguage,
+          userAge: userAge,
+          userNationality: userNationality
         }),
       });
 

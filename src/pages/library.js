@@ -169,6 +169,11 @@ const poetryCollection = [
   { id: '1322', title: 'Leaves of Grass', author: 'Walt Whitman' },
 ];
 
+// Historical documents collection
+const historicalCollection = [
+  { id: 'magna-carta', title: 'Magna Carta', author: 'King John of England', localPath: '/public-domain-texts/magna-carta.txt' },
+];
+
 const collections = [
   {
     key: 'shakespeare',
@@ -205,6 +210,13 @@ const collections = [
     onClickItem: 'handleReadPoetry',
     itemKey: 'id',
   },
+  {
+    key: 'historical',
+    title: 'Historical Documents',
+    items: historicalCollection,
+    onClickItem: 'handleReadHistorical',
+    itemKey: 'id',
+  },
 ];
 
 // Assign an emoji/icon and accent color to each collection
@@ -214,6 +226,7 @@ const collectionMeta = {
   french: { emoji: '🇫🇷', color: '#fef9c3' },
   italian: { emoji: '🇮🇹', color: '#e0fce7' },
   poetry: { emoji: '📝', color: '#fff7ed' },
+  historical: { emoji: '📜', color: '#fef3c7' },
 };
 
 export default function Library() {
@@ -223,6 +236,7 @@ export default function Library() {
   const [loadingFrench, setLoadingFrench] = useState(null);
   const [loadingItalian, setLoadingItalian] = useState(null);
   const [loadingPoetry, setLoadingPoetry] = useState(null);
+  const [loadingHistorical, setLoadingHistorical] = useState(null);
   const [expanded, setExpanded] = useState({});
   const [lang, setLang] = useState('en');
   const [customUrl, setCustomUrl] = useState('');
@@ -361,6 +375,23 @@ export default function Library() {
     }
   };
 
+  // Handler for historical documents
+  const handleReadHistorical = async (work) => {
+    setLoadingHistorical(work.id);
+    try {
+      const res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(work.localPath)}`);
+      if (!res.ok) throw new Error('Failed to fetch historical document');
+      const text = await res.text();
+      localStorage.setItem('explainer:bookText', text);
+      localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
+      router.push('/');
+    } catch (err) {
+      alert('Could not load this document.');
+    } finally {
+      setLoadingHistorical(null);
+    }
+  };
+
   // Map collection key to handler and loading state
   const handlerMap = {
     shakespeare: handleReadShakespeare,
@@ -368,6 +399,7 @@ export default function Library() {
     french: handleReadFrench,
     italian: handleReadItalian,
     poetry: handleReadPoetry,
+    historical: handleReadHistorical,
   };
   const loadingMap = {
     shakespeare: loadingShakespeare,
@@ -375,6 +407,7 @@ export default function Library() {
     french: loadingFrench,
     italian: loadingItalian,
     poetry: loadingPoetry,
+    historical: loadingHistorical,
   };
 
   const handleCustomUrl = async (e) => {

@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { text, bookTitle, bookAuthor, userLanguage } = req.body;
+    const { text, bookTitle, bookAuthor, userLanguage, userAge, userNationality } = req.body;
 
     if (!text || typeof text !== 'string') {
       return res.status(400).json({ error: 'Text is required' });
@@ -38,8 +38,29 @@ For now, here's what this text might mean:
 
     console.log('OpenAI API key found, attempting to call OpenAI API...');
 
-    // System prompt for text explanation, now including author and title
+    // System prompt for text explanation, now including author, title, age, and nationality
     const languageInstruction = userLanguage ? `Please respond in ${userLanguage}.` : 'Respond in the same language as the input text unless specifically asked otherwise.';
+    
+    // Age-appropriate instruction
+    let ageInstruction = '';
+    if (userAge) {
+      const age = parseInt(userAge);
+      if (age <= 8) {
+        ageInstruction = `The user is ${age} years old. Use simple, clear language appropriate for a young child. Avoid complex vocabulary and explain concepts in basic terms. Use short sentences and be very patient and encouraging.`;
+      } else if (age <= 12) {
+        ageInstruction = `The user is ${age} years old. Use age-appropriate language for a pre-teen. Explain concepts clearly but don't oversimplify. Use engaging examples and analogies that would make sense to someone this age.`;
+      } else if (age <= 16) {
+        ageInstruction = `The user is ${age} years old. Use language appropriate for a teenager. You can use more sophisticated vocabulary but still explain complex concepts clearly. Be engaging and relatable to this age group.`;
+      } else {
+        ageInstruction = `The user is ${age} years old. You can use adult-level vocabulary and explanations, but still be clear and engaging.`;
+      }
+    }
+    
+    // Nationality-aware instruction
+    let nationalityInstruction = '';
+    if (userNationality) {
+      nationalityInstruction = `The user is from ${userNationality}. When explaining cultural references, historical context, or social customs, consider what might be familiar or unfamiliar to someone from this background.`;
+    }
     
     const systemPrompt = `You are a helpful assistant that explains difficult texts in an engaging and educational way. The user is reading "${title}" by ${author}. When explaining text, you should:
 
@@ -52,7 +73,9 @@ For now, here's what this text might mean:
 
 Make your explanations compelling and not boring. Feel free to make occasional jokes and have a personality. Be conversational and helpful while being informative.
 
-${languageInstruction}`;
+${languageInstruction}
+${ageInstruction}
+${nationalityInstruction}`;
 
     try {
       console.log('Making request to OpenAI API...');
