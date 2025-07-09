@@ -18,6 +18,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const [touchInProgress, setTouchInProgress] = useState(false);
   const [flyingText, setFlyingText] = useState(null);
   const [listHeight, setListHeight] = useState(400);
+  const [toc, setToc] = useState([]); // [{title, lineIndex}]
   const containerRef = useRef();
   const textContainerRef = useRef();
   const lastTouchTimeRef = useRef(0);
@@ -32,10 +33,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       if (!listRef.current || !textLines.length) return;
       const targetIndex = Math.floor(ratio * (textLines.length - 1));
       listRef.current.scrollToItem(targetIndex, 'start');
+    },
+    scrollToLine: (lineIndex) => {
+      if (!listRef.current || !textLines.length) return;
+      listRef.current.scrollToItem(lineIndex, 'start');
     }
   }), [textLines]);
 
-  // Update listHeight on mount and resize
+  // Update listHeight on mount, resize, and when text content changes
   useEffect(() => {
     function updateHeight() {
       if (containerRef.current) {
@@ -45,24 +50,53 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     updateHeight();
     window.addEventListener('resize', updateHeight);
     return () => window.removeEventListener('resize', updateHeight);
-  }, []);
+  }, [textLines]);
+
+  // Detect ToC and chapters after loading text
+  useEffect(() => {
+    if (!textLines.length) return;
+    
+    // Look for a line that says "Contents" (case insensitive)
+    let contentsIndex = -1;
+    for (let i = 0; i < textLines.length; ++i) {
+      if (textLines[i].trim().toLowerCase() === 'contents') {
+        contentsIndex = i;
+        break;
+      }
+    }
+    
+    if (contentsIndex !== -1) {
+      // Find ToC entries after the "Contents" line
+      const tocEntries = [];
+      const maxTocLines = 50; // Limit ToC to reasonable size
+      const tocRegex = /^(chapter|act|scene|book|part|section|\d+\.|[ivxlc]+\.)/i;
+      
+      for (let i = contentsIndex + 1; i < Math.min(contentsIndex + maxTocLines, textLines.length); ++i) {
+        const line = textLines[i].trim();
+        if (line === '') break; // Stop at first blank line
+        if (tocRegex.test(line)) {
+          tocEntries.push({ title: line, lineIndex: i });
+        }
+      }
+      console.log('Found ToC entries:', tocEntries.length);
+      setToc(tocEntries);
+    } else {
+      console.log('No "Contents" found');
+      setToc([]);
+    }
+  }, [textLines]);
 
   // Detect mobile device
   useEffect(() => {
     const checkMobile = () => {
       const isMobileDevice = window.innerWidth <= 768;
-      console.log('Mobile detection - width:', window.innerWidth, 'isMobile:', isMobileDevice);
       setIsMobile(isMobileDevice);
     };
-    
     checkMobile();
-    // Reset selection state when component mounts or mobile detection changes
     setFirstClickIndex(null);
     setSelectedLines(new Set());
     setSubmitButtonVisible(false);
-    
     window.addEventListener('resize', checkMobile);
-    
     return () => {
       window.removeEventListener('resize', checkMobile);
     };
@@ -72,17 +106,10 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   useEffect(() => {
     const savedText = localStorage.getItem('explainer:bookText');
     const savedTitle = localStorage.getItem('explainer:bookTitle');
-    
     if (savedText) {
       const lines = savedText.split('\n').filter(line => line.trim() !== '');
       setTextLines(lines);
-      // Update the title if it's passed as a prop
-      if (title === "Source Text" && savedTitle) {
-        // Note: We can't update the title prop directly, but the parent component
-        // can check localStorage for the title when rendering
-      }
     } else {
-      // Fallback to Romeo and Juliet
       fetch('/public-domain-texts/shakespeare-romeo-and-juliet.txt')
         .then(response => {
           if (!response.ok) {
@@ -95,7 +122,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
           setTextLines(lines);
         })
         .catch(error => {
-          console.error('Error loading text:', error);
           setTextLines(['Error loading text. Please try again.']);
         });
     }
@@ -103,25 +129,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
 
   // Desktop selection handler - maintains original behavior
   const handleLineSelection = useCallback((index) => {
-    if (isDragging) return; // Don't handle during drag
-    
-    console.log('handleLineSelection called:', index, 'firstClickIndex:', firstClickIndex);
-    
+    if (isDragging) return;
     if (firstClickIndex === null) {
-      // First click - highlight this line
-      console.log('First click - highlighting');
       setFirstClickIndex(index);
       setSelectedLines(new Set([index]));
     } else if (firstClickIndex === index) {
-      // Second click on same line - submit this line
-      console.log('Second click on same line - submitting');
       const selectedText = textLines[index];
       onTextSelection(selectedText);
       setSelectedLines(new Set());
       setFirstClickIndex(null);
     } else {
-      // Click on different line - submit range from first to this line
-      console.log('Click on different line - submitting range');
       const start = Math.min(firstClickIndex, index);
       const end = Math.max(firstClickIndex, index);
       const selectedText = textLines.slice(start, end + 1).join('\n');
@@ -133,17 +150,11 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
 
   // Click handler for both desktop and mobile
   const handleLineClick = useCallback((index, event) => {
-    console.log('handleLineClick called:', index, 'isMobile:', isMobile, 'touchInProgress:', touchInProgress);
-    
-    // On mobile, completely ignore click events - only use touch events
     if (isMobile || touchInProgress) {
-      console.log('Ignoring click - mobile or touch in progress');
       event.preventDefault();
       event.stopPropagation();
       return;
     }
-    
-    console.log('Calling handleLineSelection from click');
     handleLineSelection(index);
   }, [handleLineSelection, isMobile, touchInProgress]);
 
@@ -155,7 +166,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     const touch = event.touches[0];
     touchStartPos.current = { x: touch.clientX, y: touch.clientY };
     touchMoved.current = false;
-    // Do not select yet; wait for touchend
   }, [isMobile]);
 
   const handleLineTouchMove = useCallback((event) => {
@@ -171,7 +181,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const handleLineTouchEnd = useCallback((event) => {
     if (!isMobile) return;
     setTimeout(() => setTouchInProgress(false), 100);
-    if (touchMoved.current) return; // User was scrolling, not tapping
+    if (touchMoved.current) return;
     const index = parseInt(event.currentTarget.dataset.index);
     if (firstClickIndex === null) {
       setFirstClickIndex(index);
@@ -198,7 +208,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         .sort((a, b) => a - b)
         .map(index => textLines[index])
         .join('\n');
-      
       onTextSelection(selectedText);
       setSelectedLines(new Set());
       setFirstClickIndex(null);
@@ -216,10 +225,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Animate text flying to chat panel
   const animateTextToChat = useCallback((text, sourceElement) => {
     if (!sourceElement) return;
-    
     const sourceRect = sourceElement.getBoundingClientRect();
-    
-    // Create flying text element
     const flyingElement = {
       text: text,
       startX: sourceRect.left,
@@ -227,10 +233,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       startWidth: sourceRect.width,
       timestamp: Date.now()
     };
-    
     setFlyingText(flyingElement);
-    
-    // Remove flying text after animation
     setTimeout(() => {
       setFlyingText(null);
     }, 800);
@@ -239,7 +242,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Mouse down to start drag selection
   const handleLineMouseDown = useCallback((index, event) => {
     if (isDragging) return;
-    
     setIsDragging(true);
     setDragStartIndex(index);
     setSelectedLines(new Set([index]));
@@ -261,15 +263,11 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Mouse up to end drag selection
   const handleMouseUp = useCallback(() => {
     if (isDragging && selectedLines.size > 0) {
-      // Submit selected text
       const selectedText = Array.from(selectedLines)
         .sort((a, b) => a - b)
         .map(index => textLines[index])
         .join('\n');
-      
       onTextSelection(selectedText);
-      
-      // Clear selection
       setSelectedLines(new Set());
       setIsDragging(false);
       setDragStartIndex(null);
@@ -288,23 +286,104 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const Row = ({ index, style }) => {
     const isSelected = selectedLines.has(index);
     const line = textLines[index] || '';
+    const isTocLine = toc.some(entry => entry.lineIndex === index);
+    
     return (
       <div
         className={`${styles.line} ${isSelected ? styles.selected : ''}`}
         style={{ ...style, width: '100%' }}
         data-index={index}
-        onClick={!isMobile ? (event) => handleLineClick(index, event) : undefined}
-        onMouseDown={!isMobile ? (e) => handleLineMouseDown(index, e) : undefined}
-        onMouseEnter={!isMobile ? () => handleLineMouseEnter(index) : undefined}
-        onMouseUp={!isMobile ? handleMouseUp : undefined}
-        {...(isMobile ? {
+        onClick={!isMobile && !isTocLine ? (event) => handleLineClick(index, event) : undefined}
+        onMouseDown={!isMobile && !isTocLine ? (e) => handleLineMouseDown(index, e) : undefined}
+        onMouseEnter={!isMobile && !isTocLine ? () => handleLineMouseEnter(index) : undefined}
+        onMouseUp={!isMobile && !isTocLine ? handleMouseUp : undefined}
+        {...(isMobile && !isTocLine ? {
           onTouchStart: handleLineTouchStart,
           onTouchMove: handleLineTouchMove,
           onTouchEnd: handleLineTouchEnd
         } : {})}
       >
         <span className={styles.lineNumber}>{index + 1}</span>
-        <span className={styles.lineContent}>{line}</span>
+        <span className={styles.lineContent}>
+          {isTocLine ? (
+            <button
+              className={styles.tocInlineLink}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Find the chapter this ToC entry points to
+                const tocEntry = toc.find(entry => entry.lineIndex === index);
+                console.log('Clicked ToC entry:', tocEntry);
+                console.log('Ref exists:', !!ref);
+                console.log('Ref current exists:', !!(ref && ref.current));
+                console.log('scrollToLine exists:', !!(ref && ref.current && ref.current.scrollToLine));
+                
+                if (tocEntry && ref && ref.current && ref.current.scrollToLine) {
+                  // Find the end of the ToC section - start searching after the last ToC entry
+                  const lastTocIndex = Math.max(...toc.map(entry => entry.lineIndex));
+                  const searchStart = lastTocIndex + 1;
+                  
+                  // Extract the chapter number/identifier from ToC entry
+                  const tocText = tocEntry.title.trim();
+                  let searchPattern = '';
+                  
+                  // Try to extract chapter number (e.g., "Chapter 1" -> "Chapter 1")
+                  if (tocText.match(/^Chapter\s+\d+/i)) {
+                    searchPattern = tocText.match(/^Chapter\s+\d+/i)[0];
+                  }
+                  // Try to extract roman numerals (e.g., "I." -> "I")
+                  else if (tocText.match(/^[IVXLC]+\./i)) {
+                    searchPattern = tocText.match(/^[IVXLC]+\./i)[0];
+                  }
+                  // Try to extract arabic numerals (e.g., "1." -> "1")
+                  else if (tocText.match(/^\d+\./)) {
+                    searchPattern = tocText.match(/^\d+\./)[0];
+                  }
+                  // Try to extract ACT/SCENE format (e.g., "ACT 1" -> "ACT 1")
+                  else if (tocText.match(/^ACT\s+\d+/i)) {
+                    searchPattern = tocText.match(/^ACT\s+\d+/i)[0];
+                  }
+                  // Try to extract SCENE format (e.g., "SCENE 1" -> "SCENE 1")
+                  else if (tocText.match(/^SCENE\s+\d+/i)) {
+                    searchPattern = tocText.match(/^SCENE\s+\d+/i)[0];
+                  }
+                  // Fallback: use first few words
+                  else {
+                    searchPattern = tocText.split(' ').slice(0, 2).join(' ');
+                  }
+                  
+                  console.log('ToC entry:', tocText, 'Search pattern:', searchPattern, 'Search start:', searchStart);
+                  console.log('Total lines:', textLines.length);
+                  
+                  // Search for the chapter heading after the ToC section
+                  let found = false;
+                  for (let i = searchStart; i < textLines.length; ++i) {
+                    const lineText = textLines[i].trim();
+                    console.log(`Checking line ${i}: "${lineText}"`);
+                    if (lineText.toLowerCase() === searchPattern.toLowerCase()) {
+                      console.log('Found match at line:', i, 'Text:', lineText);
+                      console.log('Calling scrollToLine with:', i);
+                      ref.current.scrollToLine(i);
+                      found = true;
+                      break;
+                    }
+                  }
+                  
+                  if (!found) {
+                    console.log('No match found for pattern:', searchPattern);
+                  }
+                } else {
+                  console.log('Missing required components for navigation');
+                }
+              }}
+              type="button"
+            >
+              {line}
+            </button>
+          ) : (
+            line
+          )}
+        </span>
       </div>
     );
   };
@@ -337,6 +416,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
           </div>
         )}
       </div>
+      
       <div className={styles.textContainer}>
         <List
           ref={listRef}

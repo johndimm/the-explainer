@@ -112,7 +112,6 @@ const frenchCollection = [
   { id: '5097', title: 'Vingt mille Lieues Sous Les Mers — Complete', author: 'Jules Verne' },
   { id: '799', title: 'De la terre à la lune: trajet direct en 97 heures 20 minutes', author: 'Jules Verne' },
   { id: '38674', title: 'De la terre à la lune, trajet direct en 97 heures 20 minutes', author: 'Jules Verne' },
-  { id: '20973', title: 'Le tour du monde en quatre-vingts jours', author: 'Jules Verne' },
   { id: '32854', title: 'Arsène Lupin, gentleman-cambrioleur', author: 'Maurice Leblanc' },
   { id: '14155', title: 'Madame Bovary', author: 'Gustave Flaubert' },
   { id: '798', title: 'Le rouge et le noir: chronique du XIXe siècle', author: 'Stendhal' },
@@ -129,48 +128,6 @@ const frenchCollection = [
   { id: '17519', title: 'Les misérables Tome V: Jean Valjean', author: 'Victor Hugo' },
 ];
 
-// German collection from Project Gutenberg (parsed from german.txt)
-const germanCollection = [
-  { id: '14075', title: 'Die Frauenfrage: ihre geschichtliche Entwicklung und wirtschaftliche Seite (German)', author: 'Lily Braun' },
-  { id: '3221', title: 'Mr. Honey\'s Large Business Dictionary (English-German) (German)', author: 'Winfried Honig' },
-  { id: '58804', title: 'Die Deutschen Familiennamen, geschichtlich, geographisch, sprachlich (German)', author: 'Albert Heintze' },
-  { id: '3213', title: 'Mr. Honey\'s Beginner\'s Dictionary (English-German) (German)', author: 'Winfried Honig' },
-  { id: '43759', title: 'Geflügelte Worte: Der Citatenschatz des deutschen Volkes (German)', author: 'Georg Büchmann and Walter Robert-tornow' },
-  { id: '39762', title: 'Etymologisches Wörterbuch der deutschen Seemannssprache (German)', author: 'Gustav Goedel' },
-  { id: '3220', title: 'Mr. Honey\'s Large Business Dictionary (German-English) (German)', author: 'Winfried Honig' },
-  { id: '61948', title: 'Mittelniederdeutsches Handwörterbuch (German)', author: 'August Lübben' },
-  { id: '3208', title: 'Mr. Honey\'s Medium Business Dictionary (German-English) (German)', author: 'Winfried Honig' },
-  { id: '3212', title: 'Mr. Honey\'s Beginner\'s Dictionary (German-English) (German)', author: 'Winfried Honig' },
-  { id: '19460', title: 'Handbuch der deutschen Kunstdenkmäler, Bd.1, Mitteldeutschland, 1914 (German)', author: 'Georg Dehio' },
-  { id: '75007', title: 'Vollständiges Orthographisches Wörterbuch der deutschen Sprache :  mit etymologischen Angaben, kurzen Sacherklärungen und Verdeutschungen der Fremdwörter (German)', author: 'Konrad Duden' },
-  { id: '3298', title: 'Mr. Honey\'s Banking Dictionary (German-English) (German)', author: 'Winfried Honig' },
-  { id: '58782', title: 'Neues Spanisch-Deutsches Wörterbuch (German)', author: 'Theodor Stromer' },
-  { id: '49503', title: 'Ährenlese: A German Reader with Practical Exercises (German)', author: '' },
-  { id: '6343', title: 'Kritik der reinen Vernunft (German)', author: 'Immanuel Kant' },
-  { id: '22160', title: 'Studien und Plaudereien. First Series (German)', author: 'Sigmon M. Stern' },
-  { id: '22492', title: 'Reise in die Aequinoctial-Gegenden des neuen Continents. Band 1. (German)', author: 'Alexander von Humboldt' },
-];
-
-// Spanish collection from Project Gutenberg (parsed from spanish.txt)
-const spanishCollection = [
-  { id: '2000', title: 'Don Quijote (Spanish)', author: 'Miguel de Cervantes Saavedra' },
-  { id: '67961', title: 'El arte de amar (Spanish)', author: 'Ovid' },
-  { id: '58221', title: 'La Odisea (Spanish)', author: 'Homer' },
-  { id: '21144', title: 'Las Fábulas de Esopo, Vol. 03 (Spanish)', author: 'Aesop and George Fyler Townsend' },
-  { id: '39647', title: 'Heath\'s Modern Language Series: The Spanish American Reader (Spanish)', author: 'Ernesto Nelson' },
-  { id: '20029', title: 'Las Fábulas de Esopo, Vol. 02 (Spanish)', author: 'Aesop and George Fyler Townsend' },
-  { id: '36805', title: 'Spanish Tales for Beginners (Spanish)', author: '' },
-  { id: '21143', title: 'Las Fábulas de Esopo, Vol. 01 (Spanish)', author: 'Aesop and George Fyler Townsend' },
-  { id: '16059', title: 'Modern Spanish Lyrics (Spanish)', author: '' },
-  { id: '61851', title: 'El crimen y el castigo (Spanish)', author: 'Fyodor Dostoyevsky' },
-  { id: '15725', title: 'Doña Perfecta (Spanish)', author: 'Benito Pérez Galdós' },
-  { id: '69552', title: 'El libro de las tierras vírgenes (Spanish)', author: 'Rudyard Kipling' },
-  { id: '73257', title: 'Historia de la lengua y literatura castellana, Tomo 2 :  Época de Carlos V (Spanish)', author: 'Julio Cejador y Frauca' },
-  { id: '49836', title: 'Niebla (Nivola) (Spanish)', author: 'Miguel de Unamuno' },
-  { id: '73255', title: 'Historia de la lengua y literatura castellana, Tomo 1 :  Desde los orígenes hasta Carlos V (Spanish)', author: 'Julio Cejador y Frauca' },
-  { id: '60464', title: 'El árbol de la ciencia: novela (Spanish)', author: 'Pío Baroja' },
-];
-
 // Italian collection from Project Gutenberg (parsed from italian.txt)
 const italianCollection = [
   { id: '48776', title: 'Petrarch, the First Modern Scholar and Man of Letters', author: 'Francesco Petrarca' },
@@ -184,7 +141,6 @@ const italianCollection = [
   { id: '18459', title: 'Hypnerotomachia: The Strife of Loue in a Dreame', author: 'Francesco Colonna' },
   { id: '36448', title: 'Renaissance in Italy, Volume 5 (of 7)', author: 'John Addington Symonds' }, // Remove, not Italian
   { id: '35792', title: 'Renaissance in Italy, Volume 4 (of 7)', author: 'John Addington Symonds' }, // Remove, not Italian
-  { id: '28961', title: "Cuore (Heart): An Italian Schoolboy's Journal", author: 'Edmondo De Amicis' },
   { id: '17650', title: 'The Sonnets, Triumphs, and Other Poems of Petrarch', author: 'Francesco Petrarca' },
 ];
 
@@ -195,7 +151,6 @@ const poetryCollection = [
   { id: '6130', title: 'The Iliad', author: 'Homer' },
   { id: '16328', title: 'Beowulf: An Anglo-Saxon Epic Poem', author: '' },
   { id: '2147', title: 'The Works of Edgar Allan Poe — Volume 1', author: 'Edgar Allan Poe' },
-  { id: '26471', title: 'Spoon River Anthology', author: 'Edgar Lee Masters' },
   { id: '61521', title: 'The Modern Traveller', author: 'Hilaire Belloc' },
   { id: '1727', title: 'The Odyssey', author: 'Homer' },
   { id: '14591', title: 'Faust [part 1]. Translated Into English in the Original Metres', author: 'Johann Wolfgang von Goethe' },
@@ -237,20 +192,6 @@ const collections = [
     itemKey: 'id',
   },
   {
-    key: 'german',
-    title: 'German Collection',
-    items: germanCollection,
-    onClickItem: 'handleReadGerman',
-    itemKey: 'id',
-  },
-  {
-    key: 'spanish',
-    title: 'Spanish Collection',
-    items: spanishCollection,
-    onClickItem: 'handleReadSpanish',
-    itemKey: 'id',
-  },
-  {
     key: 'italian',
     title: 'Italian Collection',
     items: italianCollection,
@@ -271,8 +212,6 @@ const collectionMeta = {
   shakespeare: { emoji: '🎭', color: '#f3e8ff' },
   top100: { emoji: '📚', color: '#e0f2fe' },
   french: { emoji: '🇫🇷', color: '#fef9c3' },
-  german: { emoji: '🇩🇪', color: '#fce7f3' },
-  spanish: { emoji: '🇪🇸', color: '#f1f5f9' },
   italian: { emoji: '🇮🇹', color: '#e0fce7' },
   poetry: { emoji: '📝', color: '#fff7ed' },
 };
@@ -282,8 +221,6 @@ export default function Library() {
   const [loadingShakespeare, setLoadingShakespeare] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
   const [loadingFrench, setLoadingFrench] = useState(null);
-  const [loadingGerman, setLoadingGerman] = useState(null);
-  const [loadingSpanish, setLoadingSpanish] = useState(null);
   const [loadingItalian, setLoadingItalian] = useState(null);
   const [loadingPoetry, setLoadingPoetry] = useState(null);
   const [expanded, setExpanded] = useState({});
@@ -366,56 +303,6 @@ export default function Library() {
     }
   };
 
-  // In the handler for German, use the Gutenberg plain text URL pattern
-  const handleReadGerman = async (work) => {
-    setLoadingGerman(work.id);
-    const gutenbergUrl1 = `https://www.gutenberg.org/files/${work.id}/${work.id}-0.txt`;
-    const gutenbergUrl2 = `https://www.gutenberg.org/cache/epub/${work.id}/pg${work.id}.txt`;
-    let text = null;
-    try {
-      let res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl1)}`);
-      if (res.ok) {
-        text = await res.text();
-      } else {
-        res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl2)}`);
-        if (res.ok) text = await res.text();
-      }
-      if (!text) throw new Error('Failed to fetch German work');
-      localStorage.setItem('explainer:bookText', text);
-      localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
-      router.push('/');
-    } catch (err) {
-      alert('Could not load this work.');
-    } finally {
-      setLoadingGerman(null);
-    }
-  };
-
-  // In the handler for Spanish, use the Gutenberg plain text URL pattern
-  const handleReadSpanish = async (work) => {
-    setLoadingSpanish(work.id);
-    const gutenbergUrl1 = `https://www.gutenberg.org/files/${work.id}/${work.id}-0.txt`;
-    const gutenbergUrl2 = `https://www.gutenberg.org/cache/epub/${work.id}/pg${work.id}.txt`;
-    let text = null;
-    try {
-      let res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl1)}`);
-      if (res.ok) {
-        text = await res.text();
-      } else {
-        res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl2)}`);
-        if (res.ok) text = await res.text();
-      }
-      if (!text) throw new Error('Failed to fetch Spanish work');
-      localStorage.setItem('explainer:bookText', text);
-      localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
-      router.push('/');
-    } catch (err) {
-      alert('Could not load this work.');
-    } finally {
-      setLoadingSpanish(null);
-    }
-  };
-
   // In the handler for Italian, use the Gutenberg plain text URL pattern
   const handleReadItalian = async (work) => {
     setLoadingItalian(work.id);
@@ -477,8 +364,6 @@ export default function Library() {
     shakespeare: handleReadShakespeare,
     top100: handleReadGutenberg,
     french: handleReadFrench,
-    german: handleReadGerman,
-    spanish: handleReadSpanish,
     italian: handleReadItalian,
     poetry: handleReadPoetry,
   };
@@ -486,8 +371,6 @@ export default function Library() {
     shakespeare: loadingShakespeare,
     top100: loadingId,
     french: loadingFrench,
-    german: loadingGerman,
-    spanish: loadingSpanish,
     italian: loadingItalian,
     poetry: loadingPoetry,
   };

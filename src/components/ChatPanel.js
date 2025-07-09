@@ -6,7 +6,9 @@ import { t, getUserLanguage } from '@/i18n';
 const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedText }) => {
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const [lang, setLang] = useState('en');
+  const prevMessagesLengthRef = useRef(0);
 
   useEffect(() => {
     setLang(getUserLanguage());
@@ -16,8 +18,26 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const scrollToNewResponse = () => {
+    if (messagesContainerRef.current && messages.length > prevMessagesLengthRef.current) {
+      // Find the new AI response
+      const newMessageIndex = messages.length - 1;
+      const newMessageElement = messagesContainerRef.current.children[0]?.children[newMessageIndex];
+      if (newMessageElement) {
+        newMessageElement.scrollIntoView({ 
+          behavior: "smooth", 
+          block: "start" 
+        });
+      }
+    }
+  };
+
   useEffect(() => {
-    scrollToBottom();
+    // If we have more messages than before, a new response came in
+    if (messages.length > prevMessagesLengthRef.current) {
+      scrollToNewResponse();
+    }
+    prevMessagesLengthRef.current = messages.length;
   }, [messages]);
 
   const handleSubmit = (e) => {
@@ -122,7 +142,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
         </div>
       </div>
       
-      <div className={styles.messagesContainer}>
+      <div className={styles.messagesContainer} ref={messagesContainerRef}>
         {messages.length === 0 ? (
           <div className={styles.emptyState}>
             <MessageSquare size={48} />
