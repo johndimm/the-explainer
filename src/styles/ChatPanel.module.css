@@ -232,12 +232,12 @@
   }
   
   .messagesContainer {
-    padding: 16px;
+    padding: 16px 4px;
   }
   
   .message {
-    max-width: 90%;
-    padding: 12px;
+    max-width: 100%;
+    padding: 12px 6px;
   }
   
   .inputForm {
@@ -270,12 +270,12 @@
   }
   
   .messagesContainer {
-    padding: 16px;
+    padding: 16px 4px;
   }
   
   .message {
-    max-width: 85%;
-    padding: 12px;
+    max-width: 100%;
+    padding: 12px 6px;
   }
   
   .inputForm {
