@@ -228,6 +228,8 @@ export default function Library() {
   const [customUrl, setCustomUrl] = useState('');
   const [customLoading, setCustomLoading] = useState(false);
   const [customError, setCustomError] = useState('');
+  const [fileUploadLoading, setFileUploadLoading] = useState(false);
+  const [fileUploadError, setFileUploadError] = useState('');
 
   useEffect(() => {
     setLang(getUserLanguage());
@@ -395,6 +397,41 @@ export default function Library() {
     }
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setFileUploadError('');
+    setFileUploadLoading(true);
+    
+    try {
+      // Check file type
+      if (!file.name.toLowerCase().endsWith('.txt')) {
+        throw new Error('Please select a .txt file.');
+      }
+      
+      // Check file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error('File size must be less than 10MB.');
+      }
+      
+      const text = await file.text();
+      if (!text || text.length < 100) {
+        throw new Error('The file appears to be empty or too short.');
+      }
+      
+      localStorage.setItem('explainer:bookText', text);
+      localStorage.setItem('explainer:bookTitle', file.name);
+      router.push('/');
+    } catch (err) {
+      setFileUploadError(err.message || 'Failed to load the file.');
+    } finally {
+      setFileUploadLoading(false);
+      // Reset the file input
+      e.target.value = '';
+    }
+  };
+
   // Responsive grid for the whole page: up to 3 columns if space allows
   const pageGridStyle = {
     display: 'grid',
@@ -423,7 +460,7 @@ export default function Library() {
           {t('exploreLibrary', lang)}
         </p>
         {/* Custom URL input UI */}
-        <form onSubmit={handleCustomUrl} style={{ display: 'flex', gap: 8, marginBottom: 24, alignItems: 'center' }}>
+        <form onSubmit={handleCustomUrl} style={{ display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center' }}>
           <input
             type="url"
             value={customUrl}
@@ -442,6 +479,45 @@ export default function Library() {
           </button>
         </form>
         {customError && <div style={{ color: '#dc2626', marginBottom: 16, fontWeight: 500 }}>{customError}</div>}
+        
+        {/* File upload UI */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 24, alignItems: 'center' }}>
+          <label
+            htmlFor="file-upload"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 16px',
+              background: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: 8,
+              fontWeight: 600,
+              fontSize: 16,
+              cursor: fileUploadLoading ? 'wait' : 'pointer',
+              opacity: fileUploadLoading ? 0.6 : 1,
+              transition: 'all 0.2s',
+              minWidth: 140,
+            }}
+            onMouseOver={e => !fileUploadLoading && (e.target.style.background = '#059669')}
+            onMouseOut={e => !fileUploadLoading && (e.target.style.background = '#10b981')}
+          >
+            📁 {fileUploadLoading ? t('loading', lang) : 'Upload Text File'}
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            accept=".txt"
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+            disabled={fileUploadLoading}
+          />
+          <span style={{ color: '#6b7280', fontSize: 14 }}>
+            Select a .txt file from your computer
+          </span>
+        </div>
+        {fileUploadError && <div style={{ color: '#dc2626', marginBottom: 16, fontWeight: 500 }}>{fileUploadError}</div>}
         <div style={{ ...pageGridStyle, marginLeft: 0, marginRight: 0 }}>
           {collections.map((col) => {
             const meta = collectionMeta[col.key] || {};

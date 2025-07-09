@@ -74,14 +74,14 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
     <div className={styles.panel} style={{ flex: '1 1 0%' }}>
       <div className={styles.header}>
         <h2>{t('chat', lang)}</h2>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <button 
             className={styles.saveButton}
             onClick={handleSaveChat}
             disabled={messages.length === 0}
           >
             <Save size={16} />
-            {t('saveChat', lang)}
+            Save Chat
           </button>
           <a
             href="/library"
@@ -90,15 +90,14 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
               alignItems: 'center',
               color: '#3b82f6',
               textDecoration: 'none',
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: 500,
-              padding: '7px 16px',
-              borderRadius: 6,
+              padding: '6px 12px',
+              borderRadius: 4,
               border: '1px solid #3b82f6',
               background: 'white',
               transition: 'all 0.2s',
-              marginLeft: 0,
-              height: 36
+              height: 32
             }}
             onMouseEnter={e => {
               e.target.style.background = '#3b82f6';
@@ -112,6 +111,33 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
             {t('library', lang)}
           </a>
           <a
+            href="/guide"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              color: '#3b82f6',
+              textDecoration: 'none',
+              fontSize: 14,
+              fontWeight: 500,
+              padding: '6px 12px',
+              borderRadius: 4,
+              border: '1px solid #3b82f6',
+              background: 'white',
+              transition: 'all 0.2s',
+              height: 32
+            }}
+            onMouseEnter={e => {
+              e.target.style.background = '#3b82f6';
+              e.target.style.color = 'white';
+            }}
+            onMouseLeave={e => {
+              e.target.style.background = 'white';
+              e.target.style.color = '#3b82f6';
+            }}
+          >
+            Guide
+          </a>
+          <a
             href="/profile"
             style={{
               display: 'inline-flex',
@@ -119,13 +145,13 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
               justifyContent: 'center',
               color: '#3b82f6',
               textDecoration: 'none',
-              padding: '7px',
-              borderRadius: 6,
+              padding: '6px',
+              borderRadius: 4,
               border: '1px solid #3b82f6',
               background: 'white',
               transition: 'all 0.2s',
-              height: 36,
-              width: 36
+              height: 32,
+              width: 32
             }}
             title={t('profileSettings', lang)}
             onMouseEnter={e => {
