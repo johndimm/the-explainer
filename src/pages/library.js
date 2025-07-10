@@ -172,6 +172,8 @@ const poetryCollection = [
 // Historical documents collection
 const historicalCollection = [
   { id: 'magna-carta', title: 'Magna Carta', author: 'King John of England', localPath: '/public-domain-texts/magna-carta.txt' },
+  { id: 'kjv-bible', title: 'The King James Version of the Bible', author: 'Various', localPath: '/public-domain-texts/king-james-bible.txt' },
+  { id: 'tractatus', title: 'Tractatus Logico-Philosophicus', author: 'Ludwig Wittgenstein', localPath: '/public-domain-texts/tractatus.txt' },
 ];
 
 const collections = [

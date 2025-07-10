@@ -44,7 +44,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     }
   }), [textLines]);
 
-  // Update listHeight on mount and resize
+  // Update listHeight on mount, resize, and when text changes
   useEffect(() => {
     function updateHeight() {
       if (containerRef.current) {
@@ -54,7 +54,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     updateHeight();
     window.addEventListener('resize', updateHeight);
     return () => window.removeEventListener('resize', updateHeight);
-  }, []);
+  }, [textLines]); // Re-run when textLines changes
 
   // Add global mouse move listener for drag detection
   useEffect(() => {
@@ -384,6 +384,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     setDragStartIndex(null);
     mouseMoved.current = false;
   }, [isDragging, selectedLines, textLines, onTextSelection, dragStartIndex]);
+
+
 
   if (textLines.length === 0) {
     return (

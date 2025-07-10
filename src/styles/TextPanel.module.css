@@ -1,5 +1,6 @@
 .panel {
   height: 100vh;
+  min-height: 100vh;
   background: white;
   border-right: 1px solid #e2e8f0;
   display: flex;
@@ -111,6 +112,7 @@
 
 .textContainer {
   flex: 1;
+  height: 100%;
   overflow: auto;
   position: relative;
   user-select: none;
@@ -225,7 +227,8 @@
 /* Mobile responsive - portrait mode */
 @media (max-width: 768px) and (orientation: portrait) {
   .panel {
-    height: 50vh;
+    height: 100vh;
+    min-height: 100vh;
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
     /* overflow: hidden; */
@@ -251,6 +254,8 @@
   }
   
   .textContainer {
+    height: 100%;
+    min-height: 0;
     flex: 1;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
@@ -286,6 +291,7 @@
 @media (max-width: 768px) and (orientation: landscape) {
   .panel {
     height: 100vh;
+    min-height: 100vh;
     border-right: 1px solid #e2e8f0;
     border-bottom: none;
     /* overflow: hidden; */
@@ -310,6 +316,8 @@
   }
   
   .textContainer {
+    height: 100%;
+    min-height: 0;
     flex: 1;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
@@ -350,3 +358,5 @@
     padding: 0;
   }
 } 
+
+ 
