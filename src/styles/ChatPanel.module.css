@@ -236,9 +236,10 @@
 /* Mobile responsive - portrait mode */
 @media (max-width: 768px) and (orientation: portrait) {
   .panel {
-    height: 50vh;
-    width: var(--panel-width, 50%) !important;
-    flex: 0 0 var(--panel-width, 50%);
+    height: var(--panel-height, 50vh);
+    min-height: var(--panel-height, 50vh);
+    width: 100% !important;
+    flex: 0 0 var(--panel-height, 50vh);
   }
   
   .header {
@@ -276,9 +277,10 @@
 /* Mobile responsive - landscape mode */
 @media (max-width: 768px) and (orientation: landscape) {
   .panel {
-    height: 50vh;
-    width: var(--panel-width, 50%) !important;
-    flex: 0 0 var(--panel-width, 50%);
+    height: var(--panel-height, 50vh);
+    min-height: var(--panel-height, 50vh);
+    width: 100% !important;
+    flex: 0 0 var(--panel-height, 50vh);
   }
   
   .header {

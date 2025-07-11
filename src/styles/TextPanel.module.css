@@ -410,10 +410,10 @@
 
 @media (max-width: 768px) and (orientation: portrait) {
   .panel {
-    height: 50vh;
-    min-height: 50vh;
-    width: var(--panel-width, 50%) !important;
-    flex: 0 0 var(--panel-width, 50%);
+    height: var(--panel-height, 50vh);
+    min-height: var(--panel-height, 50vh);
+    width: 100% !important;
+    flex: 0 0 var(--panel-height, 50vh);
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
   }
@@ -461,10 +461,10 @@
 
 @media (max-width: 768px) and (orientation: landscape) {
   .panel {
-    height: 50vh;
-    min-height: 50vh;
-    width: var(--panel-width, 50%) !important;
-    flex: 0 0 var(--panel-width, 50%);
+    height: var(--panel-height, 50vh);
+    min-height: var(--panel-height, 50vh);
+    width: 100% !important;
+    flex: 0 0 var(--panel-height, 50vh);
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
   }

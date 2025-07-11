@@ -121,6 +121,9 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       document.removeEventListener('touchmove', handleMove, { passive: false });
       document.removeEventListener('touchend', handleEnd);
       document.removeEventListener('touchcancel', handleEnd);
+      document.removeEventListener('pointermove', handleMove);
+      document.removeEventListener('pointerup', handleEnd);
+      document.removeEventListener('pointercancel', handleEnd);
     };
     
     // Add multiple event listeners for better compatibility
