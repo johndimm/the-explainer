@@ -9,6 +9,7 @@
   flex-shrink: 0;
   position: relative;
   touch-action: none; /* Prevent default touch behaviors */
+  z-index: 10;
 }
 
 .separator:hover {
@@ -40,11 +41,13 @@
 @media (max-width: 768px) and (orientation: portrait) {
   .separator {
     width: 100%;
-    height: 12px; /* Increased height for better touch target */
+    height: 20px;
     cursor: row-resize;
-    background: #e2e8f0;
-    border-top: 1px solid #cbd5e1;
-    border-bottom: 1px solid #cbd5e1;
+    background: #3b82f6;
+    border-top: 2px solid #1d4ed8;
+    border-bottom: 2px solid #1d4ed8;
+    flex-shrink: 0;
+    position: relative;
   }
   
   .separator:hover {
@@ -58,6 +61,10 @@
   .handle {
     transform: rotate(90deg);
     padding: 0 8px;
+    background: white;
+    border-radius: 4px;
+    padding: 4px 8px;
+    color: #3b82f6;
   }
   
   .separator:hover .handle {
@@ -103,9 +110,4 @@
   }
 }
 
-@media (max-width: 768px) and (orientation: portrait) {
-  .separator {
-    height: 24px;
-    min-height: 24px;
-  }
-} 
+ 
