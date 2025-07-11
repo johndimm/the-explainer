@@ -43,76 +43,35 @@
   color: #475569;
 }
 
-/* Mobile responsive - portrait mode */
+/* Portrait: horizontal separator */
 @media (max-width: 768px) and (orientation: portrait) {
   .separator {
     width: 100%;
     height: 20px;
+    flex-shrink: 0;
+    flex: none;
     cursor: row-resize;
     background: #3b82f6;
     border-top: 2px solid #1d4ed8;
     border-bottom: 2px solid #1d4ed8;
-    flex-shrink: 0;
     position: relative;
-  }
-  
-  .separator:hover {
-    background: #cbd5e1;
-  }
-  
-  .separator.dragging {
-    background: #94a3b8;
-  }
-  
-  .handle {
-    transform: rotate(90deg);
-    padding: 0 8px;
-    background: white;
-    border-radius: 4px;
-    padding: 4px 8px;
-    color: #3b82f6;
-  }
-  
-  .separator:hover .handle {
-    color: #475569;
-  }
-  
-  .separator.dragging .handle {
-    color: #1e293b;
+    z-index: 10;
   }
 }
 
-/* Mobile responsive - landscape mode */
-@media (max-width: 768px) and (orientation: landscape) {
+/* Landscape: vertical separator */
+@media (max-width: 768px) and (orientation: landscape), (min-width: 769px) {
   .separator {
     width: 24px;
-    min-width: 24px;
     height: 100%;
+    flex-shrink: 0;
+    flex: none;
     cursor: col-resize;
     background: #f1f5f9;
     border-left: 1px solid #e2e8f0;
     border-right: 1px solid #e2e8f0;
-  }
-  
-  .separator:hover {
-    background: #e2e8f0;
-  }
-  
-  .separator.dragging {
-    background: #cbd5e1;
-  }
-  
-  .handle {
-    transform: none;
-    padding: 8px 0;
-  }
-  
-  .separator:hover .handle {
-    color: #64748b;
-  }
-  
-  .separator.dragging .handle {
-    color: #475569;
+    position: relative;
+    z-index: 10;
   }
 }
 

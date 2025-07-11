@@ -7,6 +7,7 @@
   --button-secondary-hover: #f2f2f2;
 
   min-height: 100vh;
+  height: 100vh;
   background: #f8fafc;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
@@ -25,6 +26,7 @@
 .container {
   display: flex;
   height: 100vh;
+  min-height: 100vh;
   width: 100%;
   overflow: hidden;
 }

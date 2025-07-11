@@ -71,7 +71,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
   };
 
   return (
-    <div className={styles.panel} style={{ flex: '1 1 0%' }}>
+    <div className={styles.panel}>
       <div className={styles.header}>
         <h2>{t('chat', lang)}</h2>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

@@ -4,117 +4,86 @@ import styles from '@/styles/DraggableSeparator.module.css';
 
 function isMobile() {
   if (typeof window === 'undefined') return false;
-  
-  // Check for touch capability
-  const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  
-  // Check for mobile screen size
-  const isSmallScreen = window.innerWidth <= 768;
-  
-  // Check for mobile user agent
-  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  const mobile = hasTouch || isSmallScreen || isMobileUA;
-  console.log('isMobile check:', {
-    width: window.innerWidth,
-    hasTouch,
-    isSmallScreen,
-    isMobileUA,
-    maxTouchPoints: navigator.maxTouchPoints,
-    userAgent: navigator.userAgent,
-    mobile
-  });
-  return mobile;
+  const result = window.innerWidth <= 768;
+  console.log('isMobile() called, window.innerWidth:', window.innerWidth, 'result:', result);
+  return result;
+}
+
+function isPortrait() {
+  if (typeof window === 'undefined') return false;
+  const result = window.matchMedia('(orientation: portrait)').matches;
+  console.log('isPortrait() called, result:', result);
+  return result;
 }
 
 const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const dragStart = useRef({ x: 0, y: 0 });
-  const dragMode = useRef(null); // 'scroll' or 'resize'
+  const [debug, setDebug] = useState({ orientation: '', value: 0 });
 
   const handleMouseDown = useCallback((e) => {
-    if (isMobile()) return; // Only allow on desktop
+    console.log('handleMouseDown called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
   }, []);
 
   const handleTouchStart = useCallback((e) => {
-    console.log('=== TOUCH START ===');
-    
-    if (!isMobile()) {
-      console.log('Not mobile, returning');
-      return;
-    }
-    
+    console.log('handleTouchStart called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
     document.body.style.userSelect = 'none';
-    
-    // Get touch/pointer position
-    let clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      // Touch event
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else if (e.clientX !== undefined && e.clientY !== undefined) {
-      // Pointer event
-      clientX = e.clientX;
-      clientY = e.clientY;
-    } else {
-      console.log('No valid touch/pointer position found');
-      return;
-    }
-    
-    const orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
-    
-    let newLeftWidth;
-    if (orientation === 'portrait') {
-      newLeftWidth = (clientY / window.innerHeight) * 100;
-    } else {
-      newLeftWidth = (clientX / window.innerWidth) * 100;
-    }
-    const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
-    console.log('Initial resize to:', constrainedWidth, 'orientation:', orientation);
-    onResize(constrainedWidth);
-    
-    // Add a simple touch/pointer move handler
-    const handleMove = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      // Get touch/pointer position
+
+    const calcSize = evt => {
       let clientX, clientY;
-      if (e.touches && e.touches.length > 0) {
-        // Touch event
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-      } else if (e.clientX !== undefined && e.clientY !== undefined) {
-        // Pointer event
-        clientX = e.clientX;
-        clientY = e.clientY;
+      if (evt.touches && evt.touches.length > 0) {
+        clientX = evt.touches[0].clientX;
+        clientY = evt.touches[0].clientY;
+      } else if (evt.clientX !== undefined && evt.clientY !== undefined) {
+        clientX = evt.clientX;
+        clientY = evt.clientY;
       } else {
-        return;
+        return null;
       }
-      
-      const orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
-      
-      let newLeftWidth;
-      if (orientation === 'portrait') {
-        newLeftWidth = (clientY / window.innerHeight) * 100;
+      console.log('calcSize - clientX:', clientX, 'clientY:', clientY, 'window.innerWidth:', window.innerWidth, 'window.innerHeight:', window.innerHeight);
+      if (isPortrait()) {
+        const result = Math.max(20, Math.min(80, (clientY / window.innerHeight) * 100));
+        console.log('Portrait calculation:', result);
+        return result;
       } else {
-        newLeftWidth = (clientX / window.innerWidth) * 100;
+        const result = Math.max(20, Math.min(80, (clientX / window.innerWidth) * 100));
+        console.log('Landscape calculation:', result);
+        return result;
       }
-      const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
-      onResize(constrainedWidth);
     };
-    
-    const handleEnd = (e) => {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
+
+    const orientation = isPortrait() ? 'portrait' : 'landscape';
+    const initialSize = calcSize(e);
+    console.log('Initial size calculated:', initialSize, 'orientation:', orientation);
+    setDebug({ orientation, value: initialSize });
+    if (initialSize !== null) onResize(initialSize);
+
+    const handleMove = evt => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      const newSize = calcSize(evt);
+      console.log('handleMove - newSize:', newSize, 'orientation:', isPortrait() ? 'portrait' : 'landscape');
+      setDebug({ orientation: isPortrait() ? 'portrait' : 'landscape', value: newSize });
+      if (newSize !== null) onResize(newSize);
+      // Log CSS variables
+      const root = document.querySelector('.container');
+      if (root) {
+        const w = root.style.getPropertyValue('--panel-width');
+        const h = root.style.getPropertyValue('--panel-height');
+        console.log('DEBUG: orientation', isPortrait() ? 'portrait' : 'landscape', 'panel-width', w, 'panel-height', h);
+      }
+    };
+    const handleEnd = evt => {
+      if (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
       }
       setIsDragging(false);
       document.body.style.userSelect = '';
@@ -125,8 +94,6 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       document.removeEventListener('pointerup', handleEnd);
       document.removeEventListener('pointercancel', handleEnd);
     };
-    
-    // Add multiple event listeners for better compatibility
     document.addEventListener('touchmove', handleMove, { passive: false });
     document.addEventListener('touchend', handleEnd);
     document.addEventListener('touchcancel', handleEnd);
@@ -135,14 +102,22 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     document.addEventListener('pointercancel', handleEnd);
   }, [onResize]);
 
-
-
   const handleMouseMove = useCallback((e) => {
-    if (!isDragging || isMobile()) return;
-    const containerWidth = window.innerWidth;
-    const newLeftWidth = (e.clientX / containerWidth) * 100;
+    console.log('handleMouseMove called, isDragging:', isDragging, 'isMobile:', isMobile(), 'isPortrait:', isPortrait());
+    if (!isDragging) return;
+    const newLeftWidth = (e.clientX / window.innerWidth) * 100;
+    console.log('Mouse move - clientX:', e.clientX, 'window.innerWidth:', window.innerWidth, 'newLeftWidth:', newLeftWidth);
+    setDebug({ orientation: 'landscape', value: newLeftWidth });
     const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
+    console.log('Constrained width:', constrainedWidth);
     onResize(constrainedWidth);
+    // Log CSS variables
+    const root = document.querySelector('.container');
+    if (root) {
+      const w = root.style.getPropertyValue('--panel-width');
+      const h = root.style.getPropertyValue('--panel-height');
+      console.log('DEBUG: orientation landscape panel-width', w, 'panel-height', h);
+    }
   }, [isDragging, onResize]);
 
   const handleMouseUp = useCallback(() => {
@@ -151,10 +126,8 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     document.body.style.userSelect = '';
   }, []);
 
-
-
   useEffect(() => {
-    if (isDragging && !isMobile()) {
+    if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       return () => {
@@ -170,8 +143,13 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onPointerDown={handleTouchStart}
-      onClick={() => console.log('=== CLICK === Separator clicked!')}
-      style={{ touchAction: 'none', userSelect: 'none' }}
+      style={{ 
+        touchAction: 'none', 
+        userSelect: 'none', 
+        zIndex: 1000,
+        width: isPortrait() ? '100%' : '24px',
+        height: isPortrait() ? '20px' : '100%'
+      }}
     >
       <div className={styles.handle}>
         <GripVertical size={20} />
