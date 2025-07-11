@@ -3,8 +3,27 @@ import { GripVertical } from 'lucide-react';
 import styles from '@/styles/DraggableSeparator.module.css';
 
 function isMobile() {
-  const mobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || 'ontouchstart' in window);
-  console.log('isMobile check:', window.innerWidth, 'ontouchstart:', 'ontouchstart' in window, mobile);
+  if (typeof window === 'undefined') return false;
+  
+  // Check for touch capability
+  const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  
+  // Check for mobile screen size
+  const isSmallScreen = window.innerWidth <= 768;
+  
+  // Check for mobile user agent
+  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  const mobile = hasTouch || isSmallScreen || isMobileUA;
+  console.log('isMobile check:', {
+    width: window.innerWidth,
+    hasTouch,
+    isSmallScreen,
+    isMobileUA,
+    maxTouchPoints: navigator.maxTouchPoints,
+    userAgent: navigator.userAgent,
+    mobile
+  });
   return mobile;
 }
 
@@ -23,9 +42,6 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
 
   const handleTouchStart = useCallback((e) => {
     console.log('=== TOUCH START ===');
-    console.log('handleTouchStart called, isMobile:', isMobile());
-    console.log('Touch event:', e);
-    console.log('Touches:', e.touches);
     
     if (!isMobile()) {
       console.log('Not mobile, returning');
@@ -36,41 +52,84 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     e.stopPropagation();
     setIsDragging(true);
     document.body.style.userSelect = 'none';
-    console.log('Touch started, orientation:', window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape');
     
-    // Add touch move listener immediately
-    const handleTouchMoveGlobal = (e) => {
-      console.log('=== TOUCH MOVE ===');
+    // Get touch/pointer position
+    let clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      // Touch event
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if (e.clientX !== undefined && e.clientY !== undefined) {
+      // Pointer event
+      clientX = e.clientX;
+      clientY = e.clientY;
+    } else {
+      console.log('No valid touch/pointer position found');
+      return;
+    }
+    
+    const orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
+    
+    let newLeftWidth;
+    if (orientation === 'portrait') {
+      newLeftWidth = (clientY / window.innerHeight) * 100;
+    } else {
+      newLeftWidth = (clientX / window.innerWidth) * 100;
+    }
+    const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
+    console.log('Initial resize to:', constrainedWidth, 'orientation:', orientation);
+    onResize(constrainedWidth);
+    
+    // Add a simple touch/pointer move handler
+    const handleMove = (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const touch = e.touches[0];
-      console.log('Touch position:', touch.clientX, touch.clientY);
+      
+      // Get touch/pointer position
+      let clientX, clientY;
+      if (e.touches && e.touches.length > 0) {
+        // Touch event
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else if (e.clientX !== undefined && e.clientY !== undefined) {
+        // Pointer event
+        clientX = e.clientX;
+        clientY = e.clientY;
+      } else {
+        return;
+      }
+      
       const orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
       
       let newLeftWidth;
       if (orientation === 'portrait') {
-        newLeftWidth = (touch.clientY / window.innerHeight) * 100;
+        newLeftWidth = (clientY / window.innerHeight) * 100;
       } else {
-        newLeftWidth = (touch.clientX / window.innerWidth) * 100;
+        newLeftWidth = (clientX / window.innerWidth) * 100;
       }
       const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
-      console.log('Resizing to:', constrainedWidth, 'orientation:', orientation);
       onResize(constrainedWidth);
     };
     
-    const handleTouchEndGlobal = (e) => {
-      console.log('=== TOUCH END ===');
-      e.preventDefault();
-      e.stopPropagation();
+    const handleEnd = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       setIsDragging(false);
       document.body.style.userSelect = '';
-      document.removeEventListener('touchmove', handleTouchMoveGlobal);
-      document.removeEventListener('touchend', handleTouchEndGlobal);
+      document.removeEventListener('touchmove', handleMove, { passive: false });
+      document.removeEventListener('touchend', handleEnd);
+      document.removeEventListener('touchcancel', handleEnd);
     };
     
-    // Use capture phase to ensure we get the events
-    document.addEventListener('touchmove', handleTouchMoveGlobal, { passive: false, capture: true });
-    document.addEventListener('touchend', handleTouchEndGlobal, { capture: true });
+    // Add multiple event listeners for better compatibility
+    document.addEventListener('touchmove', handleMove, { passive: false });
+    document.addEventListener('touchend', handleEnd);
+    document.addEventListener('touchcancel', handleEnd);
+    document.addEventListener('pointermove', handleMove);
+    document.addEventListener('pointerup', handleEnd);
+    document.addEventListener('pointercancel', handleEnd);
   }, [onResize]);
 
 
@@ -107,8 +166,9 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       className={`${styles.separator} ${isDragging ? styles.dragging : ''}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
+      onPointerDown={handleTouchStart}
       onClick={() => console.log('=== CLICK === Separator clicked!')}
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: 'none', userSelect: 'none' }}
     >
       <div className={styles.handle}>
         <GripVertical size={20} />

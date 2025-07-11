@@ -412,8 +412,8 @@
   .panel {
     height: 50vh;
     min-height: 50vh;
-    width: 100% !important;
-    flex: 0 0 50vh;
+    width: var(--panel-width, 50%) !important;
+    flex: 0 0 var(--panel-width, 50%);
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
   }
@@ -463,8 +463,8 @@
   .panel {
     height: 50vh;
     min-height: 50vh;
-    width: 100% !important;
-    flex: 0 0 50vh;
+    width: var(--panel-width, 50%) !important;
+    flex: 0 0 var(--panel-width, 50%);
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
   }

@@ -237,6 +237,8 @@
 @media (max-width: 768px) and (orientation: portrait) {
   .panel {
     height: 50vh;
+    width: var(--panel-width, 50%) !important;
+    flex: 0 0 var(--panel-width, 50%);
   }
   
   .header {
@@ -274,7 +276,9 @@
 /* Mobile responsive - landscape mode */
 @media (max-width: 768px) and (orientation: landscape) {
   .panel {
-    height: 100vh;
+    height: 50vh;
+    width: var(--panel-width, 50%) !important;
+    flex: 0 0 var(--panel-width, 50%);
   }
   
   .header {
