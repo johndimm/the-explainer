@@ -37,6 +37,28 @@ export default function Home() {
     };
   }, []);
 
+  // Load book title from localStorage
+  useEffect(() => {
+    const savedTitle = localStorage.getItem('explainer:bookTitle');
+    if (savedTitle) {
+      setBookTitle(savedTitle);
+    }
+  }, []);
+
+  // Listen for changes to book title in localStorage
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'explainer:bookTitle' && e.newValue) {
+        setBookTitle(e.newValue);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   // Set both CSS variables on the container
   useEffect(() => {
     if (!containerRef.current) return;

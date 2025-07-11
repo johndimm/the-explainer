@@ -28,32 +28,100 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const mouseMoved = useRef(false);
   const currentScrollIndexRef = useRef(0);
 
-  // Bookmark management functions
-  const getBookmarkKey = useCallback(() => {
-    const savedTitle = localStorage.getItem('explainer:bookTitle');
-    return savedTitle ? `explainer:bookmark:${savedTitle}` : null;
+  // Check if storage is available
+  const isStorageAvailable = useCallback(() => {
+    try {
+      const test = '__storage_test__';
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }, []);
 
-  const saveBookmark = useCallback((scrollIndex) => {
-    const bookmarkKey = getBookmarkKey();
-    if (bookmarkKey) {
-      localStorage.setItem(bookmarkKey, scrollIndex.toString());
-      console.log('Bookmark saved:', scrollIndex);
+  // Bookmark management functions
+  const getBookmarkKey = useCallback(() => {
+    if (!isStorageAvailable()) {
+      console.warn('localStorage is not available');
+      return null;
     }
-  }, [getBookmarkKey]);
+    try {
+      const savedTitle = localStorage.getItem('explainer:bookTitle');
+      return savedTitle ? `explainer:bookmark:${savedTitle}` : null;
+    } catch (error) {
+      console.warn('Failed to get bookmark key:', error);
+      return null;
+    }
+  }, [isStorageAvailable]);
 
-  const loadBookmark = useCallback(() => {
-    const bookmarkKey = getBookmarkKey();
-    if (bookmarkKey) {
-      const savedIndex = localStorage.getItem(bookmarkKey);
-      if (savedIndex) {
-        const index = parseInt(savedIndex, 10);
-        console.log('Bookmark loaded:', index);
-        return index;
+  const saveBookmark = useCallback((scrollIndex) => {
+    if (!isStorageAvailable()) {
+      console.warn('Cannot save bookmark: storage not available');
+      return;
+    }
+    
+    try {
+      const bookmarkKey = getBookmarkKey();
+      if (bookmarkKey && scrollIndex > 0) {
+        localStorage.setItem(bookmarkKey, scrollIndex.toString());
+        console.log('Bookmark saved:', scrollIndex);
+        // Visual feedback for debugging
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`💾 Bookmark saved: line ${scrollIndex + 1}`);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to save bookmark:', error);
+      // Fallback: try to save to sessionStorage if localStorage fails
+      try {
+        const bookmarkKey = getBookmarkKey();
+        if (bookmarkKey && scrollIndex > 0) {
+          sessionStorage.setItem(bookmarkKey, scrollIndex.toString());
+          console.log('Bookmark saved to sessionStorage:', scrollIndex);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`💾 Bookmark saved to sessionStorage: line ${scrollIndex + 1}`);
+          }
+        }
+      } catch (sessionError) {
+        console.warn('Failed to save bookmark to sessionStorage:', sessionError);
       }
     }
+  }, [getBookmarkKey, isStorageAvailable]);
+
+  const loadBookmark = useCallback(() => {
+    if (!isStorageAvailable()) {
+      console.warn('Cannot load bookmark: storage not available');
+      return 0;
+    }
+    
+    try {
+      const bookmarkKey = getBookmarkKey();
+      if (bookmarkKey) {
+        // Try localStorage first
+        let savedIndex = localStorage.getItem(bookmarkKey);
+        let source = 'localStorage';
+        if (!savedIndex) {
+          // Fallback to sessionStorage
+          savedIndex = sessionStorage.getItem(bookmarkKey);
+          source = 'sessionStorage';
+        }
+        if (savedIndex) {
+          const index = parseInt(savedIndex, 10);
+          if (!isNaN(index) && index >= 0) {
+            console.log('Bookmark loaded:', index);
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`📖 Bookmark loaded from ${source}: line ${index + 1}`);
+            }
+            return index;
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load bookmark:', error);
+    }
     return 0;
-  }, [getBookmarkKey]);
+  }, [getBookmarkKey, isStorageAvailable]);
 
 
 
@@ -201,19 +269,36 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     if (textLines.length > 0) {
       const bookmarkIndex = loadBookmark();
       if (listRef.current && bookmarkIndex > 0) {
+        // Use a longer delay on mobile to ensure the component is fully rendered
+        const delay = isMobile ? 300 : 100;
         setTimeout(() => {
-          listRef.current.scrollToItem(bookmarkIndex, 'start');
-          setCurrentScrollIndex(bookmarkIndex);
-        }, 100);
+          try {
+            if (listRef.current) {
+              listRef.current.scrollToItem(bookmarkIndex, 'start');
+              setCurrentScrollIndex(bookmarkIndex);
+              currentScrollIndexRef.current = bookmarkIndex;
+              console.log('Bookmark restored to position:', bookmarkIndex);
+              if (process.env.NODE_ENV === 'development') {
+                console.log(`📍 Bookmark restored to line ${bookmarkIndex + 1}`);
+              }
+            }
+          } catch (error) {
+            console.warn('Failed to restore bookmark position:', error);
+          }
+        }, delay);
       }
     }
-  }, [textLines, loadBookmark]);
+  }, [textLines, loadBookmark, isMobile]);
 
   // Effect 7: Save bookmark on unmount
   useEffect(() => {
     return () => {
-      if (currentScrollIndexRef.current > 0) {
-        saveBookmark(currentScrollIndexRef.current);
+      try {
+        if (currentScrollIndexRef.current > 0) {
+          saveBookmark(currentScrollIndexRef.current);
+        }
+      } catch (error) {
+        console.warn('Failed to save bookmark on unmount:', error);
       }
     };
   }, [saveBookmark]);
@@ -237,6 +322,23 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [dragStartIndex, isDragging, isMobile]);
+
+  // Effect 9: Periodic bookmark save for mobile reliability
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const interval = setInterval(() => {
+      try {
+        if (currentScrollIndexRef.current > 0) {
+          saveBookmark(currentScrollIndexRef.current);
+        }
+      } catch (error) {
+        console.warn('Failed to save periodic bookmark:', error);
+      }
+    }, 5000); // Save every 5 seconds on mobile
+    
+    return () => clearInterval(interval);
+  }, [isMobile, saveBookmark]);
 
   // Event handlers
   const handleLineSelection = useCallback((index) => {
@@ -385,16 +487,29 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     mouseMoved.current = false;
   }, [isDragging, selectedLines, textLines, onTextSelection]);
 
+  // Debounced bookmark saving
+  const saveBookmarkDebounced = useCallback((() => {
+    let timeoutId = null;
+    return (scrollIndex) => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(() => {
+        saveBookmark(scrollIndex);
+      }, 1000); // Increased debounce time for better mobile performance
+    };
+  })(), [saveBookmark]);
+
   const handleScroll = useCallback(({ scrollOffset, scrollUpdateWasRequested }) => {
     if (!scrollUpdateWasRequested) {
       const currentIndex = Math.floor(scrollOffset / ROW_HEIGHT);
       if (currentIndex !== currentScrollIndexRef.current) {
         currentScrollIndexRef.current = currentIndex;
         setCurrentScrollIndex(currentIndex);
-        setTimeout(() => saveBookmark(currentIndex), 500);
+        saveBookmarkDebounced(currentIndex);
       }
     }
-  }, [saveBookmark]);
+  }, [saveBookmarkDebounced]);
 
 
 
