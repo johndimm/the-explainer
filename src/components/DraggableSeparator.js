@@ -22,8 +22,16 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
   }, []);
 
   const handleTouchStart = useCallback((e) => {
+    console.log('=== TOUCH START ===');
     console.log('handleTouchStart called, isMobile:', isMobile());
-    if (!isMobile()) return;
+    console.log('Touch event:', e);
+    console.log('Touches:', e.touches);
+    
+    if (!isMobile()) {
+      console.log('Not mobile, returning');
+      return;
+    }
+    
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
@@ -32,8 +40,11 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     
     // Add touch move listener immediately
     const handleTouchMoveGlobal = (e) => {
+      console.log('=== TOUCH MOVE ===');
       e.preventDefault();
+      e.stopPropagation();
       const touch = e.touches[0];
+      console.log('Touch position:', touch.clientX, touch.clientY);
       const orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
       
       let newLeftWidth;
@@ -47,15 +58,19 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       onResize(constrainedWidth);
     };
     
-    const handleTouchEndGlobal = () => {
+    const handleTouchEndGlobal = (e) => {
+      console.log('=== TOUCH END ===');
+      e.preventDefault();
+      e.stopPropagation();
       setIsDragging(false);
       document.body.style.userSelect = '';
       document.removeEventListener('touchmove', handleTouchMoveGlobal);
       document.removeEventListener('touchend', handleTouchEndGlobal);
     };
     
-    document.addEventListener('touchmove', handleTouchMoveGlobal, { passive: false });
-    document.addEventListener('touchend', handleTouchEndGlobal);
+    // Use capture phase to ensure we get the events
+    document.addEventListener('touchmove', handleTouchMoveGlobal, { passive: false, capture: true });
+    document.addEventListener('touchend', handleTouchEndGlobal, { capture: true });
   }, [onResize]);
 
 
@@ -92,6 +107,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       className={`${styles.separator} ${isDragging ? styles.dragging : ''}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
+      onClick={() => console.log('=== CLICK === Separator clicked!')}
       style={{ touchAction: 'none' }}
     >
       <div className={styles.handle}>

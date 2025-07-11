@@ -21,6 +21,7 @@ export default function Home() {
   }, []);
 
   const handleResize = useCallback((newWidth) => {
+    console.log('=== HANDLE RESIZE === Called with:', newWidth);
     setLeftWidth(newWidth);
   }, []);
 
