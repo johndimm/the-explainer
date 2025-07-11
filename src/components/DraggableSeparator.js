@@ -29,28 +29,36 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     setIsDragging(true);
     document.body.style.userSelect = 'none';
     console.log('Touch started, orientation:', window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape');
-  }, []);
-
-  const handleTouchMove = useCallback((e) => {
-    console.log('handleTouchMove called, isDragging:', isDragging, 'isMobile:', isMobile());
-    if (!isDragging || !isMobile()) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    const orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
     
-    // Simple resize logic - always resize based on touch position
-    let newLeftWidth;
-    if (orientation === 'portrait') {
-      // Portrait: up/down drag resizes
-      newLeftWidth = (touch.clientY / window.innerHeight) * 100;
-    } else {
-      // Landscape: left/right drag resizes
-      newLeftWidth = (touch.clientX / window.innerWidth) * 100;
-    }
-    const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
-    console.log('Resizing to:', constrainedWidth, 'orientation:', orientation);
-    onResize(constrainedWidth);
-  }, [isDragging, onResize]);
+    // Add touch move listener immediately
+    const handleTouchMoveGlobal = (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const orientation = window.matchMedia('(orientation: portrait)').matches ? 'portrait' : 'landscape';
+      
+      let newLeftWidth;
+      if (orientation === 'portrait') {
+        newLeftWidth = (touch.clientY / window.innerHeight) * 100;
+      } else {
+        newLeftWidth = (touch.clientX / window.innerWidth) * 100;
+      }
+      const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
+      console.log('Resizing to:', constrainedWidth, 'orientation:', orientation);
+      onResize(constrainedWidth);
+    };
+    
+    const handleTouchEndGlobal = () => {
+      setIsDragging(false);
+      document.body.style.userSelect = '';
+      document.removeEventListener('touchmove', handleTouchMoveGlobal);
+      document.removeEventListener('touchend', handleTouchEndGlobal);
+    };
+    
+    document.addEventListener('touchmove', handleTouchMoveGlobal, { passive: false });
+    document.addEventListener('touchend', handleTouchEndGlobal);
+  }, [onResize]);
+
+
 
   const handleMouseMove = useCallback((e) => {
     if (!isDragging || isMobile()) return;
@@ -66,40 +74,25 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     document.body.style.userSelect = '';
   }, []);
 
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false);
-    document.body.style.userSelect = '';
-  }, []);
+
 
   useEffect(() => {
-    if (isDragging) {
-      if (isMobile()) {
-        console.log('Adding mobile touch listeners');
-        document.addEventListener('touchmove', handleTouchMove, { passive: false });
-        document.addEventListener('touchend', handleTouchEnd);
-        return () => {
-          console.log('Removing mobile touch listeners');
-          document.removeEventListener('touchmove', handleTouchMove);
-          document.removeEventListener('touchend', handleTouchEnd);
-        };
-      } else {
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-        return () => {
-          document.removeEventListener('mousemove', handleMouseMove);
-          document.removeEventListener('mouseup', handleMouseUp);
-        };
-      }
+    if (isDragging && !isMobile()) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
     <div 
       className={`${styles.separator} ${isDragging ? styles.dragging : ''}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+      style={{ touchAction: 'none' }}
     >
       <div className={styles.handle}>
         <GripVertical size={20} />
