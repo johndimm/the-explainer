@@ -410,10 +410,10 @@
 
 @media (max-width: 768px) and (orientation: portrait) {
   .panel {
-    height: 100vh;
-    min-height: 100vh;
+    height: 50vh;
+    min-height: 50vh;
     width: 100% !important;
-    flex: 0 0 100%;
+    flex: 0 0 50vh;
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
   }
@@ -434,7 +434,7 @@
   }
 
   .textContainer {
-    height: calc(100vh - 120px);
+    height: calc(50vh - 120px);
     scrollbar-width: auto;
   }
 
