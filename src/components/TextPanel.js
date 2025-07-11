@@ -264,6 +264,38 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     }
   }, [textLines]);
 
+  // Function to get current scroll position from the list container
+  const getCurrentScrollPosition = useCallback(() => {
+    if (!listRef.current) return 0;
+    
+    try {
+      // Try to get scroll position from react-window's internal state
+      const scrollElement = listRef.current._outerRef;
+      if (scrollElement) {
+        const scrollTop = scrollElement.scrollTop;
+        const index = Math.floor(scrollTop / ROW_HEIGHT);
+        return Math.max(0, index);
+      }
+    } catch (error) {
+      console.warn('Failed to get scroll position from react-window:', error);
+    }
+    
+    return currentScrollIndexRef.current;
+  }, []);
+
+  // Debounced bookmark saving
+  const saveBookmarkDebounced = useCallback((() => {
+    let timeoutId = null;
+    return (scrollIndex) => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(() => {
+        saveBookmark(scrollIndex);
+      }, 1000); // Increased debounce time for better mobile performance
+    };
+  })(), [saveBookmark]);
+
   // Effect 6: Restore bookmark when text lines change
   useEffect(() => {
     if (textLines.length > 0) {
@@ -294,14 +326,87 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   useEffect(() => {
     return () => {
       try {
-        if (currentScrollIndexRef.current > 0) {
-          saveBookmark(currentScrollIndexRef.current);
+        const currentPosition = getCurrentScrollPosition();
+        if (currentPosition > 0) {
+          saveBookmark(currentPosition);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`💾 Final bookmark save on unmount: line ${currentPosition + 1}`);
+          }
         }
       } catch (error) {
         console.warn('Failed to save bookmark on unmount:', error);
       }
     };
-  }, [saveBookmark]);
+  }, [saveBookmark, getCurrentScrollPosition]);
+
+  // Effect 7.5: Save bookmark on page termination
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      try {
+        const currentPosition = getCurrentScrollPosition();
+        if (currentPosition > 0) {
+          // Use synchronous localStorage for beforeunload
+          const bookmarkKey = getBookmarkKey();
+          if (bookmarkKey) {
+            localStorage.setItem(bookmarkKey, currentPosition.toString());
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`💾 Emergency bookmark save on page termination: line ${currentPosition + 1}`);
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to save bookmark on page termination:', error);
+      }
+    };
+
+    const handlePageHide = () => {
+      try {
+        const currentPosition = getCurrentScrollPosition();
+        if (currentPosition > 0) {
+          // Use synchronous localStorage for pagehide
+          const bookmarkKey = getBookmarkKey();
+          if (bookmarkKey) {
+            localStorage.setItem(bookmarkKey, currentPosition.toString());
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`💾 Emergency bookmark save on page hide: line ${currentPosition + 1}`);
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to save bookmark on page hide:', error);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        try {
+          const currentPosition = getCurrentScrollPosition();
+          if (currentPosition > 0) {
+            // Use synchronous localStorage for visibility change
+            const bookmarkKey = getBookmarkKey();
+            if (bookmarkKey) {
+              localStorage.setItem(bookmarkKey, currentPosition.toString());
+              if (process.env.NODE_ENV === 'development') {
+                console.log(`💾 Emergency bookmark save on visibility change: line ${currentPosition + 1}`);
+              }
+            }
+          }
+        } catch (error) {
+          console.warn('Failed to save bookmark on visibility change:', error);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handlePageHide);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handlePageHide);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [getCurrentScrollPosition, getBookmarkKey]);
 
   // Effect 8: Add global mouse move listener for drag detection
   useEffect(() => {
@@ -329,16 +434,54 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     
     const interval = setInterval(() => {
       try {
-        if (currentScrollIndexRef.current > 0) {
-          saveBookmark(currentScrollIndexRef.current);
+        const currentPosition = getCurrentScrollPosition();
+        if (currentPosition > 0) {
+          saveBookmark(currentPosition);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`📱 Periodic bookmark save: line ${currentPosition + 1}`);
+          }
         }
       } catch (error) {
         console.warn('Failed to save periodic bookmark:', error);
       }
-    }, 5000); // Save every 5 seconds on mobile
+    }, 3000); // Save every 3 seconds on mobile for better reliability
     
     return () => clearInterval(interval);
-  }, [isMobile, saveBookmark]);
+  }, [isMobile, saveBookmark, getCurrentScrollPosition]);
+
+  // Effect 10: Mobile scroll position detection using Intersection Observer
+  useEffect(() => {
+    if (!isMobile || !listRef.current) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = parseInt(entry.target.dataset.index, 10);
+          if (!isNaN(index) && index !== currentScrollIndexRef.current) {
+            currentScrollIndexRef.current = index;
+            setCurrentScrollIndex(index);
+            saveBookmarkDebounced(index);
+            
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`📱 Intersection observer: line ${index + 1} is visible`);
+            }
+          }
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5
+    });
+    
+    // Observe all visible rows
+    const rows = listRef.current.querySelectorAll('[data-index]');
+    rows.forEach(row => observer.observe(row));
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, [isMobile, saveBookmarkDebounced, textLines.length]);
 
   // Event handlers
   const handleLineSelection = useCallback((index) => {
@@ -487,29 +630,43 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     mouseMoved.current = false;
   }, [isDragging, selectedLines, textLines, onTextSelection]);
 
-  // Debounced bookmark saving
-  const saveBookmarkDebounced = useCallback((() => {
-    let timeoutId = null;
-    return (scrollIndex) => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      timeoutId = setTimeout(() => {
-        saveBookmark(scrollIndex);
-      }, 1000); // Increased debounce time for better mobile performance
-    };
-  })(), [saveBookmark]);
-
   const handleScroll = useCallback(({ scrollOffset, scrollUpdateWasRequested }) => {
     if (!scrollUpdateWasRequested) {
       const currentIndex = Math.floor(scrollOffset / ROW_HEIGHT);
       if (currentIndex !== currentScrollIndexRef.current) {
         currentScrollIndexRef.current = currentIndex;
         setCurrentScrollIndex(currentIndex);
-        saveBookmarkDebounced(currentIndex);
+        
+        // On mobile, save immediately for better reliability
+        if (isMobile) {
+          saveBookmark(currentIndex);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`📱 Mobile scroll (immediate save): offset=${scrollOffset}, index=${currentIndex}, line=${currentIndex + 1}`);
+          }
+        } else {
+          saveBookmarkDebounced(currentIndex);
+        }
       }
     }
-  }, [saveBookmarkDebounced]);
+  }, [saveBookmarkDebounced, saveBookmark, isMobile]);
+
+  // Additional scroll handler for mobile reliability
+  const handleContainerScroll = useCallback((event) => {
+    if (!isMobile) return;
+    
+    const scrollTop = event.target.scrollTop;
+    const currentIndex = Math.floor(scrollTop / ROW_HEIGHT);
+    
+    if (currentIndex !== currentScrollIndexRef.current) {
+      currentScrollIndexRef.current = currentIndex;
+      setCurrentScrollIndex(currentIndex);
+      saveBookmark(currentIndex); // Immediate save on mobile
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📱 Container scroll (immediate save): scrollTop=${scrollTop}, index=${currentIndex}, line=${currentIndex + 1}`);
+      }
+    }
+  }, [isMobile, saveBookmark]);
 
 
 
@@ -566,7 +723,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         </div>
       </div>
       
-      <div className={styles.textContainer}>
+      <div className={styles.textContainer} onScroll={handleContainerScroll}>
         <List
           ref={listRef}
           height={listHeight}
