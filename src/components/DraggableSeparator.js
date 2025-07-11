@@ -19,11 +19,17 @@ function isPortrait() {
 const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [debug, setDebug] = useState({ orientation: '', value: 0 });
+  const dragModeRef = useRef('landscape'); // 'portrait' or 'landscape'
+  const dragActionRef = useRef(null); // 'resize' or 'scroll'
+  const dragStartRef = useRef({ x: 0, y: 0 });
 
   const handleMouseDown = useCallback((e) => {
     console.log('handleMouseDown called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
     e.preventDefault();
     e.stopPropagation();
+    dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';
+    dragActionRef.current = null;
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
     setIsDragging(true);
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
@@ -33,6 +39,13 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     console.log('handleTouchStart called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
     e.preventDefault();
     e.stopPropagation();
+    dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';
+    dragActionRef.current = null;
+    if (e.touches && e.touches.length > 0) {
+      dragStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else {
+      dragStartRef.current = { x: 0, y: 0 };
+    }
     setIsDragging(true);
     document.body.style.userSelect = 'none';
 
@@ -68,10 +81,58 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     const handleMove = evt => {
       evt.preventDefault();
       evt.stopPropagation();
-      const newSize = calcSize(evt);
-      console.log('handleMove - newSize:', newSize, 'orientation:', isPortrait() ? 'portrait' : 'landscape');
-      setDebug({ orientation: isPortrait() ? 'portrait' : 'landscape', value: newSize });
-      if (newSize !== null) onResize(newSize);
+      let clientX, clientY;
+      if (evt.touches && evt.touches.length > 0) {
+        clientX = evt.touches[0].clientX;
+        clientY = evt.touches[0].clientY;
+      } else if (evt.clientX !== undefined && evt.clientY !== undefined) {
+        clientX = evt.clientX;
+        clientY = evt.clientY;
+      } else {
+        return;
+      }
+      const dx = clientX - dragStartRef.current.x;
+      const dy = clientY - dragStartRef.current.y;
+      if (!dragActionRef.current) {
+        if (dragModeRef.current === 'landscape') {
+          if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+            dragActionRef.current = 'resize';
+          } else if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
+            dragActionRef.current = 'scroll';
+          } else {
+            return; // not enough movement yet
+          }
+        } else {
+          // PORTRAIT MODE
+          if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
+            dragActionRef.current = 'resize';
+          } else if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+            dragActionRef.current = 'scroll';
+          } else {
+            return; // not enough movement yet
+          }
+        }
+      }
+      if (dragActionRef.current === 'resize') {
+        if (dragModeRef.current === 'landscape') {
+          const newSize = Math.max(20, Math.min(80, (clientX / window.innerWidth) * 100));
+          if (typeof onResize === 'function') onResize(newSize);
+        } else {
+          // portrait: vertical drag resizes
+          const newSize = Math.max(20, Math.min(80, (clientY / window.innerHeight) * 100));
+          if (typeof onResize === 'function') onResize(newSize);
+        }
+      } else if (dragActionRef.current === 'scroll') {
+        let ratio;
+        if (dragModeRef.current === 'landscape') {
+          // vertical drag in landscape
+          ratio = Math.max(0, Math.min(1, clientY / window.innerHeight));
+        } else {
+          // horizontal drag in portrait
+          ratio = Math.max(0, Math.min(1, clientX / window.innerWidth));
+        }
+        if (typeof onScrollDivider === 'function') onScrollDivider(ratio);
+      }
       // Log CSS variables
       const root = document.querySelector('.container');
       if (root) {
@@ -100,17 +161,53 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     document.addEventListener('pointermove', handleMove);
     document.addEventListener('pointerup', handleEnd);
     document.addEventListener('pointercancel', handleEnd);
-  }, [onResize]);
+  }, [onResize, onScrollDivider]);
 
   const handleMouseMove = useCallback((e) => {
     console.log('handleMouseMove called, isDragging:', isDragging, 'isMobile:', isMobile(), 'isPortrait:', isPortrait());
     if (!isDragging) return;
-    const newLeftWidth = (e.clientX / window.innerWidth) * 100;
-    console.log('Mouse move - clientX:', e.clientX, 'window.innerWidth:', window.innerWidth, 'newLeftWidth:', newLeftWidth);
-    setDebug({ orientation: 'landscape', value: newLeftWidth });
-    const constrainedWidth = Math.max(20, Math.min(80, newLeftWidth));
-    console.log('Constrained width:', constrainedWidth);
-    onResize(constrainedWidth);
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    if (!dragActionRef.current) {
+      if (dragModeRef.current === 'landscape') {
+        if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+          dragActionRef.current = 'resize';
+        } else if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
+          dragActionRef.current = 'scroll';
+        } else {
+          return; // not enough movement yet
+        }
+      } else {
+        // PORTRAIT MODE
+        if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
+          dragActionRef.current = 'resize';
+        } else if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+          dragActionRef.current = 'scroll';
+        } else {
+          return; // not enough movement yet
+        }
+      }
+    }
+    if (dragActionRef.current === 'resize') {
+      if (dragModeRef.current === 'landscape') {
+        const newSize = Math.max(20, Math.min(80, (e.clientX / window.innerWidth) * 100));
+        if (typeof onResize === 'function') onResize(newSize);
+      } else {
+        // portrait: vertical drag resizes
+        const newSize = Math.max(20, Math.min(80, (e.clientY / window.innerHeight) * 100));
+        if (typeof onResize === 'function') onResize(newSize);
+      }
+    } else if (dragActionRef.current === 'scroll') {
+      let ratio;
+      if (dragModeRef.current === 'landscape') {
+        // vertical drag in landscape
+        ratio = Math.max(0, Math.min(1, e.clientY / window.innerHeight));
+      } else {
+        // horizontal drag in portrait
+        ratio = Math.max(0, Math.min(1, e.clientX / window.innerWidth));
+      }
+      if (typeof onScrollDivider === 'function') onScrollDivider(ratio);
+    }
     // Log CSS variables
     const root = document.querySelector('.container');
     if (root) {
@@ -118,7 +215,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       const h = root.style.getPropertyValue('--panel-height');
       console.log('DEBUG: orientation landscape panel-width', w, 'panel-height', h);
     }
-  }, [isDragging, onResize]);
+  }, [isDragging, onResize, onScrollDivider]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
