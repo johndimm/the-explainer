@@ -388,7 +388,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         className={`${styles.line} ${isSelected ? styles.selected : ''}`}
         style={{ ...style, width: '100%' }}
         data-index={index}
-        onClick={(event) => handleLineClick(index, event)}
+        onClick={!isMobile ? (event) => handleLineClick(index, event) : undefined}
         onMouseDown={!isMobile ? (e) => handleLineMouseDown(index, e) : undefined}
         onMouseEnter={!isMobile ? () => handleLineMouseEnter(index) : undefined}
         onMouseUp={!isMobile ? handleMouseUp : undefined}
