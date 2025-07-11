@@ -229,15 +229,29 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Effect 3: Detect mobile device
   useEffect(() => {
     const checkMobile = () => {
-      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      setIsMobile(isMobileDevice);
+      try {
+        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        setIsMobile(isMobileDevice);
+      } catch (error) {
+        console.warn('Failed to detect mobile device:', error);
+        setIsMobile(false);
+      }
     };
     
     checkMobile();
-    window.addEventListener('resize', checkMobile);
+    
+    try {
+      window.addEventListener('resize', checkMobile);
+    } catch (error) {
+      console.warn('Failed to add resize listener:', error);
+    }
     
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      try {
+        window.removeEventListener('resize', checkMobile);
+      } catch (error) {
+        console.warn('Failed to remove resize listener:', error);
+      }
     };
   }, []);
 
@@ -339,74 +353,85 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     };
   }, [saveBookmark, getCurrentScrollPosition]);
 
-  // Effect 7.5: Save bookmark on page termination
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      try {
-        const currentPosition = getCurrentScrollPosition();
-        if (currentPosition > 0) {
-          // Use synchronous localStorage for beforeunload
-          const bookmarkKey = getBookmarkKey();
-          if (bookmarkKey) {
-            localStorage.setItem(bookmarkKey, currentPosition.toString());
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`💾 Emergency bookmark save on page termination: line ${currentPosition + 1}`);
-            }
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to save bookmark on page termination:', error);
-      }
-    };
+  // Effect 7.5: Save bookmark on page termination - TEMPORARILY DISABLED
+  // useEffect(() => {
+  //   // Only add event listeners if we're in a browser environment
+  //   if (typeof window === 'undefined') return;
 
-    const handlePageHide = () => {
-      try {
-        const currentPosition = getCurrentScrollPosition();
-        if (currentPosition > 0) {
-          // Use synchronous localStorage for pagehide
-          const bookmarkKey = getBookmarkKey();
-          if (bookmarkKey) {
-            localStorage.setItem(bookmarkKey, currentPosition.toString());
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`💾 Emergency bookmark save on page hide: line ${currentPosition + 1}`);
-            }
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to save bookmark on page hide:', error);
-      }
-    };
+  //   const handleBeforeUnload = () => {
+  //     try {
+  //       const currentPosition = getCurrentScrollPosition();
+  //       if (currentPosition > 0) {
+  //         // Use synchronous localStorage for beforeunload
+  //         const bookmarkKey = getBookmarkKey();
+  //         if (bookmarkKey) {
+  //           localStorage.setItem(bookmarkKey, currentPosition.toString());
+  //           if (process.env.NODE_ENV === 'development') {
+  //             console.log(`💾 Emergency bookmark save on page termination: line ${currentPosition + 1}`);
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.warn('Failed to save bookmark on page termination:', error);
+  //     }
+  //   };
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        try {
-          const currentPosition = getCurrentScrollPosition();
-          if (currentPosition > 0) {
-            // Use synchronous localStorage for visibility change
-            const bookmarkKey = getBookmarkKey();
-            if (bookmarkKey) {
-              localStorage.setItem(bookmarkKey, currentPosition.toString());
-              if (process.env.NODE_ENV === 'development') {
-                console.log(`💾 Emergency bookmark save on visibility change: line ${currentPosition + 1}`);
-              }
-            }
-          }
-        } catch (error) {
-          console.warn('Failed to save bookmark on visibility change:', error);
-        }
-      }
-    };
+  //   const handlePageHide = () => {
+  //     try {
+  //       const currentPosition = getCurrentScrollPosition();
+  //       if (currentPosition > 0) {
+  //         // Use synchronous localStorage for pagehide
+  //         const bookmarkKey = getBookmarkKey();
+  //         if (bookmarkKey) {
+  //           localStorage.setItem(bookmarkKey, currentPosition.toString());
+  //           if (process.env.NODE_ENV === 'development') {
+  //             console.log(`💾 Emergency bookmark save on page hide: line ${currentPosition + 1}`);
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.warn('Failed to save bookmark on page hide:', error);
+  //     }
+  //   };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('pagehide', handlePageHide);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+  //   const handleVisibilityChange = () => {
+  //     if (document.visibilityState === 'hidden') {
+  //       try {
+  //         const currentPosition = getCurrentScrollPosition();
+  //         if (currentPosition > 0) {
+  //           // Use synchronous localStorage for visibility change
+  //           const bookmarkKey = getBookmarkKey();
+  //           if (bookmarkKey) {
+  //             localStorage.setItem(bookmarkKey, currentPosition.toString());
+  //             if (process.env.NODE_ENV === 'development') {
+  //               console.log(`💾 Emergency bookmark save on visibility change: line ${currentPosition + 1}`);
+  //             }
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.warn('Failed to save bookmark on visibility change:', error);
+  //       }
+  //     }
+  //   };
 
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('pagehide', handlePageHide);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [getCurrentScrollPosition, getBookmarkKey]);
+  //   try {
+  //     window.addEventListener('beforeunload', handleBeforeUnload);
+  //     window.addEventListener('pagehide', handlePageHide);
+  //     document.addEventListener('visibilitychange', handleVisibilityChange);
+  //   } catch (error) {
+  //     console.warn('Failed to add termination event listeners:', error);
+  //   }
+
+  //   return () => {
+  //     try {
+  //       window.removeEventListener('beforeunload', handleBeforeUnload);
+  //       window.removeEventListener('pagehide', handlePageHide);
+  //       document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //   } catch (error) {
+  //       console.warn('Failed to remove termination event listeners:', error);
+  //     }
+  //   };
+  // }, [getCurrentScrollPosition, getBookmarkKey]);
 
   // Effect 8: Add global mouse move listener for drag detection
   useEffect(() => {
@@ -449,39 +474,52 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     return () => clearInterval(interval);
   }, [isMobile, saveBookmark, getCurrentScrollPosition]);
 
-  // Effect 10: Mobile scroll position detection using Intersection Observer
-  useEffect(() => {
-    if (!isMobile || !listRef.current) return;
+  // Effect 10: Mobile scroll position detection using Intersection Observer - TEMPORARILY DISABLED
+  // useEffect(() => {
+  //   if (!isMobile || !listRef.current) return;
     
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const index = parseInt(entry.target.dataset.index, 10);
-          if (!isNaN(index) && index !== currentScrollIndexRef.current) {
-            currentScrollIndexRef.current = index;
-            setCurrentScrollIndex(index);
-            saveBookmarkDebounced(index);
-            
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`📱 Intersection observer: line ${index + 1} is visible`);
-            }
-          }
-        }
-      });
-    }, {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.5
-    });
-    
-    // Observe all visible rows
-    const rows = listRef.current.querySelectorAll('[data-index]');
-    rows.forEach(row => observer.observe(row));
-    
-    return () => {
-      observer.disconnect();
-    };
-  }, [isMobile, saveBookmarkDebounced, textLines.length]);
+  //   try {
+  //     const observer = new IntersectionObserver((entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           const index = parseInt(entry.target.dataset.index, 10);
+  //           if (!isNaN(index) && index !== currentScrollIndexRef.current) {
+  //             currentScrollIndexRef.current = index;
+  //             setCurrentScrollIndex(index);
+  //             saveBookmarkDebounced(index);
+              
+  //             if (process.env.NODE_ENV === 'development') {
+  //               console.log(`📱 Intersection observer: line ${index + 1} is visible`);
+  //             }
+  //           }
+  //         }
+  //       });
+  //     }, {
+  //       root: null,
+  //       rootMargin: '0px',
+  //       threshold: 0.5
+  //     });
+      
+  //     // Observe all visible rows with safety check
+  //     if (listRef.current) {
+  //       const rows = listRef.current.querySelectorAll('[data-index]');
+  //       if (rows && rows.length > 0) {
+  //         rows.forEach(row => {
+  //             if (row && row.dataset && row.dataset.index) {
+  //               observer.observe(row);
+  //             }
+  //           });
+  //         }
+  //       }
+      
+  //       return () => {
+  //         observer.disconnect();
+  //       };
+  //     } catch (error) {
+  //       console.warn('Failed to setup Intersection Observer:', error);
+  //       return () => {};
+  //     }
+  //   }, [isMobile, saveBookmarkDebounced, textLines.length]);
 
   // Event handlers
   const handleLineSelection = useCallback((index) => {
