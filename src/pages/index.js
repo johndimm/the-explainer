@@ -273,6 +273,7 @@ export default function Home() {
                   isLoading={isLoading}
                   onFollowUpQuestion={handleFollowUpQuestion}
                   selectedText={messages.length > 0 ? messages[0]?.content : ''}
+                  scrollToText={quote => textPanelRef.current?.scrollToText?.(quote)}
                 />
               </div>
             </>
@@ -300,6 +301,7 @@ export default function Home() {
                   isLoading={isLoading}
                   onFollowUpQuestion={handleFollowUpQuestion}
                   selectedText={messages.length > 0 ? messages[0]?.content : ''}
+                  scrollToText={quote => textPanelRef.current?.scrollToText?.(quote)}
                 />
               </div>
             </>

@@ -320,3 +320,22 @@
     gap: 0;
   }
 } 
+
+.quoteLink {
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.quoteLink:hover {
+  color: #1d4ed8;
+}
+
+.message.user .quoteLink {
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.message.user .quoteLink:hover {
+  color: #dbeafe;
+} 

@@ -328,8 +328,8 @@
 }
 
 .line.selected {
-  background-color: #dbeafe;
-  color: #1e40af;
+  background-color: #dbeafe !important;
+  color: #1e40af !important;
 }
 
 .lineNumber,

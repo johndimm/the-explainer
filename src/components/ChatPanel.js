@@ -3,7 +3,7 @@ import { Send, Save, MessageSquare, Settings } from 'lucide-react';
 import styles from '@/styles/ChatPanel.module.css';
 import { t, getUserLanguage } from '@/i18n';
 
-const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedText }) => {
+const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedText, scrollToText }) => {
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
@@ -191,7 +191,15 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
                   </span>
                 </div>
                 <div className={styles.messageContent}>
-                  {message.content}
+                  {message.type === 'user' ? (
+                    <span
+                      className={styles.quoteLink}
+                      onClick={() => scrollToText && scrollToText(message.content)}
+                      title="Jump to text"
+                    >
+                      {message.content}
+                    </span>
+                  ) : message.content}
                 </div>
               </div>
             ))}

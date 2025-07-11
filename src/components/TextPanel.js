@@ -116,6 +116,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       if (!listRef.current || !textLines.length) return;
       const targetIndex = Math.floor(ratio * (textLines.length - 1));
       listRef.current.scrollToItem(targetIndex, 'start');
+    },
+    scrollToText: (quote) => {
+      if (!listRef.current || !textLines.length || !quote) return;
+      // Try to find the first line that matches the quote (or first line of quote)
+      const lines = Array.isArray(quote) ? quote : quote.split('\n');
+      const firstLine = lines[0].trim();
+      const idx = textLines.findIndex(line => line.trim() === firstLine);
+      if (idx >= 0) {
+        listRef.current.scrollToItem(idx, 'start');
+      }
     }
   }), [textLines]);
 
@@ -283,7 +293,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
 
   const handleLineTouchStart = useCallback((event) => {
     if (!isMobile) return;
-    setTouchInProgress(true);
     const touch = event.touches[0];
     touchStartPos.current = { x: touch.clientX, y: touch.clientY };
     touchMoved.current = false;
@@ -310,20 +319,31 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       // First tap - select this line
       setFirstClickIndex(index);
       setSelectedLines(new Set([index]));
+      console.log('First touch: setSelectedLines', index);
     } else if (firstClickIndex === index) {
-      // Second tap on same line - submit immediately
-      const selectedText = textLines[index];
-      onTextSelection(selectedText);
-      setSelectedLines(new Set());
-      setFirstClickIndex(null);
+      // Second tap on same line - submit after highlight
+      setSelectedLines(new Set([index]));
+      setTimeout(() => {
+        const selectedText = textLines[index];
+        onTextSelection(selectedText);
+        setSelectedLines(new Set());
+        setFirstClickIndex(null);
+      }, 300);
     } else {
-      // Tap on different line - submit range immediately
+      // Tap on different line - submit range after highlight
       const start = Math.min(firstClickIndex, index);
       const end = Math.max(firstClickIndex, index);
-      const selectedText = textLines.slice(start, end + 1).join('\n');
-      onTextSelection(selectedText);
-      setSelectedLines(new Set());
-      setFirstClickIndex(null);
+      const rangeSelection = new Set();
+      for (let i = start; i <= end; i++) {
+        rangeSelection.add(i);
+      }
+      setSelectedLines(rangeSelection);
+      setTimeout(() => {
+        const selectedText = textLines.slice(start, end + 1).join('\n');
+        onTextSelection(selectedText);
+        setSelectedLines(new Set());
+        setFirstClickIndex(null);
+      }, 300);
     }
   }, [isMobile, firstClickIndex, textLines, onTextSelection, submitting]);
 
