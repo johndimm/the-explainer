@@ -24,7 +24,31 @@
   gap: 8px;
 }
 
+.headerControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
+.tocButton {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+}
+
+.tocButton:hover {
+  background: #2563eb;
+}
 
 .header h2 {
   margin: 0;
@@ -37,6 +61,146 @@
   font-size: 14px;
   color: #64748b;
   font-family: var(--font-geist-mono);
+}
+
+/* Table of Contents Styles */
+.toc {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  max-height: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.tocHeader {
+  padding: 12px 20px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tocHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.tocClose {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.tocClose:hover {
+  background: #e2e8f0;
+  color: #374151;
+}
+
+.tocList {
+  overflow-y: auto;
+  max-height: 250px;
+  padding: 8px 0;
+}
+
+.tocItem {
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tocItem:hover {
+  background: #f8fafc;
+}
+
+.tocItem:last-child {
+  border-bottom: none;
+}
+
+.tocTitle {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tocLine {
+  font-size: 12px;
+  color: #64748b;
+  font-family: var(--font-geist-mono);
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+/* ToC Item Type Styles */
+.tocAct {
+  border-left: 4px solid #3b82f6;
+  background: #eff6ff;
+}
+
+.tocAct:hover {
+  background: #dbeafe;
+}
+
+.tocScene {
+  border-left: 4px solid #10b981;
+  background: #f0fdf4;
+}
+
+.tocScene:hover {
+  background: #dcfce7;
+}
+
+.tocChapter {
+  border-left: 4px solid #f59e0b;
+  background: #fffbeb;
+}
+
+.tocChapter:hover {
+  background: #fef3c7;
+}
+
+.tocBook {
+  border-left: 4px solid #8b5cf6;
+  background: #faf5ff;
+}
+
+.tocBook:hover {
+  background: #f3e8ff;
+}
+
+.tocPart {
+  border-left: 4px solid #ef4444;
+  background: #fef2f2;
+}
+
+.tocPart:hover {
+  background: #fee2e2;
+}
+
+.tocBible {
+  border-left: 4px solid #059669;
+  background: #f0fdfa;
+}
+
+.tocBible:hover {
+  background: #ccfbf1;
 }
 
 .mobileActions {
@@ -179,10 +343,13 @@
 }
 
 .lineNumber {
+  font-family: var(--font-geist-mono);
+  font-size: 12px;
   color: #94a3b8;
   width: 40px;
   text-align: right;
   margin-right: 12px;
+  flex-shrink: 0;
 }
 
 .lineContent {
@@ -197,6 +364,23 @@
   margin: 0;
 }
 
+.sectionLink {
+  color: #3b82f6;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.sectionLink:hover {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.sectionLink:active {
+  color: #1d4ed8;
+}
+
 .lineNumber {
   color: #94a3b8;
   width: 40px;
@@ -209,153 +393,128 @@
   font-weight: 600;
 }
 
-/* Desktop pointer events */
 @media (min-width: 769px) {
   .line {
-    pointer-events: auto;
+    padding: 2px 20px;
   }
-  
+
   .line * {
-    pointer-events: auto;
+    padding: 2px 0;
   }
-  
+
   .textContainer {
-    margin-right: 4px;
+    scrollbar-width: auto;
+    scrollbar-color: #cbd5e1 #f1f5f9;
   }
 }
 
-/* Mobile responsive - portrait mode */
 @media (max-width: 768px) and (orientation: portrait) {
   .panel {
     height: 100vh;
     min-height: 100vh;
+    width: 100% !important;
+    flex: 0 0 100%;
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
-    /* overflow: hidden; */
   }
-  
+
   .header {
     padding: 12px 16px;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
 
-  
   .header h2 {
     font-size: 16px;
   }
-  
+
   .mobileActions {
-    display: flex; /* Show on mobile */
-    width: 100%;
-    justify-content: center;
+    display: flex;
   }
-  
+
   .textContainer {
-    height: 100%;
-    min-height: 0;
-    flex: 1;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+    height: calc(100vh - 120px);
+    scrollbar-width: auto;
   }
-  
+
   .line {
-    padding: 6px 16px;
-    align-items: flex-start;
-    touch-action: pan-y;
+    padding: 4px 16px;
+    min-height: 32px;
   }
-  
+
   .lineNumber {
-    min-width: 30px;
-    margin-right: 8px;
     font-size: 11px;
-    padding-top: 1px;
-    flex-shrink: 0;
+    width: 30px;
+    margin-right: 8px;
   }
-  
+
   .lineContent {
     font-size: 13px;
-    line-height: 1.6;
-    padding-top: 1px;
+    line-height: 1.3;
   }
-  
-  /* Re-enable pointer events for touch */
+
   .line {
-    pointer-events: auto;
+    border-bottom: 1px solid #f1f5f9;
   }
 }
 
-/* Mobile responsive - landscape mode */
 @media (max-width: 768px) and (orientation: landscape) {
   .panel {
     height: 100vh;
     min-height: 100vh;
-    border-right: 1px solid #e2e8f0;
-    border-bottom: none;
-    /* overflow: hidden; */
+    width: 100% !important;
+    flex: 0 0 100%;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
   }
-  
+
   .header {
-    padding: 12px 16px;
+    padding: 8px 16px;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
   }
-  
 
-  
   .header h2 {
-    font-size: 16px;
+    font-size: 14px;
   }
-  
+
   .mobileActions {
-    display: flex; /* Show on mobile */
-    justify-content: flex-end;
+    display: flex;
   }
-  
+
   .textContainer {
-    height: 100%;
-    min-height: 0;
-    flex: 1;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+    height: calc(100vh - 80px);
+    scrollbar-width: auto;
   }
-  
+
   .line {
-    padding: 6px 16px;
-    align-items: flex-start;
-    touch-action: pan-y;
+    padding: 2px 16px;
+    min-height: 24px;
   }
-  
+
   .lineNumber {
-    min-width: 30px;
-    margin-right: 8px;
-    font-size: 11px;
-    padding-top: 1px;
-    flex-shrink: 0;
+    font-size: 10px;
+    width: 25px;
+    margin-right: 6px;
   }
-  
+
   .lineContent {
-    font-size: 13px;
-    line-height: 1.6;
-    padding-top: 1px;
+    font-size: 12px;
+    line-height: 1.2;
   }
-  
-  /* Re-enable pointer events for touch */
+
   .line {
-    pointer-events: auto;
+    border-bottom: 0.5px solid #f1f5f9;
   }
 }
-
-
 
 @media (max-width: 768px) {
   .lineNumber,
   .lineContent {
-    line-height: 1.1;
-    padding: 0;
+    font-size: 13px;
+    line-height: 1.3;
   }
 } 
 

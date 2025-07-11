@@ -37,6 +37,22 @@
   transition: background-color 0.15s ease;
 }
 
+.saveButtonText {
+  display: inline;
+}
+
+@media (max-width: 768px) {
+  .saveButton {
+    padding: 8px;
+    min-width: 36px;
+    justify-content: center;
+  }
+  
+  .saveButtonText {
+    display: none;
+  }
+}
+
 .saveButton:hover:not(:disabled) {
   background: #2563eb;
 }

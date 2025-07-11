@@ -79,9 +79,10 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
             className={styles.saveButton}
             onClick={handleSaveChat}
             disabled={messages.length === 0}
+            title={t('saveChat', lang)}
           >
             <Save size={16} />
-            Save Chat
+            <span className={styles.saveButtonText}>Save Chat</span>
           </button>
           <a
             href="/library"

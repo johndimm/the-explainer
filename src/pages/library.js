@@ -42,6 +42,7 @@ const top100 = [
   { id: '4306', title: 'The Call of the Wild by Jack London' },
   { id: '25305', title: 'The Scarlet Letter by Nathaniel Hawthorne' },
   { id: '1260', title: 'Jane Eyre by Charlotte Brontë' },
+  { id: 'middlemarch', title: 'Middlemarch by George Eliot', localPath: '/public-domain-texts/middlemarch.txt' },
   // ... (add the rest up to 100)
 ];
 
@@ -126,6 +127,7 @@ const frenchCollection = [
   { id: '62215', title: 'Le Fantôme de l\'Opéra', author: 'Gaston Leroux' },
   { id: '54873', title: 'Vingt mille lieues sous les mers', author: 'Jules Verne' },
   { id: '17519', title: 'Les misérables Tome V: Jean Valjean', author: 'Victor Hugo' },
+  { id: 'moliere-le-misanthrope', title: 'Le Misanthrope', author: 'Molière', localPath: '/public-domain-texts/moliere-le-misanthrope.txt' },
 ];
 
 // Italian collection from Project Gutenberg (parsed from italian.txt)

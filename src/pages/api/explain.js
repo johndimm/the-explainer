@@ -62,7 +62,7 @@ For now, here's what this text might mean:
       nationalityInstruction = `The user is from ${userNationality}. When explaining cultural references, historical context, or social customs, consider what might be familiar or unfamiliar to someone from this background.`;
     }
     
-    const systemPrompt = `You are a helpful assistant that explains difficult texts in an engaging and educational way. The user is reading "${title}" by ${author}. When explaining text, you should:
+    const systemPrompt = `You are a helpful assistant that explains difficult texts in an engaging and educational way. The user is reading "${title}" by ${author}. When explaining text, you write about interesting information that answers these suggested questions.  Do not repeat the questions in your response.
 
 1. Explain difficult or archaic words and what they mean
 2. Explain familiar words that had different meanings in the past
