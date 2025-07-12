@@ -151,6 +151,23 @@ const historicalCollection = [
   { id: 'tractatus', title: 'Tractatus Logico-Philosophicus', author: 'Ludwig Wittgenstein', localPath: '/public-domain-texts/tractatus.txt' },
 ];
 
+// Group French books by author
+const frenchByAuthor = frenchCollection.reduce((acc, book) => {
+  const author = book.author;
+  if (!acc[author]) {
+    acc[author] = [];
+  }
+  acc[author].push(book);
+  return acc;
+}, {});
+
+// Convert to array of author sections
+const frenchAuthorSections = Object.entries(frenchByAuthor).map(([author, books]) => ({
+  author,
+  books,
+  count: books.length
+}));
+
 const collections = [
   {
     key: 'shakespeare',
@@ -168,10 +185,11 @@ const collections = [
   },
   {
     key: 'french',
-    title: 'French Collection',
+    title: 'French Literature',
     items: frenchCollection,
     onClickItem: 'handleReadFrench',
     itemKey: 'id',
+    authorSections: frenchAuthorSections, // Add author sections for French collection
   },
   {
     key: 'italian',
@@ -629,12 +647,13 @@ export default function Library() {
                   borderRadius: 16,
                   boxShadow: '0 2px 12px #0001',
                   padding: 0,
-                  overflow: 'hidden',
+                  overflow: 'hidden', // prevent overflow
                   display: 'flex',
                   flexDirection: 'column',
                   minHeight: 220,
                   border: '1px solid #e5e7eb',
                   marginBottom: 32,
+                  minWidth: 0, // allow flex children to shrink
                 }}
               >
                 {/* Accent bar */}
@@ -660,56 +679,157 @@ export default function Library() {
                       onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
                       tabIndex={0}
                     >
-                      {col.title} {col.items.length > 5 && (
-                        <span style={{ fontSize: 15, fontWeight: 400, color: '#2563eb', marginLeft: 8 }}>
-                          {expanded[col.key] ? t('showLess', lang) : t('showMore', lang)}
-                        </span>
-                      )}
+                      {col.title}
                     </h2>
                   </div>
                   {/* Book grid: 2 columns desktop, 1 column mobile */}
                   <div
                     style={bookGridStyle}
                   >
-                    {(expanded[col.key] ? col.items : col.items.slice(0, 10)).map((item, i) => (
-                      <div
-                        key={`${item[col.itemKey]}-${i}`}
-                        style={{
-                          padding: '6px 8px',
-                          borderBottom: (i < (expanded[col.key] ? col.items.length : Math.min(9, col.items.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          minWidth: 0,
-                          maxWidth: '100%',
-                        }}
-                      >
-                        <span
-                          onClick={() => handlerMap[col.key](item)}
+                    {col.key === 'french' && col.authorSections ? (
+                      // Special rendering for French collection organized by author
+                      (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
+                        <div key={section.author}>
+                          {/* Author header */}
+                          <div
+                            style={{
+                              padding: '14px 8px 8px 8px', // more vertical padding
+                              background: '#f8fafc',
+                              borderBottom: '1px solid #e2e8f0',
+                              fontWeight: 600,
+                              fontSize: 14,
+                              color: '#475569',
+                              display: 'flex',
+                              alignItems: 'center',
+                              minWidth: 0,
+                              width: '100%',
+                            }}
+                          >
+                            <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
+                          </div>
+                          {/* Books by this author */}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => (
+                            <div
+                              key={`${item[col.itemKey]}-${i}`}
+                              style={{
+                                padding: '6px 8px',
+                                borderBottom: (i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minWidth: 0,
+                                maxWidth: '100%',
+                                paddingLeft: '16px', // Indent books under author
+                              }}
+                            >
+                              <span
+                                onClick={() => handlerMap[col.key](item)}
+                                style={{
+                                  color: 'black',
+                                  cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
+                                  textDecoration: 'underline',
+                                  fontWeight: 500,
+                                  fontSize: 15,
+                                  opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
+                                  transition: 'color 0.2s',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '100%',
+                                  display: 'inline-block',
+                                }}
+                                title={item.title}
+                                onMouseOver={e => e.target.style.color = '#666'}
+                                onMouseOut={e => e.target.style.color = 'black'}
+                              >
+                                {loadingMap[col.key] === item[col.itemKey]
+                                  ? t('loading', lang)
+                                  : item.title}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ))
+                    ) : (
+                      // Regular rendering for other collections
+                      (expanded[col.key] ? col.items : col.items.slice(0, 10)).map((item, i) => (
+                        <div
+                          key={`${item[col.itemKey]}-${i}`}
                           style={{
-                            color: 'black',
-                            cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
-                            textDecoration: 'underline',
-                            fontWeight: 500,
-                            fontSize: 15,
-                            opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
-                            transition: 'color 0.2s',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
+                            padding: '6px 8px',
+                            borderBottom: (i < (expanded[col.key] ? col.items.length : Math.min(9, col.items.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            minWidth: 0,
                             maxWidth: '100%',
-                            display: 'inline-block',
                           }}
-                          title={`${item.title}${item.author ? ' by ' + item.author : ''}`}
-                          onMouseOver={e => e.target.style.color = '#666'}
-                          onMouseOut={e => e.target.style.color = 'black'}
                         >
-                          {loadingMap[col.key] === item[col.itemKey]
-                            ? t('loading', lang)
-                            : `${item.title}${item.author ? ' by ' + item.author : ''}`}
-                        </span>
-                      </div>
-                    ))}
+                          <span
+                            onClick={() => handlerMap[col.key](item)}
+                            style={{
+                              color: 'black',
+                              cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
+                              textDecoration: 'underline',
+                              fontWeight: 500,
+                              fontSize: 15,
+                              opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
+                              transition: 'color 0.2s',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              maxWidth: '100%',
+                              display: 'inline-block',
+                            }}
+                            title={`${item.title}${item.author ? ' by ' + item.author : ''}`}
+                            onMouseOver={e => e.target.style.color = '#666'}
+                            onMouseOut={e => e.target.style.color = 'black'}
+                          >
+                            {loadingMap[col.key] === item[col.itemKey]
+                              ? t('loading', lang)
+                              : `${item.title}${item.author ? ' by ' + item.author : ''}`}
+                          </span>
+                        </div>
+                      ))
+                    )}
                   </div>
+                  {/* More/Less button at the bottom */}
+                  {col.key === 'french' && col.authorSections && col.authorSections.length > 3 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '12px auto 0 auto',
+                        display: 'block',
+                        background: '#f1f5f9',
+                        color: '#2563eb',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '6px 18px',
+                        fontWeight: 600,
+                        fontSize: 15,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
+                  {col.key !== 'french' && col.items.length > 10 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '12px auto 0 auto',
+                        display: 'block',
+                        background: '#f1f5f9',
+                        color: '#2563eb',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '6px 18px',
+                        fontWeight: 600,
+                        fontSize: 15,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
                 </div>
               </div>
             );
