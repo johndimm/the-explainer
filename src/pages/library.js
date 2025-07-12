@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { t, getUserLanguage } from '@/i18n';
 import { Clock } from 'lucide-react';
 import frenchCollection from '../tools/french-literature.json';
+import italianCollectionRaw from '../tools/italian-literature.json';
 
 // Project Gutenberg Top 100 (full list)
 const top100 = [
@@ -104,20 +105,32 @@ const shakespeareWorks = [
 ];
 
 // Italian collection from Project Gutenberg (parsed from italian.txt)
-const italianCollection = [
-  { id: '48776', title: 'Petrarch, the First Modern Scholar and Man of Letters', author: 'Francesco Petrarca' },
-  { id: '41537', title: 'The Divine Comedy of Dante Alighieri: The Inferno', author: 'Dante Alighieri' },
-  { id: '57303', title: 'La Divina Comedia (Spanish)', author: 'Dante Alighieri' }, // Remove if not Italian translation
-  { id: '50306', title: 'Rinaldo ardito: Frammenti inediti pubblicati sul manoscritto originale (Italian)', author: 'Lodovico Ariosto' },
-  { id: '1012', title: 'La Divina Commedia di Dante (Italian)', author: 'Dante Alighieri' },
-  { id: '997', title: 'Divina Commedia di Dante: Inferno (Italian)', author: 'Dante Alighieri' },
-  { id: '38578', title: 'Fame usurpate (Italian)', author: 'Vittorio Imbriani' },
-  { id: '48943', title: "L'isola dei baci: Romanzo erotico-sociale (Italian)", author: 'F. T. Marinetti and Bruno Corra' },
-  { id: '18459', title: 'Hypnerotomachia: The Strife of Loue in a Dreame', author: 'Francesco Colonna' },
-  { id: '36448', title: 'Renaissance in Italy, Volume 5 (of 7)', author: 'John Addington Symonds' }, // Remove, not Italian
-  { id: '35792', title: 'Renaissance in Italy, Volume 4 (of 7)', author: 'John Addington Symonds' }, // Remove, not Italian
-  { id: '17650', title: 'The Sonnets, Triumphs, and Other Poems of Petrarch', author: 'Francesco Petrarca' },
-];
+const italianCollection = italianCollectionRaw.map(book => {
+  let cleanTitle = book.title;
+  if (book.author && cleanTitle.includes(book.author)) {
+    cleanTitle = cleanTitle.replace(book.author, '').replace(/\s*by\s*$/, '').replace(/\(Italian\)/, '').replace(/\(Spanish\)/, '').trim();
+    // Remove extra punctuation or whitespace
+    cleanTitle = cleanTitle.replace(/[:\-–]+$/, '').trim();
+  }
+  return { ...book, title: cleanTitle };
+});
+
+// Group Italian books by author
+const italianByAuthor = italianCollection.reduce((acc, book) => {
+  const author = book.author;
+  if (!acc[author]) {
+    acc[author] = [];
+  }
+  acc[author].push(book);
+  return acc;
+}, {});
+
+// Convert to array of author sections
+const italianAuthorSections = Object.entries(italianByAuthor).map(([author, books]) => ({
+  author,
+  books,
+  count: books.length
+}));
 
 // Poetry collection from Project Gutenberg (parsed from poetry.txt)
 const poetryCollection = [
@@ -193,10 +206,11 @@ const collections = [
   },
   {
     key: 'italian',
-    title: 'Italian Collection',
+    title: 'Italian Literature',
     items: italianCollection,
     onClickItem: 'handleReadItalian',
     itemKey: 'id',
+    authorSections: italianAuthorSections, // Add author sections for Italian collection
   },
   {
     key: 'poetry',
@@ -747,6 +761,108 @@ export default function Library() {
                               </span>
                             </div>
                           ))}
+                          {/* More/Less button for author */}
+                          {section.books.length > 5 && (
+                            <button
+                              onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
+                              style={{
+                                margin: '8px 0 8px 16px',
+                                background: '#f1f5f9',
+                                color: '#2563eb',
+                                border: 'none',
+                                borderRadius: 8,
+                                padding: '4px 14px',
+                                fontWeight: 600,
+                                fontSize: 14,
+                                cursor: 'pointer',
+                                display: 'inline-block',
+                              }}
+                            >
+                              {expanded[`${col.key}-${section.author}`] ? 'Less' : 'More'}
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : col.key === 'italian' && col.authorSections ? (
+                      (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
+                        <div key={section.author}>
+                          {/* Author header */}
+                          <div
+                            style={{
+                              padding: '14px 8px 8px 8px',
+                              background: '#f8fafc',
+                              borderBottom: '1px solid #e2e8f0',
+                              fontWeight: 600,
+                              fontSize: 14,
+                              color: '#475569',
+                              display: 'flex',
+                              alignItems: 'center',
+                              minWidth: 0,
+                              width: '100%',
+                            }}
+                          >
+                            <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
+                          </div>
+                          {/* Books by this author */}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => (
+                            <div
+                              key={`${item[col.itemKey]}-${i}`}
+                              style={{
+                                padding: '6px 8px',
+                                borderBottom: (i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minWidth: 0,
+                                maxWidth: '100%',
+                                paddingLeft: '16px', // Indent books under author
+                              }}
+                            >
+                              <span
+                                onClick={() => handlerMap[col.key](item)}
+                                style={{
+                                  color: 'black',
+                                  cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
+                                  textDecoration: 'underline',
+                                  fontWeight: 500,
+                                  fontSize: 15,
+                                  opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
+                                  transition: 'color 0.2s',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '100%',
+                                  display: 'inline-block',
+                                }}
+                                title={item.title}
+                                onMouseOver={e => e.target.style.color = '#666'}
+                                onMouseOut={e => e.target.style.color = 'black'}
+                              >
+                                {loadingMap[col.key] === item[col.itemKey]
+                                  ? t('loading', lang)
+                                  : item.title}
+                              </span>
+                            </div>
+                          ))}
+                          {/* More/Less button for author */}
+                          {section.books.length > 5 && (
+                            <button
+                              onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
+                              style={{
+                                margin: '8px 0 8px 16px',
+                                background: '#f1f5f9',
+                                color: '#2563eb',
+                                border: 'none',
+                                borderRadius: 8,
+                                padding: '4px 14px',
+                                fontWeight: 600,
+                                fontSize: 14,
+                                cursor: 'pointer',
+                                display: 'inline-block',
+                              }}
+                            >
+                              {expanded[`${col.key}-${section.author}`] ? 'Less' : 'More'}
+                            </button>
+                          )}
                         </div>
                       ))
                     ) : (
@@ -811,7 +927,26 @@ export default function Library() {
                       {expanded[col.key] ? 'Less' : 'More'}
                     </button>
                   )}
-                  {col.key !== 'french' && col.items.length > 10 && (
+                  {col.key === 'italian' && col.authorSections && col.authorSections.length > 3 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '12px auto 0 auto',
+                        display: 'block',
+                        background: '#f1f5f9',
+                        color: '#2563eb',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '6px 18px',
+                        fontWeight: 600,
+                        fontSize: 15,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
+                  {col.key !== 'french' && col.key !== 'italian' && col.items.length > 10 && (
                     <button
                       onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
                       style={{
