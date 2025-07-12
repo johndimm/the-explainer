@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(./create_literature_json.sh:*)",
+      "Bash(./create_literature_json_fixed.sh:*)",
+      "Bash(grep:*)"
+    ],
+    "deny": []
+  }
+}

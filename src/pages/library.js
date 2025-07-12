@@ -4,36 +4,25 @@ import { t, getUserLanguage } from '@/i18n';
 import { Clock } from 'lucide-react';
 import frenchCollection from '../tools/french-literature.json';
 import italianCollectionRaw from '../tools/italian-literature.json';
+import spanishCollectionRaw from '../tools/spanish-literature.json';
+import germanCollectionRaw from '../tools/german-literature.json';
+import poetryCollectionRaw from '../tools/poetry.json';
+import englishCollectionRaw from '../tools/english-literature.json';
 
-// Project Gutenberg Top 100 (full list)
+// Project Gutenberg Top 100 (full list) - deduplicated
 const top100 = [
   { id: '1342', title: 'Pride and Prejudice by Jane Austen' },
   { id: '84', title: 'Frankenstein; Or, The Modern Prometheus by Mary Wollstonecraft Shelley' },
-  { id: '11', title: 'Alice’s Adventures in Wonderland by Lewis Carroll' },
+  { id: '11', title: "Alice's Adventures in Wonderland by Lewis Carroll" },
   { id: '1661', title: 'The Adventures of Sherlock Holmes by Arthur Conan Doyle' },
   { id: '2701', title: 'Moby Dick; Or, The Whale by Herman Melville' },
   { id: '98', title: 'A Tale of Two Cities by Charles Dickens' },
   { id: '74', title: 'The Adventures of Tom Sawyer by Mark Twain' },
   { id: '345', title: 'Dracula by Bram Stoker' },
   { id: '1952', title: 'The Yellow Wallpaper by Charlotte Perkins Gilman' },
-  { id: '2542', title: 'A Doll’s House by Henrik Ibsen' },
+  { id: '2542', title: "A Doll's House by Henrik Ibsen" },
   { id: '5200', title: 'Metamorphosis by Franz Kafka' },
   { id: '1232', title: 'The Prince by Niccolò Machiavelli' },
-  { id: '4300', title: 'Ulysses by James Joyce' },
-  { id: '1400', title: 'Great Expectations by Charles Dickens' },
-  { id: '2600', title: 'War and Peace by Leo Tolstoy' },
-  { id: '1080', title: 'A Modest Proposal by Jonathan Swift' },
-  { id: '64317', title: 'The Picture of Dorian Gray by Oscar Wilde' },
-  { id: '520', title: 'The Waste Land by T. S. Eliot' },
-  { id: '46', title: 'A Christmas Carol in Prose; Being a Ghost Story of Christmas by Charles Dickens' },
-  { id: '140', title: 'The Wonderful Wizard of Oz by L. Frank Baum' },
-  { id: '4306', title: 'The Call of the Wild by Jack London' },
-  { id: '74', title: 'The Adventures of Tom Sawyer by Mark Twain' },
-  { id: '25305', title: 'The Scarlet Letter by Nathaniel Hawthorne' },
-  { id: '1260', title: 'Jane Eyre by Charlotte Brontë' },
-  { id: '345', title: 'Dracula by Bram Stoker' },
-  { id: '74', title: 'The Adventures of Tom Sawyer by Mark Twain' },
-  { id: '98', title: 'A Tale of Two Cities by Charles Dickens' },
   { id: '4300', title: 'Ulysses by James Joyce' },
   { id: '1400', title: 'Great Expectations by Charles Dickens' },
   { id: '2600', title: 'War and Peace by Leo Tolstoy' },
@@ -51,9 +40,9 @@ const top100 = [
 
 // Shakespeare from Project Gutenberg (parsed from shakespeare.txt)
 const shakespeareWorks = [
-  { id: '1543', title: 'A Lover’s Complaint' },
-  { id: '1514', title: 'A Midsummer Night’s Dream' },
-  { id: '1529', title: 'All’s Well That Ends Well' },
+  { id: '1543', title: "A Lover's Complaint" },
+  { id: '1514', title: "A Midsummer Night's Dream" },
+  { id: '1529', title: "All's Well That Ends Well" },
   { id: '1534', title: 'Antony and Cleopatra' },
   { id: '1523', title: 'As You Like It' },
   { id: '1535', title: 'Coriolanus' },
@@ -72,12 +61,11 @@ const shakespeareWorks = [
   { id: '1512', title: 'King Richard II' },
   { id: '1503', title: 'King Richard III' },
   { id: '1548', title: 'Locrine' },
-  { id: '1510', title: 'Love’s Labour’s Lost' },
+  { id: '1510', title: "Love's Labour's Lost" },
   { id: '1533', title: 'Macbeth' },
   { id: '1530', title: 'Measure for Measure' },
   { id: '1545', title: 'Mucedorus' },
   { id: '1519', title: 'Much Ado About Nothing' },
-  { id: '1520', title: 'Much Ado About Nothing' },
   { id: '1531', title: 'Othello, the Moor of Venice' },
   { id: '1537', title: 'Pericles' },
   { id: '1513', title: 'Romeo and Juliet' },
@@ -90,22 +78,33 @@ const shakespeareWorks = [
   { id: '1544', title: 'The Passionate Pilgrim' },
   { id: '1525', title: 'The Phoenix and the Turtle' },
   { id: '1505', title: 'The Rape of Lucrece' },
-  { id: '1506', title: 'The Rape of Lucrece' },
   { id: '1508', title: 'The Taming of the Shrew' },
   { id: '1540', title: 'The Tempest' },
   { id: '1507', title: 'The Tragedy of Titus Andronicus' },
   { id: '1542', title: 'The Two Noble Kinsmen' },
-  { id: '1539', title: 'The Winter’s Tale' },
+  { id: '1539', title: "The Winter's Tale" },
   { id: '1536', title: 'Timon of Athens' },
   { id: '1528', title: 'Troilus and Cressida' },
   { id: '1526', title: 'Twelfth Night' },
-  { id: '1527', title: 'Twelfth Night' },
   { id: '1509', title: 'Two Gentlemen of Verona' },
   { id: '1045', title: 'Venus and Adonis' },
 ];
 
+// Helper function to remove duplicates from collections
+const removeDuplicates = (collection) => {
+  const seen = new Set();
+  return collection.filter(book => {
+    const key = `${book.id}-${book.title}`;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+};
+
 // Italian collection from Project Gutenberg (parsed from italian.txt)
-const italianCollection = italianCollectionRaw.map(book => {
+const italianCollection = removeDuplicates(italianCollectionRaw.map(book => {
   let cleanTitle = book.title;
   if (book.author && cleanTitle.includes(book.author)) {
     cleanTitle = cleanTitle.replace(book.author, '').replace(/\s*by\s*$/, '').replace(/\(Italian\)/, '').replace(/\(Spanish\)/, '').trim();
@@ -113,7 +112,7 @@ const italianCollection = italianCollectionRaw.map(book => {
     cleanTitle = cleanTitle.replace(/[:\-–]+$/, '').trim();
   }
   return { ...book, title: cleanTitle };
-});
+}));
 
 // Group Italian books by author
 const italianByAuthor = italianCollection.reduce((acc, book) => {
@@ -132,30 +131,7 @@ const italianAuthorSections = Object.entries(italianByAuthor).map(([author, book
   count: books.length
 }));
 
-// Poetry collection from Project Gutenberg (parsed from poetry.txt)
-const poetryCollection = [
-  { id: '3011', title: 'The Lady of the Lake', author: 'Walter Scott' },
-  { id: '24571', title: 'Der Struwwelpeter (German)', author: 'Heinrich Hoffmann' },
-  { id: '6130', title: 'The Iliad', author: 'Homer' },
-  { id: '16328', title: 'Beowulf: An Anglo-Saxon Epic Poem', author: '' },
-  { id: '2147', title: 'The Works of Edgar Allan Poe — Volume 1', author: 'Edgar Allan Poe' },
-  { id: '61521', title: 'The Modern Traveller', author: 'Hilaire Belloc' },
-  { id: '1727', title: 'The Odyssey', author: 'Homer' },
-  { id: '14591', title: 'Faust [part 1]. Translated Into English in the Original Metres', author: 'Johann Wolfgang von Goethe' },
-  { id: '2199', title: 'The Iliad', author: 'Homer' },
-  { id: '56712', title: 'The Comic Poems of Thomas Hood', author: 'Thomas Hood' },
-  { id: '6122', title: 'Tobogganing on Parnassus', author: 'Franklin P. Adams' },
-  { id: '17161', title: 'Max und Moritz: Eine Bubengeschichte in sieben Streichen (German)', author: 'Wilhelm Busch' },
-  { id: '31036', title: 'The Lovers Assistant; Or, New Art of Love', author: 'Henry Fielding and Ovid' },
-  { id: '21700', title: 'Don Juan', author: 'Baron George Gordon Byron Byron' },
-  { id: '24869', title: 'The Rámáyan of Válmíki, translated into English verse', author: 'Valmiki' },
-  { id: '12116', title: 'Struwwelpeter: Merry Stories and Funny Pictures', author: 'Heinrich Hoffmann' },
-  { id: '15272', title: "Spenser's The Faerie Queene, Book I", author: 'Edmund Spenser' },
-  { id: '12242', title: 'Poems by Emily Dickinson, Three Series, Complete', author: 'Emily Dickinson' },
-  { id: '5131', title: "Childe Harold's Pilgrimage", author: 'Baron George Gordon Byron Byron' },
-  { id: '1934', title: 'Songs of Innocence and of Experience', author: 'William Blake' },
-  { id: '1322', title: 'Leaves of Grass', author: 'Walt Whitman' },
-];
+
 
 // Historical documents collection
 const historicalCollection = [
@@ -165,7 +141,7 @@ const historicalCollection = [
 ];
 
 // Group French books by author
-const frenchByAuthor = frenchCollection.reduce((acc, book) => {
+const frenchByAuthor = removeDuplicates(frenchCollection).reduce((acc, book) => {
   const author = book.author;
   if (!acc[author]) {
     acc[author] = [];
@@ -176,6 +152,118 @@ const frenchByAuthor = frenchCollection.reduce((acc, book) => {
 
 // Convert to array of author sections
 const frenchAuthorSections = Object.entries(frenchByAuthor).map(([author, books]) => ({
+  author,
+  books,
+  count: books.length
+}));
+
+// Spanish collection from Project Gutenberg (parsed from spanish.txt)
+const spanishCollection = removeDuplicates(spanishCollectionRaw.map(book => {
+  let cleanTitle = book.title;
+  if (book.author && cleanTitle.includes(book.author)) {
+    cleanTitle = cleanTitle.replace(book.author, '').replace(/\s*by\s*$/, '').replace(/\(Spanish\)/, '').trim();
+    // Remove extra punctuation or whitespace
+    cleanTitle = cleanTitle.replace(/[:\-–]+$/, '').trim();
+  }
+  return { ...book, title: cleanTitle };
+}));
+
+// Group Spanish books by author
+const spanishByAuthor = spanishCollection.reduce((acc, book) => {
+  const author = book.author;
+  if (!acc[author]) {
+    acc[author] = [];
+  }
+  acc[author].push(book);
+  return acc;
+}, {});
+
+// Convert to array of author sections
+const spanishAuthorSections = Object.entries(spanishByAuthor).map(([author, books]) => ({
+  author,
+  books,
+  count: books.length
+}));
+
+// German collection from Project Gutenberg (parsed from german.txt)
+const germanCollection = removeDuplicates(germanCollectionRaw.map(book => {
+  let cleanTitle = book.title;
+  if (book.author && cleanTitle.includes(book.author)) {
+    cleanTitle = cleanTitle.replace(book.author, '').replace(/\s*by\s*$/, '').replace(/\(German\)/, '').trim();
+    // Remove extra punctuation or whitespace
+    cleanTitle = cleanTitle.replace(/[:\-–]+$/, '').trim();
+  }
+  return { ...book, title: cleanTitle };
+}));
+
+// Group German books by author
+const germanByAuthor = germanCollection.reduce((acc, book) => {
+  const author = book.author;
+  if (!acc[author]) {
+    acc[author] = [];
+  }
+  acc[author].push(book);
+  return acc;
+}, {});
+
+// Convert to array of author sections
+const germanAuthorSections = Object.entries(germanByAuthor).map(([author, books]) => ({
+  author,
+  books,
+  count: books.length
+}));
+
+// Poetry collection from Project Gutenberg (parsed from poetry.txt)
+const poetryCollection = removeDuplicates(poetryCollectionRaw.map(book => {
+  let cleanTitle = book.title;
+  if (book.author && cleanTitle.includes(book.author)) {
+    cleanTitle = cleanTitle.replace(book.author, '').replace(/\s*by\s*$/, '').replace(/\(French\)/, '').replace(/\(Spanish\)/, '').replace(/\(German\)/, '').replace(/\(Italian\)/, '').trim();
+    // Remove extra punctuation or whitespace
+    cleanTitle = cleanTitle.replace(/[:\-–]+$/, '').trim();
+  }
+  return { ...book, title: cleanTitle };
+}));
+
+// Group Poetry books by author
+const poetryByAuthor = poetryCollection.reduce((acc, book) => {
+  const author = book.author;
+  if (!acc[author]) {
+    acc[author] = [];
+  }
+  acc[author].push(book);
+  return acc;
+}, {});
+
+// Convert to array of author sections
+const poetryAuthorSections = Object.entries(poetryByAuthor).map(([author, books]) => ({
+  author,
+  books,
+  count: books.length
+}));
+
+// English collection from Project Gutenberg (parsed from english.txt)
+const englishCollection = removeDuplicates(englishCollectionRaw.map(book => {
+  let cleanTitle = book.title;
+  if (book.author && cleanTitle.includes(book.author)) {
+    cleanTitle = cleanTitle.replace(book.author, '').replace(/\s*by\s*$/, '').replace(/\(English\)/, '').trim();
+    // Remove extra punctuation or whitespace
+    cleanTitle = cleanTitle.replace(/[:\-–]+$/, '').trim();
+  }
+  return { ...book, title: cleanTitle };
+}));
+
+// Group English books by author
+const englishByAuthor = englishCollection.reduce((acc, book) => {
+  const author = book.author;
+  if (!acc[author]) {
+    acc[author] = [];
+  }
+  acc[author].push(book);
+  return acc;
+}, {});
+
+// Convert to array of author sections
+const englishAuthorSections = Object.entries(englishByAuthor).map(([author, books]) => ({
   author,
   books,
   count: books.length
@@ -213,11 +301,36 @@ const collections = [
     authorSections: italianAuthorSections, // Add author sections for Italian collection
   },
   {
+    key: 'spanish',
+    title: 'Spanish Literature',
+    items: spanishCollection,
+    onClickItem: 'handleReadSpanish',
+    itemKey: 'id',
+    authorSections: spanishAuthorSections, // Add author sections for Spanish collection
+  },
+  {
+    key: 'german',
+    title: 'German Literature',
+    items: germanCollection,
+    onClickItem: 'handleReadGerman',
+    itemKey: 'id',
+    authorSections: germanAuthorSections, // Add author sections for German collection
+  },
+  {
     key: 'poetry',
     title: 'Poetry Collection',
     items: poetryCollection,
     onClickItem: 'handleReadPoetry',
     itemKey: 'id',
+    authorSections: poetryAuthorSections, // Add author sections for Poetry collection
+  },
+  {
+    key: 'english',
+    title: 'English Literature',
+    items: englishCollection,
+    onClickItem: 'handleReadEnglish',
+    itemKey: 'id',
+    authorSections: englishAuthorSections, // Add author sections for English collection
   },
   {
     key: 'historical',
@@ -234,6 +347,8 @@ const collectionMeta = {
   top100: { emoji: '📚', color: '#e0f2fe' },
   french: { emoji: '🇫🇷', color: '#fef9c3' },
   italian: { emoji: '🇮🇹', color: '#e0fce7' },
+  spanish: { emoji: '🇪🇸', color: '#e0f2fe' },
+  german: { emoji: '🇩🇪', color: '#e0fce7' },
   poetry: { emoji: '📝', color: '#fff7ed' },
   historical: { emoji: '📜', color: '#fef3c7' },
 };
@@ -271,9 +386,13 @@ export default function Library() {
   const [loadingId, setLoadingId] = useState(null);
   const [loadingFrench, setLoadingFrench] = useState(null);
   const [loadingItalian, setLoadingItalian] = useState(null);
+  const [loadingSpanish, setLoadingSpanish] = useState(null);
+  const [loadingGerman, setLoadingGerman] = useState(null);
   const [loadingPoetry, setLoadingPoetry] = useState(null);
+  const [loadingEnglish, setLoadingEnglish] = useState(null);
   const [loadingHistorical, setLoadingHistorical] = useState(null);
   const [expanded, setExpanded] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
   const [lang, setLang] = useState('en');
   const [customUrl, setCustomUrl] = useState('');
   const [customLoading, setCustomLoading] = useState(false);
@@ -396,6 +515,58 @@ export default function Library() {
     }
   };
 
+  // In the handler for Spanish, use the Gutenberg plain text URL pattern
+  const handleReadSpanish = async (work) => {
+    setLoadingSpanish(work.id);
+    const gutenbergUrl1 = `https://www.gutenberg.org/files/${work.id}/${work.id}-0.txt`;
+    const gutenbergUrl2 = `https://www.gutenberg.org/cache/epub/${work.id}/pg${work.id}.txt`;
+    let text = null;
+    try {
+      let res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl1)}`);
+      if (res.ok) {
+        text = await res.text();
+      } else {
+        res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl2)}`);
+        if (res.ok) text = await res.text();
+      }
+      if (!text) throw new Error('Failed to fetch Spanish work');
+      localStorage.setItem('explainer:bookText', text);
+      localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
+      saveRecentBook(work);
+      router.push('/');
+    } catch (err) {
+      alert('Could not load this work.');
+    } finally {
+      setLoadingSpanish(null);
+    }
+  };
+
+  // In the handler for German, use the Gutenberg plain text URL pattern
+  const handleReadGerman = async (work) => {
+    setLoadingGerman(work.id);
+    const gutenbergUrl1 = `https://www.gutenberg.org/files/${work.id}/${work.id}-0.txt`;
+    const gutenbergUrl2 = `https://www.gutenberg.org/cache/epub/${work.id}/pg${work.id}.txt`;
+    let text = null;
+    try {
+      let res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl1)}`);
+      if (res.ok) {
+        text = await res.text();
+      } else {
+        res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl2)}`);
+        if (res.ok) text = await res.text();
+      }
+      if (!text) throw new Error('Failed to fetch German work');
+      localStorage.setItem('explainer:bookText', text);
+      localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
+      saveRecentBook(work);
+      router.push('/');
+    } catch (err) {
+      alert('Could not load this work.');
+    } finally {
+      setLoadingGerman(null);
+    }
+  };
+
   // In the handler for Poetry, use the Gutenberg plain text URL pattern
   const handleReadPoetry = async (work) => {
     setLoadingPoetry(work.id);
@@ -428,6 +599,38 @@ export default function Library() {
     }
   };
 
+  // Handler for English literature
+  const handleReadEnglish = async (work) => {
+    setLoadingEnglish(work.id);
+    let text = null;
+    try {
+      if (work.directUrl) {
+        // Use the direct link if present
+        const res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(work.directUrl)}`);
+        if (res.ok) text = await res.text();
+      } else {
+        const gutenbergUrl1 = `https://www.gutenberg.org/files/${work.id}/${work.id}-0.txt`;
+        const gutenbergUrl2 = `https://www.gutenberg.org/cache/epub/${work.id}/pg${work.id}.txt`;
+        let res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl1)}`);
+        if (res.ok) {
+          text = await res.text();
+        } else {
+          res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl2)}`);
+          if (res.ok) text = await res.text();
+        }
+      }
+      if (!text) throw new Error('Failed to fetch English work');
+      localStorage.setItem('explainer:bookText', text);
+      localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
+      saveRecentBook(work);
+      router.push('/');
+    } catch (err) {
+      alert('Could not load this work.');
+    } finally {
+      setLoadingEnglish(null);
+    }
+  };
+
   // Handler for historical documents
   const handleReadHistorical = async (work) => {
     setLoadingHistorical(work.id);
@@ -446,13 +649,61 @@ export default function Library() {
     }
   };
 
+  // Helper function to handle item selection and loading
+  const handleItemClick = (collectionKey, item, handler) => {
+    // Prevent text selection
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    }
+    // Set the selected item
+    setSelectedItem({ collectionKey, itemId: item.id });
+    // Call the original handler
+    handler(item);
+  };
+
+  // Reusable style object for clickable items
+  const getClickableItemStyle = (isSelected, isLoading) => ({
+    color: isSelected ? '#1d4ed8' : 'black',
+    cursor: isLoading ? 'wait' : 'pointer',
+    textDecoration: 'underline',
+    fontWeight: isSelected ? 600 : 500,
+    fontSize: 15,
+    opacity: isLoading ? 0.6 : 1,
+    transition: 'all 0.2s',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: '100%',
+    display: 'inline-block',
+    userSelect: 'none',
+    WebkitUserSelect: 'none',
+    MozUserSelect: 'none',
+    msUserSelect: 'none',
+  });
+
+  // Reusable style object for item containers
+  const getItemContainerStyle = (isSelected, borderBottom) => ({
+    padding: '6px 8px',
+    borderBottom: borderBottom ? '1px solid #f1f5f9' : 'none',
+    display: 'flex',
+    alignItems: 'center',
+    minWidth: 0,
+    maxWidth: '100%',
+    background: isSelected ? '#dbeafe' : 'transparent',
+    borderRadius: 4,
+    transition: 'background-color 0.2s',
+  });
+
   // Map collection key to handler and loading state
   const handlerMap = {
     shakespeare: handleReadShakespeare,
     top100: handleReadGutenberg,
     french: handleReadFrench,
     italian: handleReadItalian,
+    spanish: handleReadSpanish,
+    german: handleReadGerman,
     poetry: handleReadPoetry,
+    english: handleReadEnglish,
     historical: handleReadHistorical,
   };
   const loadingMap = {
@@ -460,7 +711,10 @@ export default function Library() {
     top100: loadingId,
     french: loadingFrench,
     italian: loadingItalian,
+    spanish: loadingSpanish,
+    german: loadingGerman,
     poetry: loadingPoetry,
+    english: loadingEnglish,
     historical: loadingHistorical,
   };
 
@@ -722,68 +976,138 @@ export default function Library() {
                             <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
                           </div>
                           {/* Books by this author */}
-                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => (
-                            <div
-                              key={`${item[col.itemKey]}-${i}`}
-                              style={{
-                                padding: '6px 8px',
-                                borderBottom: (i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
-                                display: 'flex',
-                                alignItems: 'center',
-                                minWidth: 0,
-                                maxWidth: '100%',
-                                paddingLeft: '16px', // Indent books under author
-                              }}
-                            >
-                              <span
-                                onClick={() => handlerMap[col.key](item)}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => {
+                            const isSelected = selectedItem?.collectionKey === col.key && selectedItem?.itemId === item[col.itemKey];
+                            const isLoading = loadingMap[col.key] === item[col.itemKey];
+                            const hasBorder = i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1;
+                            return (
+                              <div
+                                key={`${item[col.itemKey]}-${i}`}
                                 style={{
-                                  color: 'black',
-                                  cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
-                                  textDecoration: 'underline',
-                                  fontWeight: 500,
-                                  fontSize: 15,
-                                  opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
-                                  transition: 'color 0.2s',
-                                  whiteSpace: 'nowrap',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  maxWidth: '100%',
-                                  display: 'inline-block',
+                                  ...getItemContainerStyle(isSelected, hasBorder),
+                                  paddingLeft: '16px', // Indent books under author
                                 }}
-                                title={item.title}
-                                onMouseOver={e => e.target.style.color = '#666'}
-                                onMouseOut={e => e.target.style.color = 'black'}
                               >
-                                {loadingMap[col.key] === item[col.itemKey]
-                                  ? t('loading', lang)
-                                  : item.title}
-                              </span>
-                            </div>
-                          ))}
+                                <span
+                                  onClick={() => handleItemClick(col.key, item, handlerMap[col.key])}
+                                  style={getClickableItemStyle(isSelected, isLoading)}
+                                  title={item.title}
+                                  onMouseOver={e => !isSelected && !isLoading && (e.target.style.color = '#666')}
+                                  onMouseOut={e => !isSelected && !isLoading && (e.target.style.color = 'black')}
+                                >
+                                  {isLoading
+                                    ? t('loading', lang)
+                                    : item.title}
+                                </span>
+                              </div>
+                            );
+                          })}
                           {/* More/Less button for author */}
                           {section.books.length > 5 && (
                             <button
                               onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
                               style={{
                                 margin: '8px 0 8px 16px',
-                                background: '#f1f5f9',
+                                background: '#e0e7ef',
                                 color: '#2563eb',
                                 border: 'none',
-                                borderRadius: 8,
-                                padding: '4px 14px',
-                                fontWeight: 600,
-                                fontSize: 14,
+                                borderRadius: 6,
+                                padding: '2px 10px',
+                                fontWeight: 500,
+                                fontSize: 13,
                                 cursor: 'pointer',
-                                display: 'inline-block',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                boxShadow: '0 1px 2px #0001',
                               }}
+                              title={expanded[`${col.key}-${section.author}`] ? `Show fewer works by ${section.author}` : `Show more works by ${section.author}`}
                             >
-                              {expanded[`${col.key}-${section.author}`] ? 'Less' : 'More'}
+                              <span>{expanded[`${col.key}-${section.author}`] ? '➖' : '➕'}</span>
+                              {expanded[`${col.key}-${section.author}`]
+                                ? `Show less by ${section.author}`
+                                : `Show more by ${section.author}`}
                             </button>
                           )}
                         </div>
                       ))
                     ) : col.key === 'italian' && col.authorSections ? (
+                      (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
+                        <div key={section.author}>
+                          {/* Author header */}
+                          <div
+                            style={{
+                              padding: '14px 8px 8px 8px',
+                              background: '#f8fafc',
+                              borderBottom: '1px solid #e2e8f0',
+                              fontWeight: 600,
+                              fontSize: 14,
+                              color: '#475569',
+                              display: 'flex',
+                              alignItems: 'center',
+                              minWidth: 0,
+                              width: '100%',
+                            }}
+                          >
+                            <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
+                          </div>
+                          {/* Books by this author */}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => {
+                            const isSelected = selectedItem?.collectionKey === col.key && selectedItem?.itemId === item[col.itemKey];
+                            const isLoading = loadingMap[col.key] === item[col.itemKey];
+                            const hasBorder = i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1;
+                            return (
+                              <div
+                                key={`${item[col.itemKey]}-${i}`}
+                                style={{
+                                  ...getItemContainerStyle(isSelected, hasBorder),
+                                  paddingLeft: '16px', // Indent books under author
+                                }}
+                              >
+                                <span
+                                  onClick={() => handleItemClick(col.key, item, handlerMap[col.key])}
+                                  style={getClickableItemStyle(isSelected, isLoading)}
+                                  title={item.title}
+                                  onMouseOver={e => !isSelected && !isLoading && (e.target.style.color = '#666')}
+                                  onMouseOut={e => !isSelected && !isLoading && (e.target.style.color = 'black')}
+                                >
+                                  {isLoading
+                                    ? t('loading', lang)
+                                    : item.title}
+                                </span>
+                              </div>
+                            );
+                          })}
+                          {/* More/Less button for author */}
+                          {section.books.length > 5 && (
+                            <button
+                              onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
+                              style={{
+                                margin: '8px 0 8px 16px',
+                                background: '#e0e7ef',
+                                color: '#2563eb',
+                                border: 'none',
+                                borderRadius: 6,
+                                padding: '2px 10px',
+                                fontWeight: 500,
+                                fontSize: 13,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                boxShadow: '0 1px 2px #0001',
+                              }}
+                              title={expanded[`${col.key}-${section.author}`] ? `Show fewer works by ${section.author}` : `Show more works by ${section.author}`}
+                            >
+                              <span>{expanded[`${col.key}-${section.author}`] ? '➖' : '➕'}</span>
+                              {expanded[`${col.key}-${section.author}`]
+                                ? `Show less by ${section.author}`
+                                : `Show more by ${section.author}`}
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : col.key === 'spanish' && col.authorSections ? (
                       (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
                         <div key={section.author}>
                           {/* Author header */}
@@ -849,62 +1173,410 @@ export default function Library() {
                               onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
                               style={{
                                 margin: '8px 0 8px 16px',
-                                background: '#f1f5f9',
+                                background: '#e0e7ef',
                                 color: '#2563eb',
                                 border: 'none',
-                                borderRadius: 8,
-                                padding: '4px 14px',
-                                fontWeight: 600,
-                                fontSize: 14,
+                                borderRadius: 6,
+                                padding: '2px 10px',
+                                fontWeight: 500,
+                                fontSize: 13,
                                 cursor: 'pointer',
-                                display: 'inline-block',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                boxShadow: '0 1px 2px #0001',
+                              }}
+                              title={expanded[`${col.key}-${section.author}`] ? `Show fewer works by ${section.author}` : `Show more works by ${section.author}`}
+                            >
+                              <span>{expanded[`${col.key}-${section.author}`] ? '➖' : '➕'}</span>
+                              {expanded[`${col.key}-${section.author}`]
+                                ? `Show less by ${section.author}`
+                                : `Show more by ${section.author}`}
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : col.key === 'spanish' && col.authorSections ? (
+                      (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
+                        <div key={section.author}>
+                          {/* Author header */}
+                          <div
+                            style={{
+                              padding: '14px 8px 8px 8px',
+                              background: '#f8fafc',
+                              borderBottom: '1px solid #e2e8f0',
+                              fontWeight: 600,
+                              fontSize: 14,
+                              color: '#475569',
+                              display: 'flex',
+                              alignItems: 'center',
+                              minWidth: 0,
+                              width: '100%',
+                            }}
+                          >
+                            <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
+                          </div>
+                          {/* Books by this author */}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => (
+                            <div
+                              key={`${item[col.itemKey]}-${i}`}
+                              style={{
+                                padding: '6px 8px',
+                                borderBottom: (i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minWidth: 0,
+                                maxWidth: '100%',
+                                paddingLeft: '16px', // Indent books under author
                               }}
                             >
-                              {expanded[`${col.key}-${section.author}`] ? 'Less' : 'More'}
+                              <span
+                                onClick={() => handlerMap[col.key](item)}
+                                style={{
+                                  color: 'black',
+                                  cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
+                                  textDecoration: 'underline',
+                                  fontWeight: 500,
+                                  fontSize: 15,
+                                  opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
+                                  transition: 'color 0.2s',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '100%',
+                                  display: 'inline-block',
+                                }}
+                                title={item.title}
+                                onMouseOver={e => e.target.style.color = '#666'}
+                                onMouseOut={e => e.target.style.color = 'black'}
+                              >
+                                {loadingMap[col.key] === item[col.itemKey]
+                                  ? t('loading', lang)
+                                  : item.title}
+                              </span>
+                            </div>
+                          ))}
+                          {/* More/Less button for author */}
+                          {section.books.length > 5 && (
+                            <button
+                              onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
+                              style={{
+                                margin: '8px 0 8px 16px',
+                                background: '#e0e7ef',
+                                color: '#2563eb',
+                                border: 'none',
+                                borderRadius: 6,
+                                padding: '2px 10px',
+                                fontWeight: 500,
+                                fontSize: 13,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                boxShadow: '0 1px 2px #0001',
+                              }}
+                              title={expanded[`${col.key}-${section.author}`] ? `Show fewer works by ${section.author}` : `Show more works by ${section.author}`}
+                            >
+                              <span>{expanded[`${col.key}-${section.author}`] ? '➖' : '➕'}</span>
+                              {expanded[`${col.key}-${section.author}`]
+                                ? `Show less by ${section.author}`
+                                : `Show more by ${section.author}`}
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : col.key === 'german' && col.authorSections ? (
+                      (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
+                        <div key={section.author}>
+                          {/* Author header */}
+                          <div
+                            style={{
+                              padding: '14px 8px 8px 8px',
+                              background: '#f8fafc',
+                              borderBottom: '1px solid #e2e8f0',
+                              fontWeight: 600,
+                              fontSize: 14,
+                              color: '#475569',
+                              display: 'flex',
+                              alignItems: 'center',
+                              minWidth: 0,
+                              width: '100%',
+                            }}
+                          >
+                            <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
+                          </div>
+                          {/* Books by this author */}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => (
+                            <div
+                              key={`${item[col.itemKey]}-${i}`}
+                              style={{
+                                padding: '6px 8px',
+                                borderBottom: (i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minWidth: 0,
+                                maxWidth: '100%',
+                                paddingLeft: '16px', // Indent books under author
+                              }}
+                            >
+                              <span
+                                onClick={() => handlerMap[col.key](item)}
+                                style={{
+                                  color: 'black',
+                                  cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
+                                  textDecoration: 'underline',
+                                  fontWeight: 500,
+                                  fontSize: 15,
+                                  opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
+                                  transition: 'color 0.2s',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '100%',
+                                  display: 'inline-block',
+                                }}
+                                title={item.title}
+                                onMouseOver={e => e.target.style.color = '#666'}
+                                onMouseOut={e => e.target.style.color = 'black'}
+                              >
+                                {loadingMap[col.key] === item[col.itemKey]
+                                  ? t('loading', lang)
+                                  : item.title}
+                              </span>
+                            </div>
+                          ))}
+                          {/* More/Less button for author */}
+                          {section.books.length > 5 && (
+                            <button
+                              onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
+                              style={{
+                                margin: '8px 0 8px 16px',
+                                background: '#e0e7ef',
+                                color: '#2563eb',
+                                border: 'none',
+                                borderRadius: 6,
+                                padding: '2px 10px',
+                                fontWeight: 500,
+                                fontSize: 13,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                boxShadow: '0 1px 2px #0001',
+                              }}
+                              title={expanded[`${col.key}-${section.author}`] ? `Show fewer works by ${section.author}` : `Show more works by ${section.author}`}
+                            >
+                              <span>{expanded[`${col.key}-${section.author}`] ? '➖' : '➕'}</span>
+                              {expanded[`${col.key}-${section.author}`]
+                                ? `Show less by ${section.author}`
+                                : `Show more by ${section.author}`}
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : col.key === 'poetry' && col.authorSections ? (
+                      (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
+                        <div key={section.author}>
+                          {/* Author header */}
+                          <div
+                            style={{
+                              padding: '14px 8px 8px 8px',
+                              background: '#f8fafc',
+                              borderBottom: '1px solid #e2e8f0',
+                              fontWeight: 600,
+                              fontSize: 14,
+                              color: '#475569',
+                              display: 'flex',
+                              alignItems: 'center',
+                              minWidth: 0,
+                              width: '100%',
+                            }}
+                          >
+                            <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
+                          </div>
+                          {/* Books by this author */}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => (
+                            <div
+                              key={`${item[col.itemKey]}-${i}`}
+                              style={{
+                                padding: '6px 8px',
+                                borderBottom: (i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minWidth: 0,
+                                maxWidth: '100%',
+                                paddingLeft: '16px', // Indent books under author
+                              }}
+                            >
+                              <span
+                                onClick={() => handlerMap[col.key](item)}
+                                style={{
+                                  color: 'black',
+                                  cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
+                                  textDecoration: 'underline',
+                                  fontWeight: 500,
+                                  fontSize: 15,
+                                  opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
+                                  transition: 'color 0.2s',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '100%',
+                                  display: 'inline-block',
+                                }}
+                                title={item.title}
+                                onMouseOver={e => e.target.style.color = '#666'}
+                                onMouseOut={e => e.target.style.color = 'black'}
+                              >
+                                {loadingMap[col.key] === item[col.itemKey]
+                                  ? t('loading', lang)
+                                  : item.title}
+                              </span>
+                            </div>
+                          ))}
+                          {/* More/Less button for author */}
+                          {section.books.length > 5 && (
+                            <button
+                              onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
+                              style={{
+                                margin: '8px 0 8px 16px',
+                                background: '#e0e7ef',
+                                color: '#2563eb',
+                                border: 'none',
+                                borderRadius: 6,
+                                padding: '2px 10px',
+                                fontWeight: 500,
+                                fontSize: 13,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                boxShadow: '0 1px 2px #0001',
+                              }}
+                              title={expanded[`${col.key}-${section.author}`] ? `Show fewer works by ${section.author}` : `Show more works by ${section.author}`}
+                            >
+                              <span>{expanded[`${col.key}-${section.author}`] ? '➖' : '➕'}</span>
+                              {expanded[`${col.key}-${section.author}`]
+                                ? `Show less by ${section.author}`
+                                : `Show more by ${section.author}`}
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : col.key === 'english' && col.authorSections ? (
+                      (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
+                        <div key={section.author}>
+                          {/* Author header */}
+                          <div
+                            style={{
+                              padding: '14px 8px 8px 8px',
+                              background: '#f8fafc',
+                              borderBottom: '1px solid #e2e8f0',
+                              fontWeight: 600,
+                              fontSize: 14,
+                              color: '#475569',
+                              display: 'flex',
+                              alignItems: 'center',
+                              minWidth: 0,
+                              width: '100%',
+                            }}
+                          >
+                            <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
+                          </div>
+                          {/* Books by this author */}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => (
+                            <div
+                              key={`${item[col.itemKey]}-${i}`}
+                              style={{
+                                padding: '6px 8px',
+                                borderBottom: (i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                minWidth: 0,
+                                maxWidth: '100%',
+                                paddingLeft: '16px', // Indent books under author
+                              }}
+                            >
+                              <span
+                                onClick={() => handlerMap[col.key](item)}
+                                style={{
+                                  color: 'black',
+                                  cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
+                                  textDecoration: 'underline',
+                                  fontWeight: 500,
+                                  fontSize: 15,
+                                  opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
+                                  transition: 'color 0.2s',
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  maxWidth: '100%',
+                                  display: 'inline-block',
+                                }}
+                                title={item.title}
+                                onMouseOver={e => e.target.style.color = '#666'}
+                                onMouseOut={e => e.target.style.color = 'black'}
+                              >
+                                {loadingMap[col.key] === item[col.itemKey]
+                                  ? t('loading', lang)
+                                  : item.title}
+                              </span>
+                            </div>
+                          ))}
+                          {/* More/Less button for author */}
+                          {section.books.length > 5 && (
+                            <button
+                              onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
+                              style={{
+                                margin: '8px 0 8px 16px',
+                                background: '#e0e7ef',
+                                color: '#2563eb',
+                                border: 'none',
+                                borderRadius: 6,
+                                padding: '2px 10px',
+                                fontWeight: 500,
+                                fontSize: 13,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                boxShadow: '0 1px 2px #0001',
+                              }}
+                              title={expanded[`${col.key}-${section.author}`] ? `Show fewer works by ${section.author}` : `Show more works by ${section.author}`}
+                            >
+                              <span>{expanded[`${col.key}-${section.author}`] ? '➖' : '➕'}</span>
+                              {expanded[`${col.key}-${section.author}`]
+                                ? `Show less by ${section.author}`
+                                : `Show more by ${section.author}`}
                             </button>
                           )}
                         </div>
                       ))
                     ) : (
                       // Regular rendering for other collections
-                      (expanded[col.key] ? col.items : col.items.slice(0, 10)).map((item, i) => (
-                        <div
-                          key={`${item[col.itemKey]}-${i}`}
-                          style={{
-                            padding: '6px 8px',
-                            borderBottom: (i < (expanded[col.key] ? col.items.length : Math.min(9, col.items.length - 1)) - 1) ? '1px solid #f1f5f9' : 'none',
-                            display: 'flex',
-                            alignItems: 'center',
-                            minWidth: 0,
-                            maxWidth: '100%',
-                          }}
-                        >
-                          <span
-                            onClick={() => handlerMap[col.key](item)}
-                            style={{
-                              color: 'black',
-                              cursor: loadingMap[col.key] === item[col.itemKey] ? 'wait' : 'pointer',
-                              textDecoration: 'underline',
-                              fontWeight: 500,
-                              fontSize: 15,
-                              opacity: loadingMap[col.key] === item[col.itemKey] ? 0.6 : 1,
-                              transition: 'color 0.2s',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              maxWidth: '100%',
-                              display: 'inline-block',
-                            }}
-                            title={`${item.title}${item.author ? ' by ' + item.author : ''}`}
-                            onMouseOver={e => e.target.style.color = '#666'}
-                            onMouseOut={e => e.target.style.color = 'black'}
+                      (expanded[col.key] ? col.items : col.items.slice(0, 10)).map((item, i) => {
+                        const isSelected = selectedItem?.collectionKey === col.key && selectedItem?.itemId === item[col.itemKey];
+                        const isLoading = loadingMap[col.key] === item[col.itemKey];
+                        const hasBorder = i < (expanded[col.key] ? col.items.length : Math.min(9, col.items.length - 1)) - 1;
+                        return (
+                          <div
+                            key={`${item[col.itemKey]}-${i}`}
+                            style={getItemContainerStyle(isSelected, hasBorder)}
                           >
-                            {loadingMap[col.key] === item[col.itemKey]
-                              ? t('loading', lang)
-                              : `${item.title}${item.author ? ' by ' + item.author : ''}`}
-                          </span>
-                        </div>
-                      ))
+                            <span
+                              onClick={() => handleItemClick(col.key, item, handlerMap[col.key])}
+                              style={getClickableItemStyle(isSelected, isLoading)}
+                              title={`${item.title}${item.author ? ' by ' + item.author : ''}`}
+                              onMouseOver={e => !isSelected && !isLoading && (e.target.style.color = '#666')}
+                              onMouseOut={e => !isSelected && !isLoading && (e.target.style.color = 'black')}
+                            >
+                              {isLoading
+                                ? t('loading', lang)
+                                : `${item.title}${item.author ? ' by ' + item.author : ''}`}
+                            </span>
+                          </div>
+                        );
+                      })
                     )}
                   </div>
                   {/* More/Less button at the bottom */}
@@ -912,18 +1584,23 @@ export default function Library() {
                     <button
                       onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
                       style={{
-                        margin: '12px auto 0 auto',
+                        margin: '16px auto 0 auto',
                         display: 'block',
-                        background: '#f1f5f9',
-                        color: '#2563eb',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
                         border: 'none',
-                        borderRadius: 8,
-                        padding: '6px 18px',
-                        fontWeight: 600,
-                        fontSize: 15,
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
                         cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
                       }}
+                      title={expanded[col.key] ? 'Show fewer authors in this collection' : 'Show more authors in this collection'}
                     >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
                       {expanded[col.key] ? 'Less' : 'More'}
                     </button>
                   )}
@@ -931,37 +1608,191 @@ export default function Library() {
                     <button
                       onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
                       style={{
-                        margin: '12px auto 0 auto',
+                        margin: '16px auto 0 auto',
                         display: 'block',
-                        background: '#f1f5f9',
-                        color: '#2563eb',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
                         border: 'none',
-                        borderRadius: 8,
-                        padding: '6px 18px',
-                        fontWeight: 600,
-                        fontSize: 15,
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
                         cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
                       }}
+                      title={expanded[col.key] ? 'Show fewer authors in this collection' : 'Show more authors in this collection'}
                     >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
                       {expanded[col.key] ? 'Less' : 'More'}
                     </button>
                   )}
-                  {col.key !== 'french' && col.key !== 'italian' && col.items.length > 10 && (
+                  {col.key === 'spanish' && col.authorSections && col.authorSections.length > 3 && (
                     <button
                       onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
                       style={{
-                        margin: '12px auto 0 auto',
+                        margin: '16px auto 0 auto',
                         display: 'block',
-                        background: '#f1f5f9',
-                        color: '#2563eb',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
                         border: 'none',
-                        borderRadius: 8,
-                        padding: '6px 18px',
-                        fontWeight: 600,
-                        fontSize: 15,
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
                         cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
                       }}
+                      title={expanded[col.key] ? 'Show fewer authors in this collection' : 'Show more authors in this collection'}
                     >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
+                  {col.key === 'german' && col.authorSections && col.authorSections.length > 3 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '16px auto 0 auto',
+                        display: 'block',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
+                      }}
+                      title={expanded[col.key] ? 'Show fewer authors in this collection' : 'Show more authors in this collection'}
+                    >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
+                  {col.key === 'poetry' && col.authorSections && col.authorSections.length > 3 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '16px auto 0 auto',
+                        display: 'block',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
+                      }}
+                      title={expanded[col.key] ? 'Show fewer authors in this collection' : 'Show more authors in this collection'}
+                    >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
+                  {col.key === 'english' && col.authorSections && col.authorSections.length > 3 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '16px auto 0 auto',
+                        display: 'block',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
+                      }}
+                      title={expanded[col.key] ? 'Show fewer authors in this collection' : 'Show more authors in this collection'}
+                    >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
+                  {col.key !== 'french' && col.key !== 'italian' && col.key !== 'spanish' && col.key !== 'german' && col.key !== 'poetry' && col.key !== 'english' && col.key !== 'shakespeare' && col.key !== 'top100' && col.items.length > 10 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '16px auto 0 auto',
+                        display: 'block',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
+                      }}
+                      title={expanded[col.key] ? 'Show fewer works in this collection' : 'Show more works in this collection'}
+                    >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
+                  {col.key === 'shakespeare' && col.items.length > 10 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '16px auto 0 auto',
+                        display: 'block',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
+                      }}
+                      title={expanded[col.key] ? 'Show fewer works in this collection' : 'Show more works in this collection'}
+                    >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
+                      {expanded[col.key] ? 'Less' : 'More'}
+                    </button>
+                  )}
+                  {col.key === 'top100' && col.items.length > 10 && (
+                    <button
+                      onClick={() => setExpanded((prev) => ({ ...prev, [col.key]: !prev[col.key] }))}
+                      style={{
+                        margin: '16px auto 0 auto',
+                        display: 'block',
+                        background: '#dbeafe',
+                        color: '#1d4ed8',
+                        border: 'none',
+                        borderRadius: 10,
+                        padding: '10px 28px',
+                        fontWeight: 700,
+                        fontSize: 17,
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px #0001',
+                        letterSpacing: 0.2,
+                        alignItems: 'center',
+                      }}
+                      title={expanded[col.key] ? 'Show fewer works in this collection' : 'Show more works in this collection'}
+                    >
+                      <span style={{fontSize: 20, marginRight: 8}}>👥</span>
                       {expanded[col.key] ? 'Less' : 'More'}
                     </button>
                   )}

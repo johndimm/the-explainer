@@ -231,6 +231,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     const checkMobile = () => {
       try {
         const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        console.log(`📱 Mobile detection: ${isMobileDevice}, User Agent: ${navigator.userAgent}`);
         setIsMobile(isMobileDevice);
       } catch (error) {
         console.warn('Failed to detect mobile device:', error);
@@ -441,7 +442,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       if (dragStartIndex !== null && !isDragging) {
         const dx = Math.abs(event.clientX - mouseStartPos.current.x);
         const dy = Math.abs(event.clientY - mouseStartPos.current.y);
-        if (dx > 5 || dy > 5) {
+        if (dx > 10 || dy > 10) { // Increased threshold to prevent accidental drag detection
+          console.log(`🖱️ Drag detected: dx=${dx}, dy=${dy}`);
           mouseMoved.current = true;
           setIsDragging(true);
           setSelectedLines(new Set([dragStartIndex]));
@@ -557,20 +559,32 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   }, [firstClickIndex, textLines, onTextSelection, isDragging, submitting]);
 
   const handleLineClick = useCallback((index, event) => {
+    console.log(`🎯 handleLineClick called for line ${index + 1}, isMobile: ${isMobile}, submitting: ${submitting}`);
+    
     if (isMobile) {
+      console.log(`📱 Mobile mode - calling handleLineSelection`);
       handleLineSelection(index);
     } else {
       // Desktop: immediate single-click selection
-      if (submitting) return;
+      if (submitting) {
+        console.log(`⏳ Already submitting, ignoring click`);
+        return;
+      }
       
       const selectedText = textLines[index];
+      console.log(`🖥️ Desktop mode - setting selected lines and submitting`);
       setSelectedLines(new Set([index]));
       setSubmitting(true);
+      
+      // Add visual feedback for debugging
+      console.log(`📝 Line ${index + 1} clicked and highlighted`);
+      
       setTimeout(() => {
+        console.log(`⏰ Timeout fired - sending text to chat`);
         onTextSelection(selectedText);
         setSelectedLines(new Set());
         setSubmitting(false);
-      }, 300);
+      }, 800); // Increased delay to make highlighting more visible
     }
   }, [isMobile, handleLineSelection, textLines, onTextSelection, submitting]);
 
@@ -650,6 +664,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   }, [isDragging, dragStartIndex]);
 
   const handleMouseUp = useCallback((event) => {
+    console.log(`🖱️ Mouse up - isDragging: ${isDragging}, selectedLines.size: ${selectedLines.size}, mouseMoved: ${mouseMoved.current}`);
+    
     if (isDragging && selectedLines.size > 0) {
       const selectedText = Array.from(selectedLines)
         .sort((a, b) => a - b)
@@ -663,10 +679,21 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         setDragStartIndex(null);
         setFirstClickIndex(null);
       }, 300);
+    } else if (!mouseMoved.current && dragStartIndex !== null) {
+      // Simple click - no drag detected
+      console.log(`🖱️ Simple click detected on line ${dragStartIndex + 1}`);
+      const selectedText = textLines[dragStartIndex];
+      setSelectedLines(new Set([dragStartIndex]));
+      setSubmitting(true);
+      setTimeout(() => {
+        onTextSelection(selectedText);
+        setSelectedLines(new Set());
+        setSubmitting(false);
+      }, 800);
     }
     setDragStartIndex(null);
     mouseMoved.current = false;
-  }, [isDragging, selectedLines, textLines, onTextSelection]);
+  }, [isDragging, selectedLines, textLines, onTextSelection, dragStartIndex, submitting]);
 
   const handleScroll = useCallback(({ scrollOffset, scrollUpdateWasRequested }) => {
     if (!scrollUpdateWasRequested) {
@@ -713,15 +740,32 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     const isSelected = selectedLines.has(index);
     const line = textLines[index] || '';
     
+    const handleClick = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log(`🖱️ Row ${index + 1} clicked, isMobile: ${isMobile}`);
+      handleLineClick(index, event);
+    };
+    
+    const handleMouseDown = (e) => {
+      console.log(`🖱️ Row ${index + 1} mouse down`);
+      handleLineMouseDown(index, e);
+    };
+    
+    const handleRowMouseUp = (e) => {
+      console.log(`🖱️ Row ${index + 1} mouse up`);
+      handleMouseUp(e);
+    };
+    
     return (
       <div
         className={`${styles.line} ${isSelected ? styles.selected : ''}`}
         style={{ ...style, width: '100%' }}
         data-index={index}
-        onClick={!isMobile ? (event) => handleLineClick(index, event) : undefined}
-        onMouseDown={!isMobile ? (e) => handleLineMouseDown(index, e) : undefined}
+        onClick={handleClick} // Always attach click handler
+        onMouseDown={handleMouseDown} // Always attach mouse down handler
         onMouseEnter={!isMobile ? () => handleLineMouseEnter(index) : undefined}
-        onMouseUp={!isMobile ? handleMouseUp : undefined}
+        onMouseUp={handleRowMouseUp} // Always attach mouse up handler
         onTouchStart={isMobile ? handleLineTouchStart : undefined}
         onTouchMove={isMobile ? handleLineTouchMove : undefined}
         onTouchEnd={isMobile ? handleLineTouchEnd : undefined}

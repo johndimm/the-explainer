@@ -1,0 +1,916 @@
+[
+            { "id": "40694", "title": "Philosophes et Écrivains Religieux", "author": "Barbey d'Aurevilly" }
+,
+            { "id": "6501", "title": "Supplément au Voyage de Bougainville", "author": "Diderot" }
+,
+            { "id": "13862", "title": "Le neveu de Rameau", "author": "Diderot" }
+,
+            { "id": "28602", "title": "Ceci n'est pas un conte", "author": "Diderot" }
+,
+            { "id": "28603", "title": "Les deux amis de Bourbonne", "author": "Diderot" }
+,
+            { "id": "28604", "title": "Entretien d'un père avec ses enfants", "author": "Diderot" }
+,
+            { "id": "28605", "title": "L'oiseau blanc: conte bleu", "author": "Diderot" }
+,
+            { "id": "28827", "title": "La religieuse", "author": "Diderot" }
+,
+            { "id": "37491", "title": "Les bijoux indiscrets", "author": "Diderot" }
+,
+            { "id": "39976", "title": "Jacques le fataliste et son maître", "author": "Diderot" }
+,
+            { "id": "50605", "title": "Lettres à Mademoiselle de Volland", "author": "Diderot" }
+,
+            { "id": "24260", "title": "Le temple de Gnide", "author": "Montesquieu" }
+,
+            { "id": "3644", "title": "Vie de Molière", "author": "Voltaire" }
+,
+            { "id": "4648", "title": "Memnon ou la sagesse humaine", "author": "Voltaire" }
+,
+            { "id": "4649", "title": "Micromégas", "author": "Voltaire" }
+,
+            { "id": "4651", "title": "L'Ingénu", "author": "Voltaire" }
+,
+            { "id": "4718", "title": "Histoire des voyages de Scarmentado", "author": "Voltaire" }
+,
+            { "id": "4771", "title": "Le Blanc et le Noir", "author": "Voltaire" }
+,
+            { "id": "4772", "title": "Jeannot et Colin", "author": "Voltaire" }
+,
+            { "id": "15804", "title": "La mort de César: Tragédie", "author": "Voltaire" }
+,
+            { "id": "18543", "title": "Abrégé de l'Histoire universelle depuis Charlemagne jusques à Charlequint (Tome 1)", "author": "Voltaire" }
+,
+            { "id": "25734", "title": "Correspondance avec le roi de Prusse", "author": "Voltaire" }
+,
+            { "id": "42131", "title": "Traité sur la tolérance", "author": "Voltaire" }
+,
+            { "id": "50340", "title": "Elémens de la philosophie de Neuton: Mis à la portée de tout le monde", "author": "Voltaire" }
+,
+            { "id": "68355", "title": "Œuvres - Tome XIX: Siècle de Louis XIV.—Tome I", "author": "Voltaire" }
+,
+            { "id": "69631", "title": "Œuvres - Tome XX: Siècle de Louis XIV.—Tome II", "author": "Voltaire" }
+,
+            { "id": "56498", "title": "La mandragola - La Clizia - Belfagor", "author": "Machiavelli" }
+,
+            { "id": "7337", "title": "道德經", "author": "Laozi" }
+,
+            { "id": "23839", "title": "論語", "author": "Confucius" }
+,
+            { "id": "24039", "title": "老子", "author": "Laozi" }
+,
+            { "id": "24178", "title": "孟子", "author": "Mencius" }
+,
+            { "id": "46", "title": "A Christmas Carol in Prose; Being a Ghost Story of Christmas", "author": "Dickens" }
+,
+            { "id": "322", "title": "St. Ives: Being the Adventures of a French Prisoner in England", "author": "Stevenson" }
+,
+            { "id": "423", "title": "Round the Red Lamp: Being Facts and Fancies of Medical Life", "author": "Doyle" }
+,
+            { "id": "451", "title": "The Shadow Line: A Confession", "author": "Conrad" }
+,
+            { "id": "772", "title": "Moral Emblems", "author": "Stevenson" }
+,
+            { "id": "791", "title": "The Princess", "author": "Tennyson" }
+,
+            { "id": "844", "title": "The Importance of Being Earnest: A Trivial Comedy for Serious People", "author": "Wilde" }
+,
+            { "id": "861", "title": "The Dominion of the Air: The Story of Aerial Navigation", "author": "Bacon" }
+,
+            { "id": "1047", "title": "The New Machiavelli", "author": "Wells" }
+,
+            { "id": "1247", "title": "Second April", "author": "Millay" }
+,
+            { "id": "2428", "title": "An Essay on Man; Moral Essays and Satires", "author": "Pope" }
+,
+            { "id": "2434", "title": "New Atlantis", "author": "Bacon" }
+,
+            { "id": "2537", "title": "The Pocket R.L.S.: Being Favourite Passages from the Works of Stevenson", "author": "Stevenson" }
+,
+            { "id": "2575", "title": "Confessions of an Inquiring Spirit and Some Miscellaneous Pieces", "author": "Coleridge" }
+,
+            { "id": "2615", "title": "Discourses on Satire and on Epic Poetry", "author": "Dryden" }
+,
+            { "id": "2868", "title": "The Green Mummy", "author": "Hume" }
+,
+            { "id": "2934", "title": "On the Advisableness of Improving Natural Knowledge", "author": "Huxley" }
+,
+            { "id": "2936", "title": "Geological Contemporaneity and Persistent Types of Life", "author": "Huxley" }
+,
+            { "id": "3207", "title": "Leviathan", "author": "Hobbes" }
+,
+            { "id": "3290", "title": "Valerius Terminus: Of the Interpretation of Nature", "author": "Bacon" }
+,
+            { "id": "3712", "title": "The Chateau of Prince Polignac", "author": "Trollope" }
+,
+            { "id": "3728", "title": "The Getting of Wisdom", "author": "Richardson" }
+,
+            { "id": "3743", "title": "The Writings of Thomas Paine — Volume 4 (1794-1796): The Age of Reason", "author": "Paine" }
+,
+            { "id": "3768", "title": "The Lamp and the Bell: A Drama In Five Acts", "author": "Millay" }
+,
+            { "id": "3828", "title": "Simon the Jester", "author": "Locke" }
+,
+            { "id": "3892", "title": "Memoirs of the Court of St. Cloud (Being secret letters from a gentleman at Paris to a nobleman in London) — Volume 1", "author": "Goldsmith" }
+,
+            { "id": "3893", "title": "Memoirs of the Court of St. Cloud (Being secret letters from a gentleman at Paris to a nobleman in London) — Volume 2", "author": "Goldsmith" }
+,
+            { "id": "3894", "title": "Memoirs of the Court of St. Cloud (Being secret letters from a gentleman at Paris to a nobleman in London) — Volume 3", "author": "Goldsmith" }
+,
+            { "id": "3895", "title": "Memoirs of the Court of St. Cloud (Being secret letters from a gentleman at Paris to a nobleman in London) — Volume 4", "author": "Goldsmith" }
+,
+            { "id": "3896", "title": "Memoirs of the Court of St. Cloud (Being secret letters from a gentleman at Paris to a nobleman in London) — Volume 5", "author": "Goldsmith" }
+,
+            { "id": "3897", "title": "Memoirs of the Court of St. Cloud (Being secret letters from a gentleman at Paris to a nobleman in London) — Volume 6", "author": "Goldsmith" }
+,
+            { "id": "3898", "title": "Memoirs of the Court of St. Cloud (Being secret letters from a gentleman at Paris to a nobleman in London) — Volume 7", "author": "Goldsmith" }
+,
+            { "id": "3899", "title": "Memoirs of the Court of St. Cloud (Being secret letters from a gentleman at Paris to a nobleman in London) — Complete", "author": "Goldsmith" }
+,
+            { "id": "4068", "title": "Froudacity; West Indian Fables by James Anthony Froude Explained by J. J. Thomas", "author": "Thomas" }
+,
+            { "id": "4095", "title": "Plato and Platonism", "author": "Pater" }
+,
+            { "id": "4223", "title": "The Mystery of a Hansom Cab", "author": "Hume" }
+,
+            { "id": "4225", "title": "First and Last Things: A Confession of Faith and Rule of Life", "author": "Wells" }
+,
+            { "id": "4287", "title": "The Red Planet", "author": "Locke" }
+,
+            { "id": "4320", "title": "An Enquiry Concerning the Principles of Morals", "author": "Hume" }
+,
+            { "id": "4379", "title": "The Fortunate Youth", "author": "Locke" }
+,
+            { "id": "4399", "title": "A Few Figs from Thistles", "author": "Millay" }
+,
+            { "id": "4506", "title": "Lost in the Fog", "author": "De Mille" }
+,
+            { "id": "4531", "title": "The Secret Passage", "author": "Hume" }
+,
+            { "id": "4583", "title": "Dialogues Concerning Natural Religion", "author": "Hume" }
+,
+            { "id": "4701", "title": "The Ethics of the Dust", "author": "Ruskin" }
+,
+            { "id": "4705", "title": "A Treatise of Human Nature", "author": "Hume" }
+,
+            { "id": "4722", "title": "An Essay Towards a New Theory of Vision", "author": "Berkeley" }
+,
+            { "id": "4723", "title": "A Treatise Concerning the Principles of Human Knowledge", "author": "Berkeley" }
+,
+            { "id": "4724", "title": "Three Dialogues Between Hylas and Philonous in Opposition to Sceptics and Atheists", "author": "Berkeley" }
+,
+            { "id": "4763", "title": "The Game of Logic", "author": "Carroll" }
+,
+            { "id": "4946", "title": "Madame Midas", "author": "Hume" }
+,
+            { "id": "5051", "title": "The Morals of Marcus Ordeyne : a Novel", "author": "Locke" }
+,
+            { "id": "5123", "title": "The Contest in America", "author": "Mill" }
+,
+            { "id": "5500", "title": "The Advancement of Learning", "author": "Bacon" }
+,
+            { "id": "5669", "title": "Considerations on Representative Government", "author": "Mill" }
+,
+            { "id": "5777", "title": "Life's Handicap: Being Stories of Mine Own People", "author": "Kipling" }
+,
+            { "id": "5790", "title": "Aria da Capo", "author": "Millay" }
+,
+            { "id": "6688", "title": "The Mill on the Floss", "author": "Eliot" }
+,
+            { "id": "6709", "title": "A Strange Manuscript Found in a Copper Cylinder", "author": "De Mille" }
+,
+            { "id": "6955", "title": "The Prince and Betty", "author": "Wodehouse" }
+,
+            { "id": "7235", "title": "The Bride of Fort Edward: Founded on an Incident of the Revolution", "author": "Bacon" }
+,
+            { "id": "7370", "title": "Second Treatise of Government", "author": "Locke" }
+,
+            { "id": "8111", "title": "After Long Years and Other Stories", "author": "Miller" }
+,
+            { "id": "8207", "title": "The Philosophy of the Plays of Shakspere Unfolded", "author": "Bacon" }
+,
+            { "id": "8430", "title": "The Mountebank", "author": "Locke" }
+,
+            { "id": "8572", "title": "Cord and Creese", "author": "De Mille" }
+,
+            { "id": "8711", "title": "The Living Link: A Novel", "author": "De Mille" }
+,
+            { "id": "8996", "title": "Practical Suggestions for Mother and Housewife", "author": "Miller" }
+,
+            { "id": "9662", "title": "An Enquiry Concerning Human Understanding", "author": "Hume" }
+,
+            { "id": "9675", "title": "The Mill on the Floss", "author": "Eliot" }
+,
+            { "id": "9924", "title": "Viviette", "author": "Locke" }
+,
+            { "id": "10378", "title": "Autobiography", "author": "Mill" }
+,
+            { "id": "10707", "title": "A Christmas Mystery: The Story of Three Wise Men", "author": "Locke" }
+,
+            { "id": "10771", "title": "Philippine Folklore Stories", "author": "Miller" }
+,
+            { "id": "11224", "title": "Utilitarianism", "author": "Mill" }
+,
+            { "id": "11325", "title": "The happiest time of their lives", "author": "Miller" }
+,
+            { "id": "11448", "title": "Cicero", "author": "Collins" }
+,
+            { "id": "11689", "title": "Are Women People? A Book of Rhymes for Suffrage Times", "author": "Miller" }
+,
+            { "id": "12004", "title": "Essays on some unsettled Questions of Political Economy", "author": "Mill" }
+,
+            { "id": "12376", "title": "Thirty Years in the Itinerancy", "author": "Miller" }
+,
+            { "id": "12506", "title": "Critiques and Addresses", "author": "Huxley" }
+,
+            { "id": "12641", "title": "The Queen of the Air: Being a Study of the Greek Myths of Cloud and Storm", "author": "Ruskin" }
+,
+            { "id": "12736", "title": "Masters of the English Novel: A Study of Principles and Personalities", "author": "Burton" }
+,
+            { "id": "12789", "title": "Ladies Must Live", "author": "Miller" }
+,
+            { "id": "13146", "title": "The Beauty and the Bolshevist", "author": "Miller" }
+,
+            { "id": "13257", "title": "The American Baron: A Novel", "author": "De Mille" }
+,
+            { "id": "13860", "title": "Men of the Bible; Some Lesser-Known Characters", "author": "Milligan" }
+,
+            { "id": "Being Memoirs Of His Adventures At Home And Abroad", "title": " And His Daughter Catriona", "author": "Stevenson" }
+,
+            { "id": "14395", "title": "Septimus", "author": "Locke" }
+,
+            { "id": "And the Neighbouring Islands: Alderney", "title": " Herm; Being a Small Contribution to the Ornitholony of the Channel Islands", "author": "Smith" }
+,
+            { "id": "14669", "title": "Jaffery", "author": "Locke" }
+,
+            { "id": "14835", "title": "The Burglar and the Blizzard: A Christmas Story", "author": "Miller" }
+,
+            { "id": "14953", "title": "Oklahoma and Other Poems", "author": "Miller" }
+,
+            { "id": "15356", "title": "Red Money", "author": "Hume" }
+,
+            { "id": "15517", "title": "Acetaria: A Discourse of Sallets", "author": "Evelyn" }
+,
+            { "id": "15888", "title": "The Unwritten Literature of the Hopi", "author": "Lockett" }
+,
+            { "id": "15953", "title": "The City of Delight: A Love Drama of the Siege and Fall of Jerusalem", "author": "Miller" }
+,
+            { "id": "16316", "title": "Outdoor Sports and Games", "author": "Miller" }
+,
+            { "id": "16366", "title": "The Workingman's Paradise: An Australian Labour Novel", "author": "Miller" }
+,
+            { "id": "16833", "title": "Auguste Comte and Positivism", "author": "Mill" }
+,
+            { "id": "17228", "title": "\"\"Swingin round the cirkle\"\"", "author": "Locke" }
+,
+            { "id": "17385", "title": "100 New Yorkers of the 1970s", "author": "Millard" }
+,
+            { "id": "19069", "title": "The Silent House", "author": "Hume" }
+,
+            { "id": "19179", "title": "Kelly Miller's History of the World War for Human Rights", "author": "Miller" }
+,
+            { "id": "19193", "title": "Making the Most of Life", "author": "Miller" }
+,
+            { "id": "19567", "title": "No Refuge but in Truth", "author": "Smith" }
+,
+            { "id": "19684", "title": "Columbus", "author": "Miller" }
+,
+            { "id": "19869", "title": "While Caroline Was Growing", "author": "Bacon" }
+,
+            { "id": "20160", "title": "A History of American Christianity", "author": "Bacon" }
+,
+            { "id": "20353", "title": "The Best Nonsense Verses", "author": "Bacon" }
+,
+            { "id": "21340", "title": "The Little Gold Miners of the Sierras and Other Stories", "author": "Miller" }
+,
+            { "id": "22013", "title": "The Lady of the Ice: A Novel", "author": "De Mille" }
+,
+            { "id": "22303", "title": "Personality in Literature", "author": "Scott-James" }
+,
+            { "id": "22310", "title": "In the Border Country", "author": "Bacon" }
+,
+            { "id": "22978", "title": "The Essays of Francis Bacon", "author": "Bacon" }
+,
+            { "id": "23364", "title": "A Reversion To Type", "author": "Bacon" }
+,
+            { "id": "23365", "title": "In The Valley Of The Shadow", "author": "Bacon" }
+,
+            { "id": "23366", "title": "A Philanthropist", "author": "Bacon" }
+,
+            { "id": "23367", "title": "Julia The Apostate", "author": "Bacon" }
+,
+            { "id": "23368", "title": "The courting of Lady Jane", "author": "Bacon" }
+,
+            { "id": "23369", "title": "Mrs. Dud's Sister", "author": "Bacon" }
+,
+            { "id": "23474", "title": "The Bishop's Secret", "author": "Hume" }
+,
+            { "id": "24006", "title": "Shadows of Shasta", "author": "Miller" }
+,
+            { "id": "24522", "title": "The Black Phantom", "author": "Miller" }
+,
+            { "id": "24603", "title": "The House of Toys", "author": "Miller" }
+,
+            { "id": "24680", "title": "The martyr of the catacombs", "author": "De Mille" }
+,
+            { "id": "24769", "title": "The Opal Serpent", "author": "Hume" }
+,
+            { "id": "25292", "title": "In Nesting Time", "author": "Miller" }
+,
+            { "id": "26063", "title": "A Coin of Edward VII: A Detective Story", "author": "Hume" }
+,
+            { "id": "26154", "title": "The Joyous Adventures of Aristide Pujol", "author": "Locke" }
+,
+            { "id": "26226", "title": "The Importance of Being Earnest", "author": "Wilde" }
+,
+            { "id": "26277", "title": "Margarita's Soul: The Romantic Recollections of a Man of Fifty", "author": "Bacon" }
+,
+            { "id": "27070", "title": "Report of the Committee of Inquiry into the Various Aspects of the Problem of Abortion in New Zealand", "author": "New Zealand. Committee of Inquiry into various aspects of the Problem of Abortion in New Zealand; McMillan" }
+,
+            { "id": "27083", "title": "The Subjection of Women", "author": "Mill" }
+,
+            { "id": "27277", "title": "Little Brothers of the Air", "author": "Miller" }
+,
+            { "id": "27349", "title": "Personal Friendships of Jesus", "author": "Miller" }
+,
+            { "id": "27351", "title": "Jeremiah : Being The Baird Lecture for 1922", "author": "Smith" }
+,
+            { "id": "27786", "title": "The Rough Road", "author": "Locke" }
+,
+            { "id": "27902", "title": "A Bird-Lover in the West", "author": "Miller" }
+,
+            { "id": "28065", "title": "The Pecan and its Culture", "author": "Hume" }
+,
+            { "id": "28111", "title": "Moment of Truth", "author": "Wells" }
+,
+            { "id": "28435", "title": "The Cryptogram: A Novel", "author": "De Mille" }
+,
+            { "id": "28489", "title": "The Belovéd Vagabond", "author": "Locke" }
+,
+            { "id": "28562", "title": "Wild Life on the Rockies", "author": "Mills" }
+,
+            { "id": "28696", "title": "Symbolic Logic", "author": "Carroll" }
+,
+            { "id": "28706", "title": "Oklahoma Sunshine", "author": "Miller" }
+,
+            { "id": "28838", "title": "The Getting of Wisdom", "author": "Richardson" }
+,
+            { "id": "28884", "title": "A History of England from Early Times: A Linked Index to the Project Gutenberg Editions", "author": "Hume" }
+,
+            { "id": "28950", "title": "The Geneva Protocol", "author": "Miller" }
+,
+            { "id": "28992", "title": "James Madison", "author": "Gay" }
+,
+            { "id": "29077", "title": "Byzantine Churches in Constantinople: Their History and Architecture", "author": "Van Millingen" }
+,
+            { "id": "29170", "title": "The Hoofer", "author": "Miller" }
+,
+            { "id": "29194", "title": "G-r-r-r...!", "author": "Locke" }
+,
+            { "id": "29297", "title": "Among the Brigands", "author": "De Mille" }
+,
+            { "id": "29440", "title": "Leading Articles on Various Subjects", "author": "Miller" }
+,
+            { "id": "29574", "title": "Seven Minor Epics of the English Renaissance (1596-1624)", "author": "Miller" }
+,
+            { "id": "29643", "title": "Death of a Spaceman", "author": "Miller" }
+,
+            { "id": "29681", "title": "A Mountain Boyhood", "author": "Mills" }
+,
+            { "id": "29744", "title": "Kristy's Rainy Day Picnic", "author": "Miller" }
+,
+            { "id": "Abridged with Critical", "title": " and a Sketch of the History of Political Economy", "author": "Mill" }
+,
+            { "id": "30185", "title": "London Lyrics", "author": "Locker-Lampson" }
+,
+            { "id": "30191", "title": "A Critic in Pall Mall: Being Extracts from Reviews and Miscellanies", "author": "Wilde" }
+,
+            { "id": "30343", "title": "A discourse concerning ridicule and irony in writing (1729)", "author": "Collins" }
+,
+            { "id": "30652", "title": "In The Seven Woods: Being Poems Chiefly of the Irish Heroic Age", "author": "Yeats" }
+,
+            { "id": "30688", "title": "Letters of a Radio-Engineer to His Son", "author": "Mills" }
+,
+            { "id": "30863", "title": "A Castle in Spain: A Novel", "author": "De Mille" }
+,
+            { "id": "30873", "title": "His Lordship's Leopard: A Truthful Narration of Some Impossible Facts", "author": "Wells" }
+,
+            { "id": "30888", "title": "The American Church Dictionary and Cyclopedia", "author": "Miller" }
+,
+            { "id": "31096", "title": "The Lily and the Cross: A Tale of Acadia", "author": "De Mille" }
+,
+            { "id": "31202", "title": "The Strange Cases of Dr. Stanchon", "author": "Bacon" }
+,
+            { "id": "31269", "title": "Upon The Tree-Tops", "author": "Miller" }
+,
+            { "id": "31388", "title": "Mother Truth's Melodies. Common Sense For Children. A Kindergarten", "author": "Miller" }
+,
+            { "id": "32416", "title": "Way of a Rebel", "author": "Miller" }
+,
+            { "id": "32531", "title": "Deepfreeze", "author": "Locke" }
+,
+            { "id": "32703", "title": "The Making of a Country Parish: A Story", "author": "Mills" }
+,
+            { "id": "32752", "title": "To Lhassa at Last", "author": "Millington" }
+,
+            { "id": "32775", "title": "The Ties That Bind", "author": "Miller" }
+,
+            { "id": "32813", "title": "The Wives of Henry the Eighth and the Parts They Played in History", "author": "Hume" }
+,
+            { "id": "32837", "title": "Check and Checkmate", "author": "Miller" }
+,
+            { "id": "32980", "title": "Confessions of an Opera Singer", "author": "Howard" }
+,
+            { "id": "33145", "title": "Come Out of the Kitchen! A Romance", "author": "Miller" }
+,
+            { "id": "33220", "title": "First Fam'lies of the Sierras", "author": "Miller" }
+,
+            { "id": "33582", "title": "Rhyme? and reason?", "author": "Carroll" }
+,
+            { "id": "33678", "title": "Reasonableness of Catholic Ceremonies and Practices", "author": "Burke" }
+,
+            { "id": "33898", "title": "The Haunted Sentry Box of Porto Rico", "author": "Miller" }
+,
+            { "id": "33925", "title": "The Geological Story of the Isle of Wight", "author": "Hughes" }
+,
+            { "id": "33985", "title": "Manslaughter", "author": "Miller" }
+,
+            { "id": "34124", "title": "The Panama Canal: A history and description of the enterprise", "author": "Mills" }
+,
+            { "id": "34835", "title": "The Pagan's Cup", "author": "Hume" }
+,
+            { "id": "34901", "title": "On Liberty", "author": "Mill" }
+,
+            { "id": "34942", "title": "Scamping Tricks and Odd Knowledge Occasionally Practised upon Public Works", "author": "Newman" }
+,
+            { "id": "35146", "title": "The Solitary Farm", "author": "Hume" }
+,
+            { "id": "35240", "title": "A Woman's Burden: A Novel", "author": "Hume" }
+,
+            { "id": "35534", "title": "How to be Happy Though Married: Being a Handbook to Marriage", "author": "Hardy" }
+,
+            { "id": "35597", "title": "A Treatise on the Brewing of Beer", "author": "Hughes" }
+,
+            { "id": "36120", "title": "Essays", "author": "Hume" }
+,
+            { "id": "36241", "title": "Canadian Fairy Tales", "author": "MacMillan" }
+,
+            { "id": "36346", "title": "The Mandarin's Fan", "author": "Hume" }
+,
+            { "id": "36965", "title": "Harriet Martineau", "author": "Miller" }
+,
+            { "id": "36991", "title": "The ghosts of their ancestors", "author": "Mills" }
+,
+            { "id": "37475", "title": "Peeps at Many Lands: Turkey", "author": "Van Millingen" }
+,
+            { "id": "37862", "title": "Saul of Tarsus: A Tale of the Early Christians", "author": "Miller" }
+,
+            { "id": "37995", "title": "The Diamond Fairy Book", "author": "Various; Millar" }
+,
+            { "id": "38078", "title": "Siam : The Land of the White Elephant as It Was and Is", "author": "Bacon" }
+,
+            { "id": "38138", "title": "Socialism", "author": "Mill" }
+,
+            { "id": "38141", "title": "John Dewey's logical theory", "author": "Howard" }
+,
+            { "id": "38275", "title": "Are these Things So? (1740) The Great Man's Answer to Are These things So: (1740)", "author": "Miller" }
+,
+            { "id": "38444", "title": "A Discourse Being Introductory to his Course of Lectures on Elocution and the English Language (1759)", "author": "Sheridan" }
+,
+            { "id": "38463", "title": "A Selection from the Works of Frederick Locker", "author": "Locker-Lampson" }
+,
+            { "id": "38661", "title": "A Walk and a Drive.", "author": "Miller" }
+,
+            { "id": "38766", "title": "Songs of the Mexican Seas", "author": "Miller" }
+,
+            { "id": "38815", "title": "Prowling about Panama", "author": "Miller" }
+,
+            { "id": "38995", "title": "The Sheep and Lamb", "author": "Miller" }
+,
+            { "id": "39074", "title": "Curiosities of Medical Experience", "author": "Millingen" }
+,
+            { "id": "39288", "title": "The Making of the New Testament", "author": "Bacon" }
+,
+            { "id": "40034", "title": "The Princess Dehra", "author": "Scott" }
+,
+            { "id": "40845", "title": "The Connexion Between Taste and Morals: Two lectures", "author": "Hopkins" }
+,
+            { "id": "40869", "title": "True Bear Stories", "author": "Miller" }
+,
+            { "id": "41071", "title": "A Son of Perdition: An Occult Romance", "author": "Hume" }
+,
+            { "id": "41141", "title": "The Children's Book of Birds", "author": "Miller" }
+,
+            { "id": "41955", "title": "The Ship in the Desert", "author": "Miller" }
+,
+            { "id": "41972", "title": "The Story of a Thousand-Year Pine", "author": "Mills" }
+,
+            { "id": "42030", "title": "The Rocky Mountain Wonderland", "author": "Mills" }
+,
+            { "id": "42042", "title": "The Spell of the Rockies", "author": "Mills" }
+,
+            { "id": "42056", "title": "The Red Window", "author": "Hume" }
+,
+            { "id": "42251", "title": "The Expositor's Bible: The Book of Revelation", "author": "Milligan" }
+,
+            { "id": "42282", "title": "In Beaver World", "author": "Mills" }
+,
+            { "id": "42381", "title": "Watched by Wild Animals", "author": "Mills" }
+,
+            { "id": "42559", "title": "The Story of Scotch", "author": "Mills" }
+,
+            { "id": "42692", "title": "An Idyll of All Fools' Day", "author": "Bacon" }
+,
+            { "id": "43150", "title": "The Constant Prince", "author": "Coleridge" }
+,
+            { "id": "43187", "title": "The Harlequin Opal: A Romance. Vol. 1 (of 3)", "author": "Hume" }
+,
+            { "id": "43188", "title": "The Harlequin Opal: A Romance. Vol. 2 (of 3)", "author": "Hume" }
+,
+            { "id": "43189", "title": "The Harlequin Opal: A Romance. Vol. 3 (of 3)", "author": "Hume" }
+,
+            { "id": "43288", "title": "The Third Volume", "author": "Hume" }
+,
+            { "id": "43439", "title": "Short Studies in Ethics: An Elementary Text-Book for Schools", "author": "Miller" }
+,
+            { "id": "43572", "title": "A Commentary to Kant's 'Critique of Pure Reason'", "author": "Smith" }
+,
+            { "id": "On Moral", "title": " and Literary Subjects", "author": "Webster" }
+,
+            { "id": "44919", "title": "Discourses in America", "author": "Arnold" }
+,
+            { "id": "45154", "title": "The Library of Work and Play: Outdoor Work", "author": "Miller" }
+,
+            { "id": "45368", "title": "The Outline of History: Being a Plain History of Life and Mankind", "author": "Wells" }
+,
+            { "id": "45522", "title": "The Gospel of Slavery: A Primer of Freedom", "author": "Thomas" }
+,
+            { "id": "45871", "title": "A Fleet in Being: Notes of Two Trips With The Channel Squadron", "author": "Kipling" }
+,
+            { "id": "46264", "title": "Songs from the Smoke", "author": "Miller" }
+,
+            { "id": "46761", "title": "The Wheat Princess", "author": "Webster" }
+,
+            { "id": "46892", "title": "The Eternal Boy: Being the Story of the Prodigious Hickey", "author": "Johnson" }
+,
+            { "id": "46958", "title": "Little Nobody", "author": "Miller" }
+,
+            { "id": "46964", "title": "Of Gardens: An essay", "author": "Bacon" }
+,
+            { "id": "47648", "title": "Geology: The Science of the Earth's Crust", "author": "Miller" }
+,
+            { "id": "47685", "title": "Lancaster's Choice", "author": "Miller" }
+,
+            { "id": "47702", "title": "Through the Gates of Old Romance", "author": "Mills" }
+,
+            { "id": "47744", "title": "Sekhet", "author": "Miller" }
+,
+            { "id": "48404", "title": "The Hero of Manila: Dewey on the Mississippi and the Pacific", "author": "Johnson" }
+,
+            { "id": "49662", "title": "The Cure of Rupture by Paraffin Injections", "author": "Miller" }
+,
+            { "id": "50125", "title": "The Court of Philip IV.: Spain in Decadence", "author": "Hume" }
+,
+            { "id": "50261", "title": "Philip II. of Spain", "author": "Hume" }
+,
+            { "id": "50349", "title": "A Basket of Barley Loaves", "author": "Miller" }
+,
+            { "id": "50479", "title": "Far-away Stories", "author": "Locke" }
+,
+            { "id": "50696", "title": "Railway Construction", "author": "Mills" }
+,
+            { "id": "51015", "title": "Moral Poison in Modern Fiction", "author": "Johnson" }
+,
+            { "id": "51126", "title": "The Princess and the Physicist", "author": "Smith" }
+,
+            { "id": "51651", "title": "Conditionally Human", "author": "Miller" }
+,
+            { "id": "52094", "title": "War and Misrule (1307-1399)", "author": "Locke" }
+,
+            { "id": "52307", "title": "The Life of a Foxhound", "author": "Mills" }
+,
+            { "id": "53993", "title": "At the Gate of Samaria", "author": "Locke" }
+,
+            { "id": "53994", "title": "Stella Maris", "author": "Locke" }
+,
+            { "id": "53995", "title": "A Study In Shadows", "author": "Locke" }
+,
+            { "id": "53996", "title": "Where Love Is", "author": "Locke" }
+,
+            { "id": "54134", "title": "The Senator's Bride", "author": "Miller" }
+,
+            { "id": "54570", "title": "An Old Man's Darling", "author": "Miller" }
+,
+            { "id": "54979", "title": "The Yellow Holly", "author": "Hume" }
+,
+            { "id": "55034", "title": "Through Portugal", "author": "Hume" }
+,
+            { "id": "55101", "title": "The White Room", "author": "Hume" }
+,
+            { "id": "55102", "title": "The Wooden Hand: A Detective Story", "author": "Hume" }
+,
+            { "id": "55137", "title": "The Mystery Queen", "author": "Hume" }
+,
+            { "id": "55237", "title": "The Senator's Favorite", "author": "Miller" }
+,
+            { "id": "55305", "title": "The Black Patch", "author": "Hume" }
+,
+            { "id": "55309", "title": "The Crimson Cryptogram: A Detective Story", "author": "Hume" }
+,
+            { "id": "55310", "title": "The Lone Inn: A Mystery", "author": "Hume" }
+,
+            { "id": "55311", "title": "The Girl from Malta", "author": "Hume" }
+,
+            { "id": "55312", "title": "The Rainbow Feather", "author": "Hume" }
+,
+            { "id": "55313", "title": "The Vanishing of Tera", "author": "Hume" }
+,
+            { "id": "55348", "title": "The Red-headed Man", "author": "Hume" }
+,
+            { "id": "55366", "title": "The Farmer's Veterinarian: A Practical Treatise on the Diseases of Farm Stock", "author": "Burkett" }
+,
+            { "id": "55376", "title": "The Piccadilly Puzzle: A Mysterious Story", "author": "Hume" }
+,
+            { "id": "55404", "title": "The Man with a Secret: A Novel", "author": "Hume" }
+,
+            { "id": "55417", "title": "The Gentleman Who Vanished: A Psychological Phantasy", "author": "Hume" }
+,
+            { "id": "55420", "title": "For the Defence", "author": "Hume" }
+,
+            { "id": "55457", "title": "A Creature of the Night: An Italian Enigma", "author": "Hume" }
+,
+            { "id": "55510", "title": "Lady Jim of Curzon Street: A Novel", "author": "Hume" }
+,
+            { "id": "55511", "title": "The Silver Bullet", "author": "Hume" }
+,
+            { "id": "55571", "title": "Whom God Hath Joined: A Question of Marriage", "author": "Hume" }
+,
+            { "id": "55606", "title": "The Mandarin's Fan", "author": "Hume" }
+,
+            { "id": "55617", "title": "Monsieur Judas: A Paradox", "author": "Hume" }
+,
+            { "id": "55642", "title": "The Sacred Herb", "author": "Hume" }
+,
+            { "id": "55689", "title": "The Clock Struck One", "author": "Hume" }
+,
+            { "id": "55748", "title": "The Red Bicycle", "author": "Hume" }
+,
+            { "id": "55782", "title": "The Turnpike House", "author": "Hume" }
+,
+            { "id": "55783", "title": "Tracked by a Tattoo: A Mystery", "author": "Hume" }
+,
+            { "id": "55795", "title": "The Sealed Message", "author": "Hume" }
+,
+            { "id": "55831", "title": "The Spider", "author": "Hume" }
+,
+            { "id": "55927", "title": "Derelicts", "author": "Locke" }
+,
+            { "id": "55956", "title": "The Lost Parchment: A Detective Story", "author": "Hume" }
+,
+            { "id": "55960", "title": "The Lady from Nowhere: A Detective Story", "author": "Hume" }
+,
+            { "id": "55961", "title": "The Millionaire Mystery", "author": "Hume" }
+,
+            { "id": "56013", "title": "The White Dove", "author": "Locke" }
+,
+            { "id": "56014", "title": "The Demagogue and Lady Phayre", "author": "Locke" }
+,
+            { "id": "56015", "title": "Idols", "author": "Locke" }
+,
+            { "id": "56080", "title": "The Fever of Life", "author": "Hume" }
+,
+            { "id": "56081", "title": "A Traitor in London", "author": "Hume" }
+,
+            { "id": "56087", "title": "In Queer Street", "author": "Hume" }
+,
+            { "id": "56119", "title": "The Great Lord Burghley: A study in Elizabethan statecraft", "author": "Hume" }
+,
+            { "id": "56177", "title": "The Island of Fantasy: A Romance", "author": "Hume" }
+,
+            { "id": "56230", "title": "The Amethyst Cross", "author": "Hume" }
+,
+            { "id": "56233", "title": "The Purple Fern", "author": "Hume" }
+,
+            { "id": "56237", "title": "The Pink Shop", "author": "Hume" }
+,
+            { "id": "56241", "title": "The Indian Bangle", "author": "Hume" }
+,
+            { "id": "56242", "title": "The Gates of Dawn", "author": "Hume" }
+,
+            { "id": "56243", "title": "The Mikado Jewel", "author": "Hume" }
+,
+            { "id": "56356", "title": "The Scarlet Bat: A Detective Story", "author": "Hume" }
+,
+            { "id": "56385", "title": "Jonah's Luck", "author": "Hume" }
+,
+            { "id": "56432", "title": "The Peacock of Jewels", "author": "Hume" }
+,
+            { "id": "56441", "title": "Analysis of the Phenomena of the Human Mind", "author": "Mill" }
+,
+            { "id": "56484", "title": "The Future in America: A Search After Realities", "author": "Wells" }
+,
+            { "id": "56564", "title": "Jaquelina", "author": "Miller" }
+,
+            { "id": "56612", "title": "My Story", "author": "Mills" }
+,
+            { "id": "56774", "title": "Baconian Essays", "author": "Smithson" }
+,
+            { "id": "56841", "title": "The Disappearing Eye", "author": "Hume" }
+,
+            { "id": "57203", "title": "Left to Themselves: Being the Ordeal of Philip and Gerald", "author": "Prime-Stevenson" }
+,
+            { "id": "57326", "title": "The History of Duelling. Vol. 1 (of 2)", "author": "Millingen" }
+,
+            { "id": "57701", "title": "The History of Duelling. Vol. 2 (of 2)", "author": "Millingen" }
+,
+            { "id": "57917", "title": "The Boy's Hakluyt: English Voyages of Adventure and Discovery", "author": "Bacon" }
+,
+            { "id": "58393", "title": "The Mirror of Alchimy", "author": "Bacon" }
+,
+            { "id": "58541", "title": "Pioneer Colored Christians", "author": "Miller" }
+,
+            { "id": "58583", "title": "Index of the Project Gutenberg Works of John Stuart Mill", "author": "Mill" }
+,
+            { "id": "58673", "title": "It Takes a Thief", "author": "Miller" }
+,
+            { "id": "58824", "title": "Index of the Project Gutenberg Works of James Matthew Barrie", "author": "Barrie" }
+,
+            { "id": "59022", "title": "Myself When Young: Confessions", "author": "Waugh" }
+,
+            { "id": "59163", "title": "Index of the Project Gutenberg Works of Francis Bacon", "author": "Bacon" }
+,
+            { "id": "59167", "title": "Poems", "author": "Millay" }
+,
+            { "id": "59359", "title": "Index of the Project Gutenberg Works of Fergus Hume", "author": "Hume" }
+,
+            { "id": "59379", "title": "Plain Concrete for Farm Use", "author": "Miller" }
+,
+            { "id": "59407", "title": "Index of the Project Gutenberg Works of James De Mille", "author": "De Mille" }
+,
+            { "id": "59512", "title": "In the Wilds of South America", "author": "Miller" }
+,
+            { "id": "59541", "title": "Index of the Project Gutenberg Works of William J. Locke", "author": "Locke" }
+,
+            { "id": "59591", "title": "The Lion of Poland: The Story of Paderewski", "author": "Hume" }
+,
+            { "id": "59785", "title": "Index of the Project Gutenberg Works of James Joyce", "author": "Joyce" }
+,
+            { "id": "59792", "title": "Hume's Political Discourses", "author": "Hume" }
+,
+            { "id": "60120", "title": "The House of Baltazar", "author": "Locke" }
+,
+            { "id": "60121", "title": "The Glory of Clementina Wing", "author": "Locke" }
+,
+            { "id": "60122", "title": "The Tale of Triona", "author": "Locke" }
+,
+            { "id": "60123", "title": "The Wonderful Year", "author": "Locke" }
+,
+            { "id": "60186", "title": "Polite Conversation in Three Dialogues", "author": "Swift" }
+,
+            { "id": "60419", "title": "A Treatise on Fever", "author": "Smith" }
+,
+            { "id": "60451", "title": "The Mystery of Suicide Place", "author": "Miller" }
+,
+            { "id": "60496", "title": "Whom the Gods Destroyed", "author": "Bacon" }
+,
+            { "id": "61989", "title": "Some Artists at the Fair", "author": "Millet" }
+,
+            { "id": "62150", "title": "The Danube from the Black Forest to the Black Sea", "author": "Millet" }
+,
+            { "id": "62165", "title": "From Dixie to Canada: Romances and Realities of the Underground Railroad", "author": "Johnson" }
+,
+            { "id": "62779", "title": "The Moon Hoax", "author": "Locke" }
+,
+            { "id": "63831", "title": "Queens of old Spain", "author": "Hume" }
+,
+            { "id": "64192", "title": "The Priceless Pearl", "author": "Miller" }
+,
+            { "id": "64214", "title": "Princess of Chaos", "author": "Walton" }
+,
+            { "id": "64308", "title": "The Ethic of the Assassin", "author": "Howard" }
+,
+            { "id": "64443", "title": "Art principles in literature", "author": "Donnelly" }
+,
+            { "id": "64795", "title": "The Ultimate Image", "author": "Miller" }
+,
+            { "id": "64880", "title": "The Facts of Life", "author": "Miller" }
+,
+            { "id": "64917", "title": "Are Parents People?", "author": "Miller" }
+,
+            { "id": "65048", "title": "\"\"Lexington\"\": A Pageant-Drama of the American Freedom", "author": "Howard" }
+,
+            { "id": "65050", "title": "Brief for the higher education of the negro", "author": "Miller" }
+,
+            { "id": "65354", "title": "Lily Speed-O-Weave: Luncheon Set No. 86", "author": "Lily Mills Company" }
+,
+            { "id": "65362", "title": "Harry Fenimore's Principles", "author": "Hopkins" }
+,
+            { "id": "65782", "title": "Her Christmas at the Hermitage: A Tale About Rachel and Andrew Jackson", "author": "Miller" }
+,
+            { "id": "65806", "title": "Christmas at Monticello with Thomas Jefferson", "author": "Miller" }
+,
+            { "id": "65809", "title": "Christmas at Sagamore Hill with Theodore Roosevelt", "author": "Miller" }
+,
+            { "id": "65810", "title": "Christmas for Tad: A Story of Mary and Abraham Lincoln", "author": "Miller" }
+,
+            { "id": "66029", "title": "Two Slatterns and a King: A Moral Interlude", "author": "Millay" }
+,
+            { "id": "66046", "title": "Søren Hjorth: Inventor of the Dynamo-electric Principle", "author": "Smith" }
+,
+            { "id": "66144", "title": "Milk Run", "author": "Locke" }
+,
+            { "id": "66862", "title": "Things", "author": "Miller" }
+,
+            { "id": "66946", "title": "Summer Morning: A poem", "author": "Miller" }
+,
+            { "id": "67234", "title": "The Book of Stars: Being a Simple Explanation of the Stars and Their Uses to Boy Life", "author": "Collins" }
+,
+            { "id": "67527", "title": "The Foot-prints of the Creator", "author": "Miller" }
+,
+            { "id": "67795", "title": "The Lhota Nagas", "author": "Mills" }
+,
+            { "id": "68004", "title": "Pandora's Millions", "author": "Smith" }
+,
+            { "id": "68724", "title": "An historical and moral view of the origin and progress of the French Revolution; and the effect it has produced in Europe", "author": "Wollstonecraft" }
+,
+            { "id": "68876", "title": "Unparliamentary papers and other diversions", "author": "Berkeley" }
+,
+            { "id": "69011", "title": "Australian Fairy Tales", "author": "Hume-Cook" }
+,
+            { "id": "69026", "title": "Essays on the Latin Orient", "author": "Miller" }
+,
+            { "id": "69071", "title": "Loved you better than you knew", "author": "Miller" }
+,
+            { "id": "69515", "title": "In the tiger's lair", "author": "Miller" }
+,
+            { "id": "69554", "title": "The boy explorers in darkest New Guinea", "author": "Miller" }
+,
+            { "id": "69569", "title": "The wooing of Leola", "author": "Miller" }
+,
+            { "id": "70010", "title": "The shadow between them;", "author": "Miller" }
+,
+            { "id": "70727", "title": "Sweet Violet", "author": "Miller" }
+,
+            { "id": "70877", "title": "The mystery at lovers' cave", "author": "Berkeley" }
+,
+            { "id": "71024", "title": "The man she hated", "author": "Miller" }
+,
+            { "id": "71325", "title": "Scenes and legends of the north of Scotland", "author": "Miller" }
+,
+            { "id": "71376", "title": "The strength of love", "author": "Miller" }
+,
+            { "id": "71668", "title": "Julia Cary and her kitten", "author": "Miller" }
+,
+            { "id": "71674", "title": "Less than kin", "author": "Miller" }
+,
+            { "id": "71700", "title": "The chronicles of Fairy land", "author": "Hume" }
+,
+            { "id": "71888", "title": "Lives of the apostles of Jesus Christ", "author": "Bacon" }
+,
+            { "id": "71889", "title": "Chants for the Boer", "author": "Miller" }
+,
+            { "id": "71970", "title": "The jungle folk of Africa", "author": "Milligan" }
+,
+            { "id": "72480", "title": "The fetish folk of West Africa", "author": "Milligan" }
+,
+            { "id": "72675", "title": "The amateur crime", "author": "Berkeley" }
+,
+            { "id": "72883", "title": "The Layton Court mystery", "author": "Berkeley" }
+,
+            { "id": "73056", "title": "The gospel of freedom", "author": "Herrick" }
+,
+            { "id": "73125", "title": "The Black Panther of the Navaho", "author": "Miller" }
+,
+            { "id": "73274", "title": "Red Mesa", "author": "Miller" }
+,
+            { "id": "73394", "title": "The virtues of common water", "author": "Smith" }
+,
+            { "id": "73404", "title": "Enfranchisement of women", "author": "Mill" }
+,
+            { "id": "73692", "title": "With my regiment", "author": "Mills" }
+,
+            { "id": "73780", "title": "The other Miller girl", "author": "Gray" }
+,
+            { "id": "73825", "title": "Wild flowers of the north-eastern states", "author": "Miller" }
+,
+            { "id": "73856", "title": "Molly's treachery", "author": "Miller" }
+,
+            { "id": "74006", "title": "Little sweetheart", "author": "Miller" }
+,
+            { "id": "74111", "title": "Kitecraft", "author": "Miller" }
+,
+            { "id": "74635", "title": "The minstrel's curse", "author": "Miller" }
+,
+            { "id": "74796", "title": "Viola's vanity", "author": "Miller" }
+,
+            { "id": "75476", "title": "The poisoned chocolates case", "author": "Berkeley" }
+,
+            { "id": "75489", "title": "Poems", "author": "Bacon" }
+,
+            { "id": "76051", "title": "The strike of a sex", "author": "Miller" }
+,
+            { "id": "76151", "title": "The unbidden guest", "author": "Miller" }
+,
+            { "id": "76413", "title": "Slighted love", "author": "Miller" }
+
+]
