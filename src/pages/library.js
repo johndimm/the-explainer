@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { t, getUserLanguage } from '@/i18n';
 import { Clock } from 'lucide-react';
+import frenchCollection from '../tools/french-literature.json';
 
 // Project Gutenberg Top 100 (full list)
 const top100 = [
@@ -100,35 +101,6 @@ const shakespeareWorks = [
   { id: '1527', title: 'Twelfth Night' },
   { id: '1509', title: 'Two Gentlemen of Verona' },
   { id: '1045', title: 'Venus and Adonis' },
-];
-
-// French collection from Project Gutenberg (parsed from french.txt)
-const frenchCollection = [
-  { id: '17489', title: 'Les misérables Tome I: Fantine', author: 'Victor Hugo' },
-  { id: '2650', title: 'Du côté de chez Swann', author: 'Marcel Proust' },
-  { id: '28718', title: 'Les crimes de l\'amour', author: 'marquis de Sade' },
-  { id: '13951', title: 'Les trois mousquetaires', author: 'Alexandre Dumas and Auguste Maquet' },
-  { id: '17989', title: 'Le comte de Monte-Cristo, Tome I', author: 'Alexandre Dumas and Auguste Maquet' },
-  { id: '4791', title: 'Voyage au Centre de la Terre', author: 'Jules Verne' },
-  { id: '14287', title: 'L\'île mystérieuse', author: 'Jules Verne' },
-  { id: '5097', title: 'Vingt mille Lieues Sous Les Mers — Complete', author: 'Jules Verne' },
-  { id: '799', title: 'De la terre à la lune: trajet direct en 97 heures 20 minutes', author: 'Jules Verne' },
-  { id: '38674', title: 'De la terre à la lune, trajet direct en 97 heures 20 minutes', author: 'Jules Verne' },
-  { id: '32854', title: 'Arsène Lupin, gentleman-cambrioleur', author: 'Maurice Leblanc' },
-  { id: '14155', title: 'Madame Bovary', author: 'Gustave Flaubert' },
-  { id: '798', title: 'Le rouge et le noir: chronique du XIXe siècle', author: 'Stendhal' },
-  { id: '19657', title: 'Notre-Dame de Paris', author: 'Victor Hugo' },
-  { id: '16816', title: 'Le roman de la rose - Tome I', author: 'de Lorris Guillaume and de Meun Jean' },
-  { id: '16885', title: 'Aline et Valcour, ou Le Roman Philosophique. Tome 1', author: 'marquis de Sade' },
-  { id: '40877', title: 'Caprices d\'un Bibliophile', author: 'Octave Uzanne' },
-  { id: '43851', title: 'La Comédie humaine - Volume 02', author: 'Honoré de Balzac' },
-  { id: '26685', title: 'Aphrodite: Moeurs antiques', author: 'Pierre Louÿs' },
-  { id: '16820', title: 'Le Journal d\'une Femme de Chambre', author: 'Octave Mirbeau' },
-  { id: '61239', title: 'Contes pour les bibliophiles', author: 'Octave Uzanne' },
-  { id: '62215', title: 'Le Fantôme de l\'Opéra', author: 'Gaston Leroux' },
-  { id: '54873', title: 'Vingt mille lieues sous les mers', author: 'Jules Verne' },
-  { id: '17519', title: 'Les misérables Tome V: Jean Valjean', author: 'Victor Hugo' },
-  { id: 'moliere-le-misanthrope', title: 'Le Misanthrope', author: 'Molière', localPath: '/public-domain-texts/moliere-le-misanthrope.txt' },
 ];
 
 // Italian collection from Project Gutenberg (parsed from italian.txt)
