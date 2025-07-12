@@ -7,15 +7,14 @@
 }
 
 .header {
-  padding: 16px 20px;
-  border-bottom: 1px solid #e2e8f0;
-  background: #f8fafc;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  gap: 8px;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+  min-height: 56px;
+  container-type: inline-size;
 }
 
 .header h2 {
@@ -338,4 +337,50 @@
 }
 .message.user .quoteLink:hover {
   color: #dbeafe;
+} 
+
+.topRightButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px), (orientation: portrait) {
+  .topRightButtons {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+  .saveButtonText, .buttonText {
+    display: none;
+  }
+  .topRightButtons a, .topRightButtons button {
+    min-width: 32px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Hide button text if the chat header is squeezed/narrow in landscape */
+@media (max-width: 420px) {
+  .saveButtonText, .buttonText {
+    display: none;
+  }
+  .topRightButtons a, .topRightButtons button {
+    min-width: 32px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+} 
+
+@container (max-width: 340px) {
+  .saveButtonText, .buttonText {
+    display: none;
+  }
+  .topRightButtons a, .topRightButtons button {
+    min-width: 32px;
+    padding-left: 0;
+    padding-right: 0;
+  }
 } 

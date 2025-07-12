@@ -62,7 +62,9 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       }
       console.log('calcSize - clientX:', clientX, 'clientY:', clientY, 'window.innerWidth:', window.innerWidth, 'window.innerHeight:', window.innerHeight);
       if (isPortrait()) {
-        const result = Math.max(20, Math.min(80, (clientY / window.innerHeight) * 100));
+        // In portrait mode, chat is on top, so dragging up should make chat smaller
+        // We invert the calculation: 100 - (clientY / window.innerHeight) * 100
+        const result = Math.max(20, Math.min(80, 100 - (clientY / window.innerHeight) * 100));
         console.log('Portrait calculation:', result);
         return result;
       } else {
@@ -119,7 +121,8 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
           if (typeof onResize === 'function') onResize(newSize);
         } else {
           // portrait: vertical drag resizes
-          const newSize = Math.max(20, Math.min(80, (clientY / window.innerHeight) * 100));
+          // In portrait mode, chat is on top, so dragging up should make chat smaller
+          const newSize = Math.max(20, Math.min(80, 100 - (clientY / window.innerHeight) * 100));
           if (typeof onResize === 'function') onResize(newSize);
         }
       } else if (dragActionRef.current === 'scroll') {
@@ -194,7 +197,8 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
         if (typeof onResize === 'function') onResize(newSize);
       } else {
         // portrait: vertical drag resizes
-        const newSize = Math.max(20, Math.min(80, (e.clientY / window.innerHeight) * 100));
+        // In portrait mode, chat is on top, so dragging up should make chat smaller
+        const newSize = Math.max(20, Math.min(80, 100 - (e.clientY / window.innerHeight) * 100));
         if (typeof onResize === 'function') onResize(newSize);
       }
     } else if (dragActionRef.current === 'scroll') {

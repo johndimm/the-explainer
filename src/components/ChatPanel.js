@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { Send, Save, MessageSquare, Settings } from 'lucide-react';
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { Send, Save, MessageSquare, Settings, BookOpen, HelpCircle } from 'lucide-react';
 import styles from '@/styles/ChatPanel.module.css';
 import { t, getUserLanguage } from '@/i18n';
 
@@ -74,7 +74,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
     <div className={styles.panel}>
       <div className={styles.header}>
         <h2>{t('chat', lang)}</h2>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className={styles.topRightButtons}>
           <button 
             className={styles.saveButton}
             onClick={handleSaveChat}
@@ -89,6 +89,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
             style={{
               display: 'inline-flex',
               alignItems: 'center',
+              gap: '6px',
               color: '#3b82f6',
               textDecoration: 'none',
               fontSize: 14,
@@ -98,8 +99,10 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
               border: '1px solid #3b82f6',
               background: 'white',
               transition: 'all 0.2s',
-              height: 32
+              height: 32,
+              position: 'relative'
             }}
+            title="Browse and load books from our library of classic literature"
             onMouseEnter={e => {
               e.target.style.background = '#3b82f6';
               e.target.style.color = 'white';
@@ -109,13 +112,15 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
               e.target.style.color = '#3b82f6';
             }}
           >
-            {t('library', lang)}
+            <BookOpen size={16} />
+            <span className={styles.buttonText}>{t('library', lang)}</span>
           </a>
           <a
             href="/guide"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
+              gap: '6px',
               color: '#3b82f6',
               textDecoration: 'none',
               fontSize: 14,
@@ -125,8 +130,10 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
               border: '1px solid #3b82f6',
               background: 'white',
               transition: 'all 0.2s',
-              height: 32
+              height: 32,
+              position: 'relative'
             }}
+            title="Learn how to use The Explainer effectively"
             onMouseEnter={e => {
               e.target.style.background = '#3b82f6';
               e.target.style.color = 'white';
@@ -136,7 +143,8 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
               e.target.style.color = '#3b82f6';
             }}
           >
-            Guide
+            <HelpCircle size={16} />
+            <span className={styles.buttonText}>Guide</span>
           </a>
           <a
             href="/profile"
@@ -203,7 +211,6 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
                 </div>
               </div>
             ))}
-            
             {isLoading && (
               <div className={`${styles.message} ${styles.ai}`}>
                 <div className={styles.messageHeader}>
@@ -219,12 +226,10 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
                 </div>
               </div>
             )}
-            
             <div ref={messagesEndRef} />
           </div>
         )}
       </div>
-
       <form className={styles.inputForm} onSubmit={handleSubmit}>
         <input
           type="text"
@@ -246,4 +251,4 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
   );
 };
 
-export default ChatPanel; 
+export default ChatPanel;

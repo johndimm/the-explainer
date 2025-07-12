@@ -321,11 +321,13 @@ export default function Home() {
         <div className={styles.container} ref={containerRef}>
           {layoutMode.mode === 'mobile-portrait' ? (
             <>
-              <div style={{ height: `var(--panel-height, 50vh)`, width: '100%', flex: 'none', marginBottom: 6 }}>
-                <TextPanel 
-                  ref={textPanelRef}
-                  onTextSelection={handleTextSelection}
-                  title={bookTitle}
+              <div style={{ height: `calc(100vh - var(--panel-height, 50vh) - 20px)`, width: '100%', flex: 'none', minHeight: 0 }}>
+                <ChatPanel 
+                  messages={messages}
+                  isLoading={isLoading}
+                  onFollowUpQuestion={handleFollowUpQuestion}
+                  selectedText={messages.length > 0 ? messages[0]?.content : ''}
+                  scrollToText={quote => textPanelRef.current?.scrollToText?.(quote)}
                 />
               </div>
               <div style={{ height: 20, width: '100%', flex: 'none' }}>
@@ -335,13 +337,11 @@ export default function Home() {
                   onScrollDivider={handleDividerScroll}
                 />
               </div>
-              <div style={{ height: `calc(100vh - var(--panel-height, 50vh) - 20px)`, width: '100%', flex: 'none', minHeight: 0 }}>
-                <ChatPanel 
-                  messages={messages}
-                  isLoading={isLoading}
-                  onFollowUpQuestion={handleFollowUpQuestion}
-                  selectedText={messages.length > 0 ? messages[0]?.content : ''}
-                  scrollToText={quote => textPanelRef.current?.scrollToText?.(quote)}
+              <div style={{ height: `var(--panel-height, 50vh)`, width: '100%', flex: 'none', marginTop: 6 }}>
+                <TextPanel 
+                  ref={textPanelRef}
+                  onTextSelection={handleTextSelection}
+                  title={bookTitle}
                 />
               </div>
             </>
