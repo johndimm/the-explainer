@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { t, getUserLanguage } from '@/i18n';
+import { Clock } from 'lucide-react';
 
 // Project Gutenberg Top 100 (full list)
 const top100 = [
@@ -233,6 +234,33 @@ const collectionMeta = {
   historical: { emoji: '📜', color: '#fef3c7' },
 };
 
+// Save a book to the recent books list in localStorage
+function saveRecentBook(book) {
+  try {
+    const key = 'explainer:recentBooks';
+    const raw = localStorage.getItem(key);
+    let recent = [];
+    if (raw) {
+      recent = JSON.parse(raw);
+    }
+    // Remove any existing entry for this book (by id or title)
+    recent = recent.filter(b => b.id !== book.id && b.title !== book.title);
+    // Add to front
+    recent.unshift({
+      id: book.id,
+      title: book.title,
+      author: book.author || '',
+      localPath: book.localPath || '',
+      directUrl: book.directUrl || '',
+    });
+    // Limit to 8
+    if (recent.length > 8) recent = recent.slice(0, 8);
+    localStorage.setItem(key, JSON.stringify(recent));
+  } catch (e) {
+    // ignore
+  }
+}
+
 export default function Library() {
   const router = useRouter();
   const [loadingShakespeare, setLoadingShakespeare] = useState(null);
@@ -248,9 +276,21 @@ export default function Library() {
   const [customError, setCustomError] = useState('');
   const [fileUploadLoading, setFileUploadLoading] = useState(false);
   const [fileUploadError, setFileUploadError] = useState('');
+  const [recentBooks, setRecentBooks] = useState([]);
 
   useEffect(() => {
     setLang(getUserLanguage());
+  }, []);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('explainer:recentBooks');
+      if (raw) {
+        setRecentBooks(JSON.parse(raw));
+      }
+    } catch (e) {
+      setRecentBooks([]);
+    }
   }, []);
 
   // Handlers for each collection
@@ -264,6 +304,7 @@ export default function Library() {
       const text = await res.text();
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', book.title);
+      saveRecentBook(book);
       router.push('/');
     } catch (err) {
       alert('Could not load book text.');
@@ -290,6 +331,7 @@ export default function Library() {
       if (!text) throw new Error('Failed to fetch Shakespeare work');
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title} by William Shakespeare`);
+      saveRecentBook(work);
       router.push('/');
     } catch (err) {
       alert('Could not load this work.');
@@ -315,6 +357,7 @@ export default function Library() {
       if (!text) throw new Error('Failed to fetch French work');
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title} by ${work.author}`);
+      saveRecentBook(work);
       router.push('/');
     } catch (err) {
       alert('Could not load this work.');
@@ -340,6 +383,7 @@ export default function Library() {
       if (!text) throw new Error('Failed to fetch Italian work');
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
+      saveRecentBook(work);
       router.push('/');
     } catch (err) {
       alert('Could not load this work.');
@@ -371,6 +415,7 @@ export default function Library() {
       if (!text) throw new Error('Failed to fetch Poetry work');
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
+      saveRecentBook(work);
       router.push('/');
     } catch (err) {
       alert('Could not load this work.');
@@ -388,6 +433,7 @@ export default function Library() {
       const text = await res.text();
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
+      saveRecentBook(work);
       router.push('/');
     } catch (err) {
       alert('Could not load this document.');
@@ -412,6 +458,15 @@ export default function Library() {
     italian: loadingItalian,
     poetry: loadingPoetry,
     historical: loadingHistorical,
+  };
+
+  const findCollectionKey = (book) => {
+    for (const col of collections) {
+      if (col.items.some(item => item.id === book.id)) {
+        return col.key;
+      }
+    }
+    return null; // Should not happen if book is from a known collection
   };
 
   const handleCustomUrl = async (e) => {
@@ -490,6 +545,42 @@ export default function Library() {
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', padding: 0 }}>
       <div style={{ maxWidth: 1200, margin: 0, padding: '40px 16px 64px 16px' }}>
+        {/* Recently Viewed Section */}
+        {recentBooks.length > 0 && (
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <Clock size={18} style={{ color: '#3b82f6' }} />
+              <span style={{ fontWeight: 700, fontSize: 18, color: '#1e293b' }}>Recently Viewed</span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+              {recentBooks.map((book, i) => (
+                <button
+                  key={book.id + book.title}
+                  onClick={() => handlerMap[findCollectionKey(book)]?.(book)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    background: '#fff',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: 8,
+                    padding: '8px 14px',
+                    fontSize: 15,
+                    fontWeight: 500,
+                    color: '#2563eb',
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 4px #0001',
+                    transition: 'background 0.15s',
+                  }}
+                  title={book.title + (book.author ? ' by ' + book.author : '')}
+                >
+                  <span style={{ fontSize: 16, marginRight: 4 }}>📖</span>
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180 }}>{book.title}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <h1 style={{ fontSize: 38, fontWeight: 800, letterSpacing: -1, color: 'black', margin: 0 }}>Library</h1>
         </div>
