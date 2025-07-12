@@ -23,19 +23,54 @@ export default function Home() {
   const textPanelRef = useRef();
   const containerRef = useRef();
 
+  // Load divider positions from localStorage
+  const loadDividerPosition = useCallback((orientation) => {
+    try {
+      const savedPosition = localStorage.getItem(`explainer:divider:${orientation}`);
+      if (savedPosition) {
+        const position = parseFloat(savedPosition);
+        if (!isNaN(position) && position >= 20 && position <= 80) {
+          return position;
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load divider position:', error);
+    }
+    
+    // Default positions: more text in landscape, more chat in portrait
+    return orientation === 'portrait' ? 40 : 60;
+  }, []);
+
+  // Save divider position to localStorage
+  const saveDividerPosition = useCallback((orientation, position) => {
+    try {
+      localStorage.setItem(`explainer:divider:${orientation}`, position.toString());
+    } catch (error) {
+      console.warn('Failed to save divider position:', error);
+    }
+  }, []);
+
   // Responsive: update layout mode on resize/orientation
   useEffect(() => {
     function updateLayout() {
-      setLayoutMode(getLayoutMode());
+      const newLayoutMode = getLayoutMode();
+      setLayoutMode(newLayoutMode);
+      
+      // Load the appropriate divider position for the new orientation
+      const orientation = newLayoutMode.mode === 'mobile-portrait' ? 'portrait' : 'landscape';
+      const savedPosition = loadDividerPosition(orientation);
+      setPanelSize(savedPosition);
     }
+    
     window.addEventListener('resize', updateLayout);
     window.addEventListener('orientationchange', updateLayout);
     updateLayout();
+    
     return () => {
       window.removeEventListener('resize', updateLayout);
       window.removeEventListener('orientationchange', updateLayout);
     };
-  }, []);
+  }, [loadDividerPosition]);
 
   // Load book title from localStorage
   useEffect(() => {
@@ -44,6 +79,13 @@ export default function Home() {
       setBookTitle(savedTitle);
     }
   }, []);
+
+  // Load initial divider position based on current orientation
+  useEffect(() => {
+    const orientation = layoutMode.mode === 'mobile-portrait' ? 'portrait' : 'landscape';
+    const savedPosition = loadDividerPosition(orientation);
+    setPanelSize(savedPosition);
+  }, [layoutMode.mode, loadDividerPosition]);
 
   // Listen for changes to book title in localStorage
   useEffect(() => {
@@ -76,7 +118,11 @@ export default function Home() {
   const handleResize = useCallback((newSize) => {
     console.log('handleResize called with:', newSize, 'layoutMode:', layoutMode.mode);
     setPanelSize(newSize);
-  }, [layoutMode.mode]);
+    
+    // Save the position for the current orientation
+    const orientation = layoutMode.mode === 'mobile-portrait' ? 'portrait' : 'landscape';
+    saveDividerPosition(orientation, newSize);
+  }, [layoutMode.mode, saveDividerPosition]);
 
   // Mobile: scroll callback for divider
   const handleDividerScroll = useCallback((ratio) => {
