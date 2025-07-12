@@ -8,6 +8,7 @@ import spanishCollectionRaw from '../tools/spanish-literature.json';
 import germanCollectionRaw from '../tools/german-literature.json';
 import poetryCollectionRaw from '../tools/poetry.json';
 import englishCollectionRaw from '../tools/english-literature.json';
+import philosophersCollectionRaw from '../tools/philosophers.json';
 
 // Project Gutenberg Top 100 (full list) - deduplicated
 const top100 = [
@@ -34,7 +35,6 @@ const top100 = [
   { id: '4306', title: 'The Call of the Wild by Jack London' },
   { id: '25305', title: 'The Scarlet Letter by Nathaniel Hawthorne' },
   { id: '1260', title: 'Jane Eyre by Charlotte Brontë' },
-  { id: 'middlemarch', title: 'Middlemarch by George Eliot', localPath: '/public-domain-texts/middlemarch.txt' },
   // ... (add the rest up to 100)
 ];
 
@@ -269,6 +269,34 @@ const englishAuthorSections = Object.entries(englishByAuthor).map(([author, book
   count: books.length
 }));
 
+// Philosophers collection from Project Gutenberg
+const philosophersCollection = removeDuplicates(philosophersCollectionRaw.map(book => {
+  let cleanTitle = book.title;
+  if (book.author && cleanTitle.includes(book.author)) {
+    cleanTitle = cleanTitle.replace(book.author, '').replace(/\s*by\s*$/, '').trim();
+    // Remove extra punctuation or whitespace
+    cleanTitle = cleanTitle.replace(/[:\-–]+$/, '').trim();
+  }
+  return { ...book, title: cleanTitle };
+}));
+
+// Group Philosophers books by author
+const philosophersByAuthor = philosophersCollection.reduce((acc, book) => {
+  const author = book.author;
+  if (!acc[author]) {
+    acc[author] = [];
+  }
+  acc[author].push(book);
+  return acc;
+}, {});
+
+// Convert to array of author sections
+const philosophersAuthorSections = Object.entries(philosophersByAuthor).map(([author, books]) => ({
+  author,
+  books,
+  count: books.length
+}));
+
 const collections = [
   {
     key: 'shakespeare',
@@ -333,6 +361,14 @@ const collections = [
     authorSections: englishAuthorSections, // Add author sections for English collection
   },
   {
+    key: 'philosophers',
+    title: 'Philosophers',
+    items: philosophersCollection,
+    onClickItem: 'handleReadPhilosophers',
+    itemKey: 'id',
+    authorSections: philosophersAuthorSections, // Add author sections for Philosophers collection
+  },
+  {
     key: 'historical',
     title: 'Historical Documents',
     items: historicalCollection,
@@ -350,6 +386,8 @@ const collectionMeta = {
   spanish: { emoji: '🇪🇸', color: '#e0f2fe' },
   german: { emoji: '🇩🇪', color: '#e0fce7' },
   poetry: { emoji: '📝', color: '#fff7ed' },
+  english: { emoji: '🇬🇧', color: '#fef3c7' },
+  philosophers: { emoji: '🤔', color: '#f0f9ff' },
   historical: { emoji: '📜', color: '#fef3c7' },
 };
 
@@ -390,6 +428,7 @@ export default function Library() {
   const [loadingGerman, setLoadingGerman] = useState(null);
   const [loadingPoetry, setLoadingPoetry] = useState(null);
   const [loadingEnglish, setLoadingEnglish] = useState(null);
+  const [loadingPhilosophers, setLoadingPhilosophers] = useState(null);
   const [loadingHistorical, setLoadingHistorical] = useState(null);
   const [expanded, setExpanded] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
@@ -631,6 +670,38 @@ export default function Library() {
     }
   };
 
+  // Handler for Philosophers
+  const handleReadPhilosophers = async (work) => {
+    setLoadingPhilosophers(work.id);
+    let text = null;
+    try {
+      if (work.directUrl) {
+        // Use the direct link if present
+        const res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(work.directUrl)}`);
+        if (res.ok) text = await res.text();
+      } else {
+        const gutenbergUrl1 = `https://www.gutenberg.org/files/${work.id}/${work.id}-0.txt`;
+        const gutenbergUrl2 = `https://www.gutenberg.org/cache/epub/${work.id}/pg${work.id}.txt`;
+        let res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl1)}`);
+        if (res.ok) {
+          text = await res.text();
+        } else {
+          res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl2)}`);
+          if (res.ok) text = await res.text();
+        }
+      }
+      if (!text) throw new Error('Failed to fetch Philosophers work');
+      localStorage.setItem('explainer:bookText', text);
+      localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
+      saveRecentBook(work);
+      router.push('/');
+    } catch (err) {
+      alert('Could not load this work.');
+    } finally {
+      setLoadingPhilosophers(null);
+    }
+  };
+
   // Handler for historical documents
   const handleReadHistorical = async (work) => {
     setLoadingHistorical(work.id);
@@ -704,6 +775,7 @@ export default function Library() {
     german: handleReadGerman,
     poetry: handleReadPoetry,
     english: handleReadEnglish,
+    philosophers: handleReadPhilosophers,
     historical: handleReadHistorical,
   };
   const loadingMap = {
@@ -715,6 +787,7 @@ export default function Library() {
     german: loadingGerman,
     poetry: loadingPoetry,
     english: loadingEnglish,
+    philosophers: loadingPhilosophers,
     historical: loadingHistorical,
   };
 
@@ -1434,6 +1507,82 @@ export default function Library() {
                               </span>
                             </div>
                           ))}
+                          {/* More/Less button for author */}
+                          {section.books.length > 5 && (
+                            <button
+                              onClick={() => setExpanded((prev) => ({ ...prev, [`${col.key}-${section.author}`]: !prev[`${col.key}-${section.author}`] }))}
+                              style={{
+                                margin: '8px 0 8px 16px',
+                                background: '#e0e7ef',
+                                color: '#2563eb',
+                                border: 'none',
+                                borderRadius: 6,
+                                padding: '2px 10px',
+                                fontWeight: 500,
+                                fontSize: 13,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                boxShadow: '0 1px 2px #0001',
+                              }}
+                              title={expanded[`${col.key}-${section.author}`] ? `Show fewer works by ${section.author}` : `Show more works by ${section.author}`}
+                            >
+                              <span>{expanded[`${col.key}-${section.author}`] ? '➖' : '➕'}</span>
+                              {expanded[`${col.key}-${section.author}`]
+                                ? `Show less by ${section.author}`
+                                : `Show more by ${section.author}`}
+                            </button>
+                          )}
+                        </div>
+                      ))
+                    ) : col.key === 'philosophers' && col.authorSections ? (
+                      (expanded[col.key] ? col.authorSections : col.authorSections.slice(0, 3)).map((section, sectionIndex) => (
+                        <div key={section.author}>
+                          {/* Author header */}
+                          <div
+                            style={{
+                              padding: '14px 8px 8px 8px',
+                              background: '#f8fafc',
+                              borderBottom: '1px solid #e2e8f0',
+                              fontWeight: 600,
+                              fontSize: 14,
+                              color: '#475569',
+                              display: 'flex',
+                              alignItems: 'center',
+                              minWidth: 0,
+                              width: '100%',
+                            }}
+                          >
+                            <span style={{ flex: '1 1 0%', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800, fontSize: 18, color: '#1e293b', letterSpacing: '-0.5px' }}>{section.author}</span>
+                          </div>
+                          {/* Books by this author */}
+                          {(expanded[`${col.key}-${section.author}`] ? section.books : section.books.slice(0, 5)).map((item, i) => {
+                            const isSelected = selectedItem?.collectionKey === col.key && selectedItem?.itemId === item[col.itemKey];
+                            const isLoading = loadingMap[col.key] === item[col.itemKey];
+                            const hasBorder = i < (expanded[`${col.key}-${section.author}`] ? section.books.length : Math.min(4, section.books.length - 1)) - 1;
+                            return (
+                              <div
+                                key={`${item[col.itemKey]}-${i}`}
+                                style={{
+                                  ...getItemContainerStyle(isSelected, hasBorder),
+                                  paddingLeft: '16px', // Indent books under author
+                                }}
+                              >
+                                <span
+                                  onClick={() => handleItemClick(col.key, item, handlerMap[col.key])}
+                                  style={getClickableItemStyle(isSelected, isLoading)}
+                                  title={item.title}
+                                  onMouseOver={e => !isSelected && !isLoading && (e.target.style.color = '#666')}
+                                  onMouseOut={e => !isSelected && !isLoading && (e.target.style.color = 'black')}
+                                >
+                                  {isLoading
+                                    ? t('loading', lang)
+                                    : item.title}
+                                </span>
+                              </div>
+                            );
+                          })}
                           {/* More/Less button for author */}
                           {section.books.length > 5 && (
                             <button
