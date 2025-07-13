@@ -346,13 +346,13 @@
   width: 100%;
   padding: 0;
   margin: 0;
-  color: #18181b; /* Much darker for readability */
+  color: #18181b; /* Even darker for readability */
 }
 
 .lineNumber {
   font-family: var(--font-geist-mono);
   font-size: 12px;
-  color: #52525b; /* Darker gray for better contrast */
+  color: #33343a; /* Darker gray for better contrast */
   width: 40px;
   text-align: right;
   margin-right: 12px;
@@ -454,7 +454,7 @@
     font-size: 11px;
     width: 30px;
     margin-right: 8px;
-    color: #52525b;
+    color: #33343a;
   }
 
   .lineContent {
