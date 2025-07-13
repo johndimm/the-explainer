@@ -271,7 +271,8 @@ export default function Home() {
           bookAuthor: bookAuthor,
           userLanguage: userLanguage,
           userAge: userAge,
-          userNationality: userNationality
+          userNationality: userNationality,
+          isFollowUp: true
         }),
       });
 

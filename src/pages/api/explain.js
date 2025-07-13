@@ -79,6 +79,14 @@ ${languageInstruction}
 ${ageInstruction}
 ${nationalityInstruction}`;
 
+    const isFollowUp = req.body.isFollowUp;
+    let userPrompt;
+    if (isFollowUp) {
+      userPrompt = `The user has a follow-up question about the text. Please answer their question clearly and helpfully.\n\nQuestion: ${text}`;
+    } else {
+      userPrompt = `Please explain this text from \"${title}\":\n\n${text}`;
+    }
+
     try {
       console.log('Making request to OpenAI API...');
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -91,7 +99,7 @@ ${nationalityInstruction}`;
           model: 'gpt-4-turbo',
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: `Please explain this text from "${title}":\n\n${text}` }
+            { role: 'user', content: userPrompt }
           ],
           max_tokens: 1000,
           temperature: 0.7
