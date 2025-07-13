@@ -1,0 +1,12 @@
+[
+  { "id": "mahabharata", "title": "Mahabharata", "author": "Vyasa", "directUrl": "https://www.gutenberg.org/files/15474/15474-0.txt" },
+  { "id": "ramayana", "title": "Ramayana", "author": "Valmiki", "directUrl": "https://www.gutenberg.org/files/24869/24869-0.txt" },
+  { "id": "gita", "title": "Bhagavad Gita", "author": "Vyasa", "directUrl": "https://www.gutenberg.org/files/2388/2388-0.txt" },
+  { "id": "shakuntala", "title": "Shakuntala", "author": "Kalidasa", "directUrl": "https://www.gutenberg.org/files/11599/11599-0.txt" },
+  { "id": "gitanjali", "title": "Gitanjali", "author": "Rabindranath Tagore", "directUrl": "https://www.gutenberg.org/files/6524/6524-0.txt" },
+  { "id": "panchatantra", "title": "Panchatantra", "author": "Vishnu Sharma", "directUrl": "https://www.gutenberg.org/files/11506/11506-0.txt" },
+  { "id": "dhammapada", "title": "Dhammapada", "author": "Various", "directUrl": "https://www.gutenberg.org/files/2017/2017-0.txt" },
+  { "id": "tirukkural", "title": "Tirukkural", "author": "Tiruvalluvar", "directUrl": "https://www.gutenberg.org/files/21839/21839-0.txt" },
+  { "id": "gita-govinda", "title": "Gita Govinda", "author": "Jayadeva", "directUrl": "https://www.gutenberg.org/files/57399/57399-0.txt" },
+  { "id": "anandamath", "title": "Anandamath", "author": "Bankim Chandra Chatterjee", "directUrl": "https://www.gutenberg.org/files/32977/32977-0.txt" }
+] 

@@ -129,10 +129,50 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
 
 
 
+  // Helper: detect Shakespeare play by title
+  const SHAKESPEARE_PLAYS = [
+    'Romeo and Juliet', 'Hamlet', 'Macbeth', 'Othello', 'King Lear', 'A Midsummer Night\'s Dream',
+    'Julius Caesar', 'The Tempest', 'Much Ado About Nothing', 'Twelfth Night', 'As You Like It',
+    'The Merchant of Venice', 'Richard III', 'Henry V', 'Antony and Cleopatra', 'Coriolanus',
+    'Taming of the Shrew', 'Measure for Measure', 'All\'s Well That Ends Well', 'King John',
+    'Love\'s Labour\'s Lost', 'The Winter\'s Tale', 'Two Gentlemen of Verona', 'Timon of Athens',
+    'Pericles', 'Cymbeline', 'Troilus and Cressida', 'Henry IV', 'Henry VI', 'Henry VIII',
+    'The Comedy of Errors', 'The Merry Wives of Windsor', 'Titus Andronicus', 'Sonnets',
+    'Venus and Adonis', 'The Rape of Lucrece', 'A Lover\'s Complaint', 'The Phoenix and the Turtle',
+    'The Passionate Pilgrim', 'Sonnets To Sundry Notes of Music', 'Sir Thomas More', 'Locrine',
+    'The Two Noble Kinsmen', 'The Tragedy of Titus Andronicus', 'The Life of King Henry the Fifth',
+    'The Life and Death of King Richard the Second', 'The Life and Death of King John',
+    'The Tragedy of King Richard the Third', 'The Tragedy of King Lear', 'The Tragedy of Hamlet',
+    'The Tragedy of Macbeth', 'The Tragedy of Othello', 'The Tragedy of Julius Caesar',
+    'The Tragedy of Antony and Cleopatra', 'The Tragedy of Coriolanus', 'The Tragedy of Timon of Athens',
+    'The Tragedy of Troilus and Cressida', 'The Tragedy of Cymbeline', 'The Tragedy of Pericles',
+    'The Tragedy of Romeo and Juliet', 'The Tragedy of Titus Andronicus',
+  ];
+  function isShakespearePlay(title) {
+    if (!title) return false;
+    if (title.toLowerCase().includes('shakespeare')) return true;
+    return SHAKESPEARE_PLAYS.some(play => title.toLowerCase().includes(play.toLowerCase()));
+  }
+
   // Function to render line content
   const renderLineContent = useCallback((line, lineIndex) => {
-    return line;
-  }, []);
+    if (!isShakespearePlay(title)) return line;
+    const trimmed = line.trim();
+    // Scene/act headings
+    if (/^(act|scene)\b/i.test(trimmed)) {
+      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', margin: '16px 0 8px 0' }}>{trimmed}</span>;
+    }
+    // Character names (all caps, centered, not too long)
+    if (/^[A-Z][A-Z\s\-\.']{2,30}$/.test(trimmed) && trimmed.length < 32) {
+      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{trimmed}</span>;
+    }
+    // Stage directions (in brackets or parentheses)
+    if (/^\s*\[.*\]\s*$/.test(line) || /^\s*\(.*\)\s*$/.test(line)) {
+      return <span style={{ fontStyle: 'italic', marginLeft: 48, color: '#64748b' }}>{trimmed}</span>;
+    }
+    // Dialogue (default)
+    return <span style={{ marginLeft: 32, display: 'block' }}>{line}</span>;
+  }, [title]);
 
   // Function to split long lines at word boundaries
   const splitLongLines = useCallback((text, maxWidth = 80) => {
@@ -399,7 +439,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   //     if (document.visibilityState === 'hidden') {
   //       try {
   //         const currentPosition = getCurrentScrollPosition();
-  //         if (currentPosition > 0) {
+  //       if (currentPosition > 0) {
   //           // Use synchronous localStorage for visibility change
   //           const bookmarkKey = getBookmarkKey();
   //           if (bookmarkKey) {
@@ -792,7 +832,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
 
   return (
     <div 
-      className={styles.panel}
+      className={`${styles.panel} ${isShakespearePlay(title) ? styles.screenplayFormat : ''}`}
       style={{ '--panel-width': `${width}%` }}
       ref={containerRef}
     >

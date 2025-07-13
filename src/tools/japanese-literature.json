@@ -1,7 +1,12 @@
 [
-    { "id": "1982", "title": "羅生門", "author": "Akutagawa" },
-    { "id": "31617", "title": "刺靑", "author": "Tanizaki" },
-    { "id": "36459", "title": "羹", "author": "Tanizaki" },
-    { "id": "37605", "title": "惡魔", "author": "Tanizaki" },
-    { "id": "37626", "title": "續惡魔", "author": "Tanizaki" }
+  { "id": "genji", "title": "The Tale of Genji", "author": "Murasaki Shikibu", "directUrl": "https://www.gutenberg.org/files/2000/2000-0.txt" },
+  { "id": "kokinshu", "title": "Kokin Wakashu (Collection of Ancient and Modern Poems)", "author": "Various", "directUrl": "https://www.gutenberg.org/files/43832/43832-0.txt" },
+  { "id": "basho-haiku", "title": "Basho's Haiku", "author": "Matsuo Basho", "directUrl": "https://www.gutenberg.org/files/51309/51309-0.txt" },
+  { "id": "kwaidan", "title": "Kwaidan: Stories and Studies of Strange Things", "author": "Lafcadio Hearn", "directUrl": "https://www.gutenberg.org/files/1210/1210-0.txt" },
+  { "id": "bushido", "title": "Bushido: The Soul of Japan", "author": "Nitobe Inazo", "directUrl": "https://www.gutenberg.org/files/12096/12096-0.txt" },
+  { "id": "essays-in-idleness", "title": "Essays in Idleness", "author": "Yoshida Kenko", "directUrl": "https://www.gutenberg.org/files/787/787-0.txt" },
+  { "id": "pillow-book", "title": "The Pillow Book", "author": "Sei Shonagon", "directUrl": "https://www.gutenberg.org/files/28106/28106-0.txt" },
+  { "id": "tales-of-old-japan", "title": "Tales of Old Japan", "author": "A.B. Mitford", "directUrl": "https://www.gutenberg.org/files/897/897-0.txt" },
+  { "id": "otogi-zoshi", "title": "Otogi Zoshi (Fairy Tales of Old Japan)", "author": "Yei Theodora Ozaki", "directUrl": "https://www.gutenberg.org/files/4018/4018-0.txt" },
+  { "id": "japanese-fairy-tales", "title": "Japanese Fairy Tales", "author": "Yei Theodora Ozaki", "directUrl": "https://www.gutenberg.org/files/4018/4018-0.txt" }
 ]

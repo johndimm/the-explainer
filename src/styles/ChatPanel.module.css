@@ -15,6 +15,7 @@
   background: #f8fafc;
   min-height: 56px;
   container-type: inline-size;
+  gap: 20px;
 }
 
 .header h2 {
@@ -321,22 +322,27 @@
 } 
 
 .quoteLink {
-  color: #2563eb;
+  color: #6b7280;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 400;
+  font-size: 13px;
+  opacity: 0.95;
+  transition: color 0.15s;
 }
 
 .quoteLink:hover {
-  color: #1d4ed8;
+  color: #374151;
 }
 
 .message.user .quoteLink {
-  color: #fff;
+  color: #e0e7ef;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 400;
+  font-size: 13px;
+  opacity: 0.95;
 }
 .message.user .quoteLink:hover {
-  color: #dbeafe;
+  color: #fff;
 } 
 
 .topRightButtons {
