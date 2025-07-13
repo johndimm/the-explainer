@@ -566,9 +566,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Event handlers
   const handleLineSelection = useCallback((index) => {
     if (isDragging || submitting) return;
-    
-    if (firstClickIndex === null) {
-      // First click - submit immediately for single line
+
+    if (!isMobile) {
+      // Desktop: submit immediately on first click
       const selectedText = textLines[index];
       setSelectedLines(new Set([index]));
       setSubmitting(true);
@@ -577,26 +577,44 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         setSelectedLines(new Set());
         setSubmitting(false);
       }, 300);
-    } else {
-      // Second click - select range between first and current
-      const start = Math.min(firstClickIndex, index);
-      const end = Math.max(firstClickIndex, index);
-      const selectedText = textLines.slice(start, end + 1).join('\n');
-      
-      const rangeSelection = new Set();
-      for (let i = start; i <= end; i++) {
-        rangeSelection.add(i);
-      }
-      setSelectedLines(rangeSelection);
-      setSubmitting(true);
-      setTimeout(() => {
-        onTextSelection(selectedText);
-        setSelectedLines(new Set());
-        setFirstClickIndex(null);
-        setSubmitting(false);
-      }, 300);
+      return;
     }
-  }, [firstClickIndex, textLines, onTextSelection, isDragging, submitting]);
+
+    // Mobile: two-tap logic
+    if (firstClickIndex === null) {
+      // First tap: highlight and store index, do NOT submit
+      setFirstClickIndex(index);
+      setSelectedLines(new Set([index]));
+      // No submission yet
+    } else {
+      // Second tap: submit single line or range
+      if (firstClickIndex === index) {
+        // Second tap on same line - submit after highlight
+        setSelectedLines(new Set([index]));
+        setTimeout(() => {
+          const selectedText = textLines[index];
+          onTextSelection(selectedText);
+          setSelectedLines(new Set());
+          setFirstClickIndex(null);
+        }, 300);
+      } else {
+        // Tap on different line - submit range after highlight
+        const start = Math.min(firstClickIndex, index);
+        const end = Math.max(firstClickIndex, index);
+        const rangeSelection = new Set();
+        for (let i = start; i <= end; i++) {
+          rangeSelection.add(i);
+        }
+        setSelectedLines(rangeSelection);
+        setTimeout(() => {
+          const selectedText = textLines.slice(start, end + 1).join('\n');
+          onTextSelection(selectedText);
+          setSelectedLines(new Set());
+          setFirstClickIndex(null);
+        }, 300);
+      }
+    }
+  }, [isMobile, firstClickIndex, textLines, onTextSelection, isDragging, submitting]);
 
   const handleLineClick = useCallback((index, event) => {
     console.log(`🎯 handleLineClick called for line ${index + 1}, isMobile: ${isMobile}, submitting: ${submitting}`);
@@ -779,36 +797,31 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const Row = useCallback(({ index, style }) => {
     const isSelected = selectedLines.has(index);
     const line = textLines[index] || '';
-    
-    const handleClick = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      console.log(`🖱️ Row ${index + 1} clicked, isMobile: ${isMobile}`);
-      handleLineClick(index, event);
-    };
-    
-    const handleMouseDown = (e) => {
-      console.log(`🖱️ Row ${index + 1} mouse down`);
-      handleLineMouseDown(index, e);
-    };
-    
-    const handleRowMouseUp = (e) => {
-      console.log(`🖱️ Row ${index + 1} mouse up`);
-      handleMouseUp(e);
-    };
-    
+
+    // Only attach the relevant event for the platform
+    const eventHandlers = isMobile
+      ? {
+          onTouchStart: handleLineTouchStart,
+          onTouchMove: handleLineTouchMove,
+          onTouchEnd: handleLineTouchEnd,
+        }
+      : {
+          onClick: (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            handleLineClick(index, event);
+          },
+          onMouseDown: (e) => handleLineMouseDown(index, e),
+          onMouseEnter: () => handleLineMouseEnter(index),
+          onMouseUp: handleMouseUp,
+        };
+
     return (
       <div
         className={`${styles.line} ${isSelected ? styles.selected : ''}`}
         style={{ ...style, width: '100%' }}
         data-index={index}
-        onClick={handleClick} // Always attach click handler
-        onMouseDown={handleMouseDown} // Always attach mouse down handler
-        onMouseEnter={!isMobile ? () => handleLineMouseEnter(index) : undefined}
-        onMouseUp={handleRowMouseUp} // Always attach mouse up handler
-        onTouchStart={isMobile ? handleLineTouchStart : undefined}
-        onTouchMove={isMobile ? handleLineTouchMove : undefined}
-        onTouchEnd={isMobile ? handleLineTouchEnd : undefined}
+        {...eventHandlers}
       >
         <span className={styles.lineNumber}>{index + 1}</span>
         <span 
