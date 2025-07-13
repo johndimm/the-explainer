@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&display=swap');
+
 .panel {
   height: 100%;
   min-height: 100vh;
@@ -8,7 +10,7 @@
   overflow: hidden;
   transition: width 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
   flex-shrink: 0;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Fira Mono', Menlo, Consolas, Monaco, 'Courier New', Courier, monospace;
   color: #000;
   font-size: 17px;
   font-weight: 600;
@@ -533,7 +535,7 @@
 }
 
 .screenplayFormat {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Fira Mono', Menlo, Consolas, Monaco, 'Courier New', Courier, monospace;
   max-width: 700px;
   margin: 0 auto;
   background: #fff;
