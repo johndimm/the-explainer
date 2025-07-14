@@ -10,6 +10,44 @@ const COUNTRIES = [
   'United States', 'France', 'Germany', 'Spain', 'Italy', 'China', 'Japan', 'Russia', 'Brazil', 'India', 'United Kingdom', 'Canada', 'Other'
 ];
 
+const PROVIDERS = [
+  { value: 'openai', label: 'OpenAI' },
+  { value: 'anthropic', label: 'Anthropic (Claude)' },
+  { value: 'deepseek', label: 'DeepSeek' },
+  { value: 'gemini', label: 'Gemini (Google)' },
+  { value: 'custom', label: 'Custom' },
+];
+
+const MODELS = {
+  openai: [
+    { value: 'gpt-4o', label: 'GPT-4o' },
+    { value: 'gpt-4.1', label: 'GPT-4.1' },
+    { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
+    { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
+    { value: 'gpt-4', label: 'GPT-4 (legacy)' },
+    { value: 'gpt-4-32k', label: 'GPT-4 32k (legacy)' },
+    { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5 Turbo 16k (legacy)' },
+  ],
+  anthropic: [
+    { value: 'claude-3-opus-20240229', label: 'Claude 3 Opus' },
+    { value: 'claude-3-sonnet-20240229', label: 'Claude 3 Sonnet' },
+    { value: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku' },
+    { value: 'claude-2.1', label: 'Claude 2.1' },
+    { value: 'claude-2.0', label: 'Claude 2.0' },
+  ],
+  deepseek: [
+    { value: 'deepseek-chat', label: 'DeepSeek LLM' },
+  ],
+  gemini: [
+    { value: 'gemini-1.5-pro-latest', label: 'Gemini 1.5 Pro' },
+    { value: 'gemini-1.0-pro', label: 'Gemini 1.0 Pro' },
+    { value: 'gemini-1.5-flash-latest', label: 'Gemini 1.5 Flash' },
+  ],
+  custom: [
+    { value: '', label: 'Custom' },
+  ],
+};
+
 export default function Profile() {
   const router = useRouter();
   const [language, setLanguage] = useState('');
@@ -18,6 +56,11 @@ export default function Profile() {
   const [lang, setLang] = useState('en');
   const [showSaved, setShowSaved] = useState(false);
   const [translations, setTranslations] = useState({});
+  const [llmProvider, setLlmProvider] = useState('openai');
+  const [llmModel, setLlmModel] = useState('gpt-4o');
+  const [llmKey, setLlmKey] = useState('');
+  const [llmEndpoint, setLlmEndpoint] = useState('');
+  const [llmCustomModel, setLlmCustomModel] = useState('');
 
   useEffect(() => {
     setLang(getUserLanguage());
@@ -27,6 +70,12 @@ export default function Profile() {
     setNationality(profile.nationality || '');
     // Load translations for the current language
     loadTranslations();
+    const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+    setLlmProvider(llm.provider || 'openai');
+    setLlmModel(llm.model || 'gpt-4o');
+    setLlmKey(llm.key || '');
+    setLlmEndpoint(llm.endpoint || '');
+    setLlmCustomModel(llm.customModel || '');
   }, []);
 
   const loadTranslations = async () => {
@@ -76,6 +125,14 @@ export default function Profile() {
     const currentProfile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
     const newProfile = { ...currentProfile, ...updates };
     localStorage.setItem('explainer:profile', JSON.stringify(newProfile));
+    setShowSaved(true);
+    setTimeout(() => setShowSaved(false), 2000);
+  };
+
+  const autoSaveLlm = (updates) => {
+    const currentLlm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+    const newLlm = { ...currentLlm, ...updates };
+    localStorage.setItem('explainer:llm', JSON.stringify(newLlm));
     setShowSaved(true);
     setTimeout(() => setShowSaved(false), 2000);
   };
@@ -246,6 +303,90 @@ export default function Profile() {
               {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </label>
+
+          <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+            LLM Provider
+            <select
+              value={llmProvider}
+              onChange={e => {
+                setLlmProvider(e.target.value);
+                setLlmModel(MODELS[e.target.value][0]?.value || '');
+                autoSaveLlm({ provider: e.target.value, model: MODELS[e.target.value][0]?.value || '' });
+              }}
+              style={{ width: '100%', marginTop: 8, padding: 12, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
+              onFocus={e => e.target.style.borderColor = '#3b82f6'}
+              onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+            >
+              {PROVIDERS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+            </select>
+          </label>
+
+          <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+            Model
+            <select
+              value={llmModel}
+              onChange={e => {
+                setLlmModel(e.target.value);
+                autoSaveLlm({ model: e.target.value });
+              }}
+              style={{ width: '100%', marginTop: 8, padding: 12, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
+              onFocus={e => e.target.style.borderColor = '#3b82f6'}
+              onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+            >
+              {MODELS[llmProvider].map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+            </select>
+          </label>
+
+          <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+            API Key
+            <input
+              type="password"
+              value={llmKey}
+              onChange={e => {
+                setLlmKey(e.target.value);
+                autoSaveLlm({ key: e.target.value });
+              }}
+              placeholder="Paste your API key here"
+              style={{ width: '100%', marginTop: 8, padding: 12, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
+              onFocus={e => e.target.style.borderColor = '#3b82f6'}
+              onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+            />
+          </label>
+
+          {llmProvider === 'custom' && (
+            <>
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Custom Endpoint
+                <input
+                  type="text"
+                  value={llmEndpoint}
+                  onChange={e => {
+                    setLlmEndpoint(e.target.value);
+                    autoSaveLlm({ endpoint: e.target.value });
+                  }}
+                  placeholder="https://api.your-llm.com/v1/chat"
+                  style={{ width: '100%', marginTop: 8, padding: 12, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                />
+              </label>
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Custom Model Name
+                <input
+                  type="text"
+                  value={llmCustomModel}
+                  onChange={e => {
+                    setLlmCustomModel(e.target.value);
+                    autoSaveLlm({ customModel: e.target.value });
+                  }}
+                  placeholder="your-model-name"
+                  style={{ width: '100%', marginTop: 8, padding: 12, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                />
+              </label>
+            </>
+          )}
         </div>
 
         {/* Auto-save indicator */}

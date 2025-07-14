@@ -215,6 +215,7 @@
   border-radius: 8px;
   font-size: 14px;
   background: white;
+  color: #1e293b;
   transition: border-color 0.15s ease;
 }
 
@@ -285,6 +286,7 @@
   .input {
     padding: 10px 14px;
     font-size: 13px;
+    color: #1e293b;
   }
   
   .sendButton {
@@ -325,7 +327,7 @@
   color: #6b7280;
   cursor: pointer;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 14px;
   opacity: 0.95;
   transition: color 0.15s;
 }
@@ -338,7 +340,7 @@
   color: #e0e7ef;
   cursor: pointer;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 14px;
   opacity: 0.95;
 }
 .message.user .quoteLink:hover {

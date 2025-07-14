@@ -154,6 +154,18 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     return SHAKESPEARE_PLAYS.some(play => title.toLowerCase().includes(play.toLowerCase()));
   }
 
+  // Helper: Detect speaker for plays/scripts
+  function detectSpeaker(textLines, startIndex) {
+    for (let i = startIndex; i >= 0; i--) {
+      const line = textLines[i].trim();
+      // Match lines like FRIAR LAWRENCE. or JULIET:
+      if (/^[A-Z][A-Z\s\-\.']{2,30}[\.:]$/.test(line) && line.length < 40) {
+        return line.replace(/[\.:]$/, '').trim();
+      }
+    }
+    return null;
+  }
+
   // Function to render line content
   const renderLineContent = useCallback((line, lineIndex) => {
     if (!isShakespearePlay(title)) return line;
@@ -570,13 +582,10 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     if (!isMobile) {
       // Desktop: submit immediately on first click
       const selectedText = textLines[index];
-      setSelectedLines(new Set([index]));
-      setSubmitting(true);
-      setTimeout(() => {
-        onTextSelection(selectedText);
-        setSelectedLines(new Set());
-        setSubmitting(false);
-      }, 300);
+      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
+      onTextSelection({ text: selectedText, speaker });
+      setSelectedLines(new Set());
+      setSubmitting(false);
       return;
     }
 
@@ -590,13 +599,11 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       // Second tap: submit single line or range
       if (firstClickIndex === index) {
         // Second tap on same line - submit after highlight
-        setSelectedLines(new Set([index]));
-        setTimeout(() => {
-          const selectedText = textLines[index];
-          onTextSelection(selectedText);
-          setSelectedLines(new Set());
-          setFirstClickIndex(null);
-        }, 300);
+        const selectedText = textLines[index];
+        const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
+        onTextSelection({ text: selectedText, speaker });
+        setSelectedLines(new Set());
+        setFirstClickIndex(null);
       } else {
         // Tap on different line - submit range after highlight
         const start = Math.min(firstClickIndex, index);
@@ -605,16 +612,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         for (let i = start; i <= end; i++) {
           rangeSelection.add(i);
         }
-        setSelectedLines(rangeSelection);
-        setTimeout(() => {
-          const selectedText = textLines.slice(start, end + 1).join('\n');
-          onTextSelection(selectedText);
-          setSelectedLines(new Set());
-          setFirstClickIndex(null);
-        }, 300);
+        const selectedText = textLines.slice(start, end + 1).join('\n');
+        const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, start) : null;
+        onTextSelection({ text: selectedText, speaker });
+        setSelectedLines(new Set());
+        setFirstClickIndex(null);
       }
     }
-  }, [isMobile, firstClickIndex, textLines, onTextSelection, isDragging, submitting]);
+  }, [isMobile, firstClickIndex, textLines, onTextSelection, isDragging, submitting, title]);
 
   const handleLineClick = useCallback((index, event) => {
     console.log(`🎯 handleLineClick called for line ${index + 1}, isMobile: ${isMobile}, submitting: ${submitting}`);
@@ -630,7 +635,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       }
       
       const selectedText = textLines[index];
-      console.log(`🖥️ Desktop mode - setting selected lines and submitting`);
+      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
+      onTextSelection({ text: selectedText, speaker });
       setSelectedLines(new Set([index]));
       setSubmitting(true);
       
@@ -639,12 +645,11 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       
       setTimeout(() => {
         console.log(`⏰ Timeout fired - sending text to chat`);
-        onTextSelection(selectedText);
         setSelectedLines(new Set());
         setSubmitting(false);
       }, 800); // Increased delay to make highlighting more visible
     }
-  }, [isMobile, handleLineSelection, textLines, onTextSelection, submitting]);
+  }, [isMobile, handleLineSelection, textLines, onTextSelection, submitting, title]);
 
   const handleLineTouchStart = useCallback((event) => {
     if (!isMobile) return;
@@ -677,10 +682,11 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       console.log('First touch: setSelectedLines', index);
     } else if (firstClickIndex === index) {
       // Second tap on same line - submit after highlight
+      const selectedText = textLines[index];
+      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
+      onTextSelection({ text: selectedText, speaker });
       setSelectedLines(new Set([index]));
       setTimeout(() => {
-        const selectedText = textLines[index];
-        onTextSelection(selectedText);
         setSelectedLines(new Set());
         setFirstClickIndex(null);
       }, 300);
@@ -692,15 +698,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       for (let i = start; i <= end; i++) {
         rangeSelection.add(i);
       }
+      const selectedText = textLines.slice(start, end + 1).join('\n');
+      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, start) : null;
+      onTextSelection({ text: selectedText, speaker });
       setSelectedLines(rangeSelection);
       setTimeout(() => {
-        const selectedText = textLines.slice(start, end + 1).join('\n');
-        onTextSelection(selectedText);
         setSelectedLines(new Set());
         setFirstClickIndex(null);
       }, 300);
     }
-  }, [isMobile, firstClickIndex, textLines, onTextSelection, submitting]);
+  }, [isMobile, firstClickIndex, textLines, onTextSelection, submitting, title]);
 
   const handleLineMouseDown = useCallback((index, event) => {
     if (isDragging) return;
@@ -731,7 +738,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         .join('\n');
       
       setTimeout(() => {
-        onTextSelection(selectedText);
+        onTextSelection({ text: selectedText, speaker: null }); // No speaker for drag selection
         setSelectedLines(new Set());
         setIsDragging(false);
         setDragStartIndex(null);
@@ -741,17 +748,18 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       // Simple click - no drag detected
       console.log(`🖱️ Simple click detected on line ${dragStartIndex + 1}`);
       const selectedText = textLines[dragStartIndex];
+      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, dragStartIndex) : null;
+      onTextSelection({ text: selectedText, speaker });
       setSelectedLines(new Set([dragStartIndex]));
       setSubmitting(true);
       setTimeout(() => {
-        onTextSelection(selectedText);
         setSelectedLines(new Set());
         setSubmitting(false);
       }, 800);
     }
     setDragStartIndex(null);
     mouseMoved.current = false;
-  }, [isDragging, selectedLines, textLines, onTextSelection, dragStartIndex, submitting]);
+  }, [isDragging, selectedLines, textLines, onTextSelection, dragStartIndex, submitting, title]);
 
   const handleScroll = useCallback(({ scrollOffset, scrollUpdateWasRequested }) => {
     if (!scrollUpdateWasRequested) {
