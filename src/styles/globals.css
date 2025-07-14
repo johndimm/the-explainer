@@ -4,7 +4,7 @@ t:root {
 }
 
 /* Force light mode on mobile to ensure black text */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   :root {
     --background: #ffffff;
     --foreground: #171717;
@@ -33,7 +33,7 @@ body {
 }
 
 /* Force black text on mobile devices */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   body {
     color: #171717 !important;
     background: #ffffff !important;
