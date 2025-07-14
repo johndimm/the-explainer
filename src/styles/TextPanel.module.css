@@ -10,13 +10,18 @@
   overflow: hidden;
   transition: width 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
   flex-shrink: 0;
-  font-family: 'Fira Mono', Menlo, Consolas, Monaco, 'Courier New', Courier, monospace;
-  color: #000;
+  font-family: 'Georgia', 'Times New Roman', Times, serif;
+  font-weight: 300;
+  color: #18181b;
   font-size: 17px;
-  font-weight: 600;
   letter-spacing: 0.1px;
   line-height: 1.5;
   /* Left panel uses flex-basis from --panel-width */
+}
+
+.shakespeare {
+  font-family: 'Georgia', 'Times New Roman', Times, serif;
+  font-weight: 300;
 }
 
 .header {
@@ -332,6 +337,8 @@
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   user-select: none; /* Prevent text selection on click */
+  font-weight: 300 !important;
+  font-family: inherit !important;
 }
 
 .line:hover {
@@ -349,6 +356,8 @@
   padding: 0;
   margin: 0;
   color: #18181b; /* Even darker for readability */
+  font-weight: 300 !important;
+  font-family: inherit !important;
 }
 
 .lineNumber {

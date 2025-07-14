@@ -1,4 +1,27 @@
 import fetch from 'node-fetch';
+import { Pool } from 'pg';
+import cookie from 'cookie';
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+async function logUserActivity(email, bookTitle, model) {
+  if (!email) return;
+  const client = await pool.connect();
+  try {
+    // Get user id
+    const { rows } = await client.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (rows.length === 0) return;
+    const userId = rows[0].id;
+    // Insert activity
+    await client.query(
+      `INSERT INTO user_activity (user_id, activity_type, activity_time, meta)
+       VALUES ($1, $2, NOW(), $3)`,
+      [userId, 'explanation', JSON.stringify({ bookTitle, model })]
+    );
+  } finally {
+    client.release();
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -8,8 +31,18 @@ export default async function handler(req, res) {
   try {
     const {
       text, bookTitle, bookAuthor, userLanguage, userAge, userNationality,
-      provider, model, apiKey, endpoint, customModel, isFollowUp, speaker
+      provider, model, apiKey, endpoint, customModel, isFollowUp, speaker, userEmail
     } = req.body;
+
+    // Anonymous user limit: 3 free explanations
+    if (!userEmail) {
+      // Parse cookies
+      const cookies = cookie.parse(req.headers.cookie || '');
+      const anonCount = parseInt(cookies.anon_explanations || '0', 10);
+      if (anonCount >= 3) {
+        return res.status(403).json({ error: 'Sign in required after 3 free explanations. Please sign in to continue.' });
+      }
+    }
 
     if (!text || typeof text !== 'string') {
       return res.status(400).json({ error: 'Text is required' });
@@ -21,17 +54,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Model is required' });
     }
     if (!apiKey && provider !== 'custom') {
-      // Fallback to env for OpenAI only
-      if (provider === 'openai' && process.env.OPENAI_API_KEY) {
-        // ok
-      } else if (provider === 'anthropic' && process.env.ANTHROPIC_API_KEY) {
-        // ok
-      } else if (provider === 'deepseek' && process.env.DEEPSEEK_API_KEY) {
-        // ok
-      } else if (provider === 'gemini' && process.env.GEMINI_API_KEY) {
-        // ok
-      } else {
-        return res.status(400).json({ error: 'API key is required for this provider' });
+      // Check if environment variable is available for the selected provider
+      const envKeyMap = {
+        'openai': 'OPENAI_API_KEY',
+        'anthropic': 'ANTHROPIC_API_KEY',
+        'deepseek': 'DEEPSEEK_API_KEY',
+        'gemini': 'GEMINI_API_KEY'
+      };
+      
+      const envKey = envKeyMap[provider];
+      if (!envKey || !process.env[envKey]) {
+        return res.status(400).json({ error: `API key is required for ${provider}. Please provide your own key or ensure the server has the ${envKey} environment variable configured.` });
       }
     }
     if (provider === 'custom' && (!endpoint || !customModel || !apiKey)) {
@@ -185,6 +218,32 @@ ${nationalityInstruction}`;
       });
       if (!response.ok) {
         const errorText = await response.text();
+        
+        // Handle rate limit errors gracefully
+        if (response.status === 429) {
+          let rateLimitMessage = `The ${provider} API is currently experiencing high usage. `;
+          
+          if (provider === 'gemini') {
+            rateLimitMessage += "The free tier has been exceeded. You can:\n\n" +
+              "• Switch to a different AI provider in your settings\n" +
+              "• Use your own API key with higher limits\n" +
+              "• Try again later when the rate limit resets\n\n" +
+              "To switch providers, go to Settings → LLM Provider and select OpenAI, Anthropic, or DeepSeek.";
+          } else if (provider === 'openai') {
+            rateLimitMessage += "You've hit the rate limit. Please try again in a few minutes or switch to a different provider.";
+          } else if (provider === 'anthropic') {
+            rateLimitMessage += "You've hit the rate limit. Please try again in a few minutes or switch to a different provider.";
+          } else {
+            rateLimitMessage += "Please try again in a few minutes or switch to a different provider.";
+          }
+          
+          return res.status(429).json({ 
+            error: rateLimitMessage,
+            rateLimited: true,
+            provider: provider
+          });
+        }
+        
         throw new Error(`${provider} API error: ${response.status} - ${errorText}`);
       }
       const data = await response.json();
@@ -199,6 +258,24 @@ ${nationalityInstruction}`;
       if (!explanation) {
         throw new Error('No explanation received from model');
       }
+
+      // Log user activity if userEmail is present
+      if (userEmail) {
+        await logUserActivity(userEmail, title, model);
+      }
+
+      // Increment anon_explanations cookie for anonymous users
+      if (!userEmail) {
+        const cookies = cookie.parse(req.headers.cookie || '');
+        const anonCount = parseInt(cookies.anon_explanations || '0', 10) + 1;
+        res.setHeader('Set-Cookie', cookie.serialize('anon_explanations', String(anonCount), {
+          httpOnly: false,
+          maxAge: 60 * 60 * 24 * 30, // 30 days
+          path: '/',
+          sameSite: 'lax',
+        }));
+      }
+
       res.status(200).json({ 
         explanation,
         timestamp: new Date().toISOString()

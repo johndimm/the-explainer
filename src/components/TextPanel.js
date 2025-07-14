@@ -845,7 +845,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Early return after all hooks
   if (textLines.length === 0) {
     return (
-      <div className={styles.panel} style={{ width: `${width}%` }}>
+      <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ width: `${width}%` }}>
         <div className={styles.loading}>Loading text...</div>
       </div>
     );
@@ -853,7 +853,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
 
   return (
     <div 
-      className={`${styles.panel} ${isShakespearePlay(title) ? styles.screenplayFormat : ''}`}
+      className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
       style={{ '--panel-width': `${width}%` }}
       ref={containerRef}
     >

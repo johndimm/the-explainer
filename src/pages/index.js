@@ -4,7 +4,7 @@ import TextPanel from '@/components/TextPanel';
 import ChatPanel from '@/components/ChatPanel';
 import DraggableSeparator from '@/components/DraggableSeparator';
 import styles from '@/styles/Home.module.css';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 
 function getLayoutMode() {
   if (typeof window === 'undefined') return { mode: 'desktop', isPortrait: false };
@@ -192,7 +192,7 @@ export default function Home() {
           userNationality: userNationality,
           provider: llm.provider,
           model: llm.model,
-          apiKey: llm.key,
+          apiKey: llm.provider === 'custom' ? llm.key : undefined,
           endpoint: llm.endpoint,
           customModel: llm.customModel,
           userEmail: session?.user?.email || null,
@@ -200,12 +200,38 @@ export default function Home() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        data = {};
       }
 
-      const data = await response.json();
-      
+      if (!response.ok) {
+        // If the response has an error message, use it; otherwise use the status
+        let backendMsg = data.error || data.message || '';
+        console.log('Backend error message:', backendMsg);
+        if (response.status === 403 && backendMsg.toLowerCase().includes('sign in required')) {
+          const errorMessage = {
+            type: 'sign-in-required',
+            timestamp: new Date().toISOString(),
+            model: 'Notice'
+          };
+          setMessages(prev => [...prev, errorMessage]);
+          setIsLoading(false);
+          return; // Do not add the generic error message
+        }
+        const errorMessage = {
+          type: 'ai',
+          content: `Sorry, I encountered an error while trying to explain this text: HTTP error! status: ${response.status}${backendMsg ? '\n' + backendMsg : ''}`,
+          timestamp: new Date().toISOString(),
+          model: 'Error'
+        };
+        setMessages(prev => [...prev, errorMessage]);
+        setIsLoading(false);
+        return;
+      }
+
       if (data.error) {
         throw new Error(data.error);
       }
@@ -214,18 +240,27 @@ export default function Home() {
       const aiMessage = {
         type: 'ai',
         content: data.explanation,
-        timestamp: data.timestamp
+        timestamp: data.timestamp,
+        model: llm.model || 'Unknown Model'
       };
 
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error getting explanation:', error);
       
+      let errorContent = `Sorry, I encountered an error while trying to explain this text: ${error.message}`;
+      
+      // Handle rate limit errors with more helpful messages
+      if (error.message && error.message.includes('429')) {
+        errorContent = `The AI service is currently experiencing high usage and has hit its rate limit. \n\nYou can:\n• Switch to a different AI provider in Settings → LLM Provider\n• Try again in a few minutes\n• Use your own API key for higher limits\n\nTo switch providers, click the Settings button in the top right and change the LLM Provider.`;
+      }
+      
       // Add error message
       const errorMessage = {
         type: 'ai',
-        content: `Sorry, I encountered an error while trying to explain this text: ${error.message}`,
-        timestamp: new Date().toISOString()
+        content: errorContent,
+        timestamp: new Date().toISOString(),
+        model: 'Error'
       };
 
       setMessages(prev => [...prev, errorMessage]);
@@ -291,19 +326,44 @@ export default function Home() {
           isFollowUp: true,
           provider: llm.provider,
           model: llm.model,
-          apiKey: llm.key,
+          apiKey: llm.provider === 'custom' ? llm.key : undefined,
           endpoint: llm.endpoint,
           customModel: llm.customModel,
           userEmail: session?.user?.email || null
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      let data;
+      try {
+        data = await response.json();
+      } catch (e) {
+        data = {};
       }
 
-      const data = await response.json();
-      
+      if (!response.ok) {
+        // If the response has an error message, use it; otherwise use the status
+        let backendMsg = data.error || data.message || '';
+        if (response.status === 403 && backendMsg.toLowerCase().includes('sign in required')) {
+          const errorMessage = {
+            type: 'sign-in-required',
+            timestamp: new Date().toISOString(),
+            model: 'Notice'
+          };
+          setMessages(prev => [...prev, errorMessage]);
+          setIsLoading(false);
+          return; // Do not add the generic error message
+        }
+        const errorMessage = {
+          type: 'ai',
+          content: `Sorry, I encountered an error while trying to answer your question: HTTP error! status: ${response.status}${backendMsg ? '\n' + backendMsg : ''}`,
+          timestamp: new Date().toISOString(),
+          model: 'Error'
+        };
+        setMessages(prev => [...prev, errorMessage]);
+        setIsLoading(false);
+        return;
+      }
+
       if (data.error) {
         throw new Error(data.error);
       }
@@ -312,25 +372,34 @@ export default function Home() {
       const aiMessage = {
         type: 'ai',
         content: data.explanation,
-        timestamp: data.timestamp
+        timestamp: data.timestamp,
+        model: llm.model || 'Unknown Model'
       };
 
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error getting explanation:', error);
       
+      let errorContent = `Sorry, I encountered an error while trying to answer your question: ${error.message}`;
+      
+      // Handle rate limit errors with more helpful messages
+      if (error.message && error.message.includes('429')) {
+        errorContent = `The AI service is currently experiencing high usage and has hit its rate limit. \n\nYou can:\n• Switch to a different AI provider in Settings → LLM Provider\n• Try again in a few minutes\n• Use your own API key for higher limits\n\nTo switch providers, click the Settings button in the top right and change the LLM Provider.`;
+      }
+      
       // Add error message
       const errorMessage = {
         type: 'ai',
-        content: `Sorry, I encountered an error while trying to answer your question: ${error.message}`,
-        timestamp: new Date().toISOString()
+        content: errorContent,
+        timestamp: new Date().toISOString(),
+        model: 'Error'
       };
 
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
-  }, [session?.user?.email]);
+  }, [session?.user?.email, signIn]);
 
   return (
     <>
