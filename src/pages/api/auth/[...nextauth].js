@@ -9,13 +9,6 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
-      authorization: {
-        params: {
-          // ...other params if needed
-        },
-      },
-      // Explicitly set the callback URL for Google
-      callbackUrl: '/api/auth/callback/google',
     }),
   ],
   session: {
