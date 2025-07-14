@@ -392,3 +392,51 @@
     padding-right: 0;
   }
 } 
+
+.signButtonText {
+  display: inline;
+  white-space: nowrap;
+}
+.iconSignButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #3b82f6;
+  background: #fff;
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  height: 32px;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+  gap: 6px;
+  min-width: unset;
+  min-height: unset;
+  max-width: unset;
+  max-height: unset;
+  margin-right: 8px;
+  overflow: hidden;
+}
+.iconSignButton img, .iconSignButton svg {
+  display: block;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .iconSignButton {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    padding: 0;
+    border-radius: 8px;
+    justify-content: center;
+    gap: 0;
+  }
+  .signButtonText {
+    display: none;
+  }
+} 

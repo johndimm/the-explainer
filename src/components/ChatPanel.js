@@ -77,28 +77,6 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
       <div className={styles.header}>
         <h2>{t('chat', lang)}</h2>
         <div className={styles.topRightButtons}>
-          {/* Google Auth Button */}
-          {session ? (
-            <button
-              className={styles.saveButton}
-              style={{ background: '#fff', color: '#3b82f6', border: '1px solid #3b82f6', marginRight: 8 }}
-              onClick={() => signOut()}
-              title={session.user.email || session.user.name}
-            >
-              <span style={{ marginRight: 6 }}>Sign out</span>
-              <img src={session.user.image} alt="avatar" style={{ width: 20, height: 20, borderRadius: '50%' }} />
-            </button>
-          ) : (
-            <button
-              className={styles.saveButton}
-              style={{ background: '#fff', color: '#3b82f6', border: '1px solid #3b82f6', marginRight: 8 }}
-              onClick={() => signIn('google')}
-              title="Sign in with Google"
-            >
-              <span style={{ marginRight: 6 }}>Sign in</span>
-              <svg width="20" height="20" viewBox="0 0 48 48"><g><path fill="#4285F4" d="M44.5 20H24v8.5h11.7C34.7 33.1 29.8 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c2.7 0 5.2.9 7.2 2.4l6.4-6.4C33.5 5.5 28.1 3.5 22 3.5 11.2 3.5 2.5 12.2 2.5 23S11.2 42.5 22 42.5c10.2 0 18.5-7.2 18.5-18.5 0-1.2-.1-2.1-.3-3z"/><path fill="#34A853" d="M6.3 14.7l7 5.1C15.1 17.1 18.3 15 22 15c2.7 0 5.2.9 7.2 2.4l6.4-6.4C33.5 5.5 28.1 3.5 22 3.5c-6.6 0-12 5.4-12 12 0 2.1.5 4.1 1.3 5.7z"/><path fill="#FBBC05" d="M22 42.5c5.8 0 10.7-2.1 14.3-5.7l-6.6-5.4C27.2 33.1 24 34.5 22 34.5c-5.8 0-10.7-2.1-14.3-5.7l6.6-5.4C16.8 30.9 20 32.5 22 32.5z"/><path fill="#EA4335" d="M44.5 20H24v8.5h11.7C34.7 33.1 29.8 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c2.7 0 5.2.9 7.2 2.4l6.4-6.4C33.5 5.5 28.1 3.5 22 3.5 11.2 3.5 2.5 12.2 2.5 23S11.2 42.5 22 42.5c10.2 0 18.5-7.2 18.5-18.5 0-1.2-.1-2.1-.3-3z" opacity=".1"/></g></svg>
-            </button>
-          )}
           <button 
             className={styles.saveButton}
             onClick={handleSaveChat}
@@ -171,7 +149,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
             <span className={styles.buttonText}>Guide</span>
           </a>
           <a
-            href="/profile"
+            href={session ? "/profile" : undefined}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -187,6 +165,12 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
               width: 32
             }}
             title={t('profileSettings', lang)}
+            onClick={e => {
+              if (!session) {
+                e.preventDefault();
+                signIn('google');
+              }
+            }}
             onMouseEnter={e => {
               e.target.style.background = '#3b82f6';
               e.target.style.color = 'white';
@@ -215,12 +199,20 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
                 className={`${styles.message} ${styles[message.type]}`}
               >
                 <div className={styles.messageHeader}>
-                  <span className={styles.messageType}>
-                    {message.type === 'user' ? 'You' : 'AI'}
-                  </span>
-                  <span className={styles.timestamp}>
-                    {formatTimestamp(message.timestamp)}
-                  </span>
+                  {message.type === 'user' ? (
+                    <span className={styles.timestamp}>
+                      {formatTimestamp(message.timestamp)}
+                    </span>
+                  ) : (
+                    <>
+                      <span className={styles.messageType}>
+                        {message.model || 'AI'}
+                      </span>
+                      <span className={styles.timestamp}>
+                        {formatTimestamp(message.timestamp)}
+                      </span>
+                    </>
+                  )}
                 </div>
                 <div className={styles.messageContent}>
                   {message.type === 'user' ? (
@@ -231,6 +223,18 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
                     >
                       {message.content}
                     </span>
+                  ) : message.type === 'sign-in-required' ? (
+                    <span>
+                      <strong>Sign in required</strong><br />
+                      You&apos;ve used your 3 free explanations.{' '}
+                      <a
+                        href="#"
+                        style={{ color: '#3b82f6', textDecoration: 'underline', cursor: 'pointer' }}
+                        onClick={e => { e.preventDefault(); signIn('google'); }}
+                      >
+                        Sign in
+                      </a>{' '}to continue using The Explainer.
+                    </span>
                   ) : message.content}
                 </div>
               </div>
@@ -238,7 +242,16 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
             {isLoading && (
               <div className={`${styles.message} ${styles.ai}`}>
                 <div className={styles.messageHeader}>
-                  <span className={styles.messageType}>AI</span>
+                  <span className={styles.messageType}>
+                    {(() => {
+                      try {
+                        const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+                        return llm.model || 'AI';
+                      } catch {
+                        return 'AI';
+                      }
+                    })()}
+                  </span>
                 </div>
                 <div className={styles.loadingMessage}>
                   <div className={styles.typingIndicator}>
