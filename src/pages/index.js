@@ -4,6 +4,7 @@ import TextPanel from '@/components/TextPanel';
 import ChatPanel from '@/components/ChatPanel';
 import DraggableSeparator from '@/components/DraggableSeparator';
 import styles from '@/styles/Home.module.css';
+import { useSession } from 'next-auth/react';
 
 function getLayoutMode() {
   if (typeof window === 'undefined') return { mode: 'desktop', isPortrait: false };
@@ -22,6 +23,7 @@ export default function Home() {
   const [bookTitle, setBookTitle] = useState("Romeo and Juliet");
   const textPanelRef = useRef();
   const containerRef = useRef();
+  const { data: session } = useSession();
 
   // Load divider positions from localStorage
   const loadDividerPosition = useCallback((orientation) => {
@@ -131,7 +133,10 @@ export default function Home() {
     }
   }, []);
 
-  const handleTextSelection = useCallback(async (selectedText) => {
+  const handleTextSelection = useCallback(async (selection) => {
+    // Accepts { text, speaker }
+    const selectedText = typeof selection === 'string' ? selection : selection.text;
+    const speaker = typeof selection === 'object' && selection.speaker ? selection.speaker : null;
     if (!selectedText.trim()) return;
 
     // Add user message
@@ -170,6 +175,8 @@ export default function Home() {
       }
     }
 
+    // Get LLM settings from localStorage
+    const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
     try {
       const response = await fetch('/api/explain', {
         method: 'POST',
@@ -182,7 +189,14 @@ export default function Home() {
           bookAuthor: bookAuthor,
           userLanguage: userLanguage,
           userAge: userAge,
-          userNationality: userNationality
+          userNationality: userNationality,
+          provider: llm.provider,
+          model: llm.model,
+          apiKey: llm.key,
+          endpoint: llm.endpoint,
+          customModel: llm.customModel,
+          userEmail: session?.user?.email || null,
+          speaker: speaker || null
         }),
       });
 
@@ -218,7 +232,7 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [session]);
 
   const handleFollowUpQuestion = useCallback(async (question) => {
     if (!question.trim()) return;
@@ -259,6 +273,8 @@ export default function Home() {
       }
     }
 
+    // Get LLM settings from localStorage
+    const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
     try {
       const response = await fetch('/api/explain', {
         method: 'POST',
@@ -272,7 +288,13 @@ export default function Home() {
           userLanguage: userLanguage,
           userAge: userAge,
           userNationality: userNationality,
-          isFollowUp: true
+          isFollowUp: true,
+          provider: llm.provider,
+          model: llm.model,
+          apiKey: llm.key,
+          endpoint: llm.endpoint,
+          customModel: llm.customModel,
+          userEmail: session?.user?.email || null
         }),
       });
 
@@ -308,7 +330,7 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [session?.user?.email]);
 
   return (
     <>
