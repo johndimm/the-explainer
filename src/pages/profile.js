@@ -194,7 +194,8 @@ export default function Profile() {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 1000
+      zIndex: 1000,
+      color: '#18181b', // Ensure text is always dark
     }}>
       <div style={{
         background: '#fff',
