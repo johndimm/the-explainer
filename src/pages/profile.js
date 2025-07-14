@@ -195,7 +195,10 @@ export default function Profile() {
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 1000,
-      color: '#18181b', // Ensure text is always dark
+      color: '#18181b',
+      // Add important to override any global or media query
+      WebkitTextFillColor: '#18181b',
+      textShadow: 'none',
     }}>
       <div style={{
         background: '#fff',
