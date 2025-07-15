@@ -2,10 +2,12 @@ import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHand
 import { FixedSizeList as List } from 'react-window';
 import styles from '@/styles/TextPanel.module.css';
 
-const ROW_HEIGHT = 28; // Compact, but readable
+const ROW_HEIGHT = 36; // Increased to accommodate line-height and padding
 const HEADER_HEIGHT = 56; // Adjust if your header is a different height
 
 const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" }, ref) => {
+  console.log('TextPanel component loaded - version without react-window');
+  
   // All state hooks - must be called in same order every time
   const [textLines, setTextLines] = useState([]);
   const [selectedLines, setSelectedLines] = useState(new Set());
@@ -186,48 +188,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     return <span style={{ marginLeft: 32, display: 'block' }}>{line}</span>;
   }, [title]);
 
-  // Function to split long lines at word boundaries
-  const splitLongLines = useCallback((text, maxWidth = 80) => {
-    const lines = text.split('\n');
-    const processedLines = [];
-    
-    for (const line of lines) {
-      if (line.trim() === '') {
-        processedLines.push('');
-        continue;
-      }
-      
-      // If line is already short enough, keep it as is
-      if (line.length <= maxWidth) {
-        processedLines.push(line);
-        continue;
-      }
-      
-      // Split long lines at word boundaries
-      const words = line.split(' ');
-      let currentLine = '';
-      
-      for (const word of words) {
-        if ((currentLine + ' ' + word).length <= maxWidth) {
-          currentLine = currentLine ? currentLine + ' ' + word : word;
-        } else {
-          if (currentLine) {
-            processedLines.push(currentLine);
-            currentLine = word;
-          } else {
-            // If a single word is longer than maxWidth, split it
-            processedLines.push(word.substring(0, maxWidth));
-            currentLine = word.substring(maxWidth);
-          }
-        }
-      }
-      
-      if (currentLine) {
-        processedLines.push(currentLine);
-      }
-    }
-    
-    return processedLines.filter(line => line.trim() !== '');
+  // Function to split text into lines (no artificial line breaks)
+  const splitLongLines = useCallback((text) => {
+    return text.split('\n');
   }, []);
 
   // Imperative handle
@@ -333,31 +296,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     };
   }, []);
 
-  // Effect 4: Setup height and resize listener
-  useEffect(() => {
-    function updateHeight() {
-      if (containerRef.current) {
-        const textContainerElement = containerRef.current.querySelector(`.${styles.textContainer}`);
-        if (textContainerElement) {
-          // Use the actual available height of the text container
-          setListHeight(textContainerElement.offsetHeight);
-        } else {
-          // Fallback to the old calculation
-          const headerElement = containerRef.current.querySelector(`.${styles.header}`);
-          const headerHeight = headerElement ? headerElement.offsetHeight : HEADER_HEIGHT;
-          setListHeight(containerRef.current.offsetHeight - headerHeight);
-        }
-      }
-    }
-    
-    updateHeight();
-    window.addEventListener('resize', updateHeight);
-    
-    return () => {
-      window.removeEventListener('resize', updateHeight);
-    };
-  }, []);
-
   // Effect 5: Update height when textLines changes
   useEffect(() => {
     if (textLines.length > 0 && containerRef.current) {
@@ -374,12 +312,13 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     }
   }, [textLines]);
 
-  // Function to get current scroll position from the list container
+
+
+  // Function to get current scroll position from react-window
   const getCurrentScrollPosition = useCallback(() => {
     if (!listRef.current) return 0;
     
     try {
-      // Try to get scroll position from react-window's internal state
       const scrollElement = listRef.current._outerRef;
       if (scrollElement) {
         const scrollTop = scrollElement.scrollTop;
@@ -822,57 +761,26 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         }
       }
     }
-  }, [saveBookmarkDebounced, saveBookmark, isMobile]);
+  }, [saveBookmarkDebounced, saveBookmark, isMobile, ROW_HEIGHT]);
 
-  // Additional scroll handler for mobile reliability
-  const handleContainerScroll = useCallback((event) => {
-    if (!isMobile) return;
-    
-    const scrollTop = event.target.scrollTop;
-    const currentIndex = Math.floor(scrollTop / ROW_HEIGHT);
-    
-    if (currentIndex !== currentScrollIndexRef.current) {
-      currentScrollIndexRef.current = currentIndex;
-      setCurrentScrollIndex(currentIndex);
-      saveBookmark(currentIndex); // Immediate save on mobile
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`📱 Container scroll (immediate save): scrollTop=${scrollTop}, index=${currentIndex}, line=${currentIndex + 1}`);
-      }
-    }
-  }, [isMobile, saveBookmark]);
-
-
-
-  // Row component - defined outside of render to avoid recreation
+  // Row component for react-window - defined after all handlers
   const Row = useCallback(({ index, style }) => {
     const isSelected = selectedLines.has(index);
     const line = textLines[index] || '';
 
-    // Only attach the relevant event for the platform
-    const eventHandlers = isMobile
-      ? {
-          onTouchStart: handleLineTouchStart,
-          onTouchMove: handleLineTouchMove,
-          onTouchEnd: handleLineTouchEnd,
-        }
-      : {
-          onClick: (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            handleLineClick(index, event);
-          },
-          onMouseDown: (e) => handleLineMouseDown(index, e),
-          onMouseEnter: () => handleLineMouseEnter(index),
-          onMouseUp: handleMouseUp,
-        };
-
     return (
       <div
         className={`${styles.line} ${isSelected ? styles.selected : ''}`}
-        style={{ ...style, width: '100%' }}
+        style={{ ...style, width: '100%', height: ROW_HEIGHT }}
         data-index={index}
-        {...eventHandlers}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          handleLineClick(index, event);
+        }}
+        onMouseDown={(e) => handleLineMouseDown(index, e)}
+        onMouseEnter={() => handleLineMouseEnter(index)}
+        onMouseUp={handleMouseUp}
       >
         <span className={styles.lineNumber}>{index + 1}</span>
         <span 
@@ -883,7 +791,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         </span>
       </div>
     );
-  }, [selectedLines, textLines, handleLineClick, isMobile, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, handleLineTouchStart, handleLineTouchMove, handleLineTouchEnd, renderLineContent]);
+  }, [selectedLines, textLines, handleLineClick, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, renderLineContent]);
 
   // Early return after all hooks
   if (textLines.length === 0) {
@@ -909,7 +817,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         </div>
       </div>
       
-      <div className={styles.textContainer} onScroll={handleContainerScroll}>
+      <div className={styles.textContainer}>
         <List
           ref={listRef}
           height={listHeight}
@@ -917,6 +825,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
           itemSize={ROW_HEIGHT}
           width={'100%'}
           onScroll={handleScroll}
+          estimatedItemSize={ROW_HEIGHT}
+          overscanCount={10}
         >
           {Row}
         </List>
