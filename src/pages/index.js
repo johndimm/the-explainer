@@ -18,6 +18,16 @@ function getLayoutMode() {
   const aspectRatioPortrait = window.innerHeight > window.innerWidth;
   const isPortrait = mediaQueryPortrait || aspectRatioPortrait;
   
+  console.log('🔍 Layout detection:', {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    isMobile,
+    mediaQueryPortrait,
+    aspectRatioPortrait,
+    isPortrait,
+    userAgent: navigator.userAgent
+  });
+  
   if (isMobile && isPortrait) return { mode: 'mobile-portrait', isPortrait: true };
   if (isMobile && !isPortrait) return { mode: 'mobile-landscape', isPortrait: false };
   return { mode: 'desktop', isPortrait: false };

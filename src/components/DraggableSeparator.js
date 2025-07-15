@@ -11,8 +11,11 @@ function isMobile() {
 
 function isPortrait() {
   if (typeof window === 'undefined') return false;
-  const result = window.matchMedia('(orientation: portrait)').matches;
-  console.log('isPortrait() called, result:', result);
+  // Check orientation using both media query and aspect ratio
+  const mediaQueryPortrait = window.matchMedia('(orientation: portrait)').matches;
+  const aspectRatioPortrait = window.innerHeight > window.innerWidth;
+  const result = mediaQueryPortrait || aspectRatioPortrait;
+  // Reduced logging to avoid spam
   return result;
 }
 
@@ -26,7 +29,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
   const dragStartRef = useRef({ x: 0, y: 0 });
 
   const handleMouseDown = useCallback((e) => {
-    console.log('handleMouseDown called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
+    // Reduced logging to avoid spam
     e.preventDefault();
     e.stopPropagation();
     dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';

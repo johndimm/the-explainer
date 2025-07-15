@@ -67,9 +67,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       const bookmarkKey = getBookmarkKey();
       if (bookmarkKey && scrollIndex > 0) {
         localStorage.setItem(bookmarkKey, scrollIndex.toString());
-        console.log('Bookmark saved:', scrollIndex);
-        // Visual feedback for debugging
-        if (process.env.NODE_ENV === 'development') {
+        // Reduced logging to avoid spam
+        if (process.env.NODE_ENV === 'development' && scrollIndex % 50 === 0) {
           console.log(`💾 Bookmark saved: line ${scrollIndex + 1}`);
         }
       }
@@ -80,10 +79,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         const bookmarkKey = getBookmarkKey();
         if (bookmarkKey && scrollIndex > 0) {
           sessionStorage.setItem(bookmarkKey, scrollIndex.toString());
-          console.log('Bookmark saved to sessionStorage:', scrollIndex);
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`💾 Bookmark saved to sessionStorage: line ${scrollIndex + 1}`);
-          }
+          // Reduced logging to avoid spam
         }
       } catch (sessionError) {
         console.warn('Failed to save bookmark to sessionStorage:', sessionError);
@@ -273,8 +269,11 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   useEffect(() => {
     const checkMobile = () => {
       try {
-        const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        console.log(`📱 Mobile detection: ${isMobileDevice}, User Agent: ${navigator.userAgent}`);
+        // Use the same logic as the main page
+        const isMobileDevice = window.innerWidth <= 1024 || 
+                              /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        console.log(`📱 TextPanel Mobile detection: ${isMobileDevice}, User Agent: ${navigator.userAgent}`);
+        console.log(`📱 TextPanel Window dimensions: ${window.innerWidth}x${window.innerHeight}`);
         setIsMobile(isMobileDevice);
       } catch (error) {
         console.warn('Failed to detect mobile device:', error);
@@ -510,14 +509,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         const currentPosition = getCurrentScrollPosition();
         if (currentPosition > 0) {
           saveBookmark(currentPosition);
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`📱 Periodic bookmark save: line ${currentPosition + 1}`);
-          }
+          // Reduced logging to avoid spam
         }
       } catch (error) {
         console.warn('Failed to save periodic bookmark:', error);
       }
-    }, 3000); // Save every 3 seconds on mobile for better reliability
+    }, 10000); // Increased to 10 seconds to reduce frequency
     
     return () => clearInterval(interval);
   }, [isMobile, saveBookmark, getCurrentScrollPosition]);
@@ -665,19 +662,26 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   }, [isMobile]);
 
   const handleLineTouchEnd = useCallback((event) => {
-    if (!isMobile || submitting) return;
+    console.log('🔍 handleLineTouchEnd called, isMobile:', isMobile, 'submitting:', submitting, 'firstClickIndex:', firstClickIndex);
+    if (!isMobile || submitting) {
+      console.log('❌ Early return: !isMobile or submitting');
+      return;
+    }
     if (touchMoved.current) {
+      console.log('❌ Early return: touchMoved');
       return; // User was scrolling, not tapping
     }
     const index = parseInt(event.currentTarget.dataset.index);
+    console.log('📱 Touch on line:', index);
     
     if (firstClickIndex === null) {
       // First tap - select this line
+      console.log('✅ First tap - highlighting line', index);
       setFirstClickIndex(index);
       setSelectedLines(new Set([index]));
-      console.log('First touch: setSelectedLines', index);
     } else if (firstClickIndex === index) {
       // Second tap on same line - submit after highlight
+      console.log('✅ Second tap on same line - submitting');
       const selectedText = textLines[index];
       const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
       onTextSelection({ text: selectedText, speaker });
@@ -688,6 +692,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       }, 300);
     } else {
       // Tap on different line - submit range after highlight
+      console.log('✅ Second tap on different line - submitting range');
       const start = Math.min(firstClickIndex, index);
       const end = Math.max(firstClickIndex, index);
       const rangeSelection = new Set();
@@ -725,7 +730,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   }, [isDragging, dragStartIndex]);
 
   const handleMouseUp = useCallback((event) => {
-    console.log(`🖱️ Mouse up - isDragging: ${isDragging}, selectedLines.size: ${selectedLines.size}, mouseMoved: ${mouseMoved.current}`);
+    console.log(`🖱️ Mouse up called - isMobile: ${isMobile}, isDragging: ${isDragging}, selectedLines.size: ${selectedLines.size}, mouseMoved: ${mouseMoved.current}`);
     
     if (isDragging && selectedLines.size > 0) {
       const selectedText = Array.from(selectedLines)
@@ -755,7 +760,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     }
     setDragStartIndex(null);
     mouseMoved.current = false;
-  }, [isDragging, selectedLines, textLines, onTextSelection, dragStartIndex, submitting, title]);
+  }, [isDragging, selectedLines, textLines, onTextSelection, dragStartIndex, submitting, title, isMobile]);
 
   const handleScroll = useCallback(({ scrollOffset, scrollUpdateWasRequested }) => {
     if (!scrollUpdateWasRequested) {
@@ -796,11 +801,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          handleLineClick(index, event);
+          if (!isMobile) {
+            handleLineClick(index, event);
+          }
         }}
-        onMouseDown={(e) => handleLineMouseDown(index, e)}
-        onMouseEnter={() => handleLineMouseEnter(index)}
-        onMouseUp={handleMouseUp}
+        onTouchStart={(e) => handleLineTouchStart(e)}
+        onTouchMove={(e) => handleLineTouchMove(e)}
+        onTouchEnd={(e) => handleLineTouchEnd(e)}
+        onMouseDown={(e) => !isMobile && handleLineMouseDown(index, e)}
+        onMouseEnter={() => !isMobile && handleLineMouseEnter(index)}
+        onMouseUp={(e) => !isMobile && handleMouseUp(e)}
       >
         <span className={styles.lineNumber}>{index + 1}</span>
         <span 
@@ -811,7 +821,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         </span>
       </div>
     );
-  }, [selectedLines, textLines, handleLineClick, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, renderLineContent]);
+  }, [selectedLines, textLines, handleLineClick, handleLineTouchStart, handleLineTouchMove, handleLineTouchEnd, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, renderLineContent, isMobile]);
 
   // Early return after all hooks
   if (textLines.length === 0) {
