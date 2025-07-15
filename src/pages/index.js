@@ -39,8 +39,8 @@ export default function Home() {
       console.warn('Failed to load divider position:', error);
     }
     
-    // Default positions: more text in landscape, more chat in portrait
-    return orientation === 'portrait' ? 40 : 60;
+    // Default positions: start at 50% for both orientations
+    return 50;
   }, []);
 
   // Save divider position to localStorage

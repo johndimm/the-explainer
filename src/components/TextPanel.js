@@ -312,7 +312,41 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   useEffect(() => {
     function updateHeight() {
       if (containerRef.current) {
-        setListHeight(containerRef.current.offsetHeight - HEADER_HEIGHT);
+        const textContainerElement = containerRef.current.querySelector(`.${styles.textContainer}`);
+        if (textContainerElement) {
+          // Use the actual available height of the text container
+          setListHeight(textContainerElement.offsetHeight);
+        } else {
+          // Fallback to the old calculation
+          const headerElement = containerRef.current.querySelector(`.${styles.header}`);
+          const headerHeight = headerElement ? headerElement.offsetHeight : HEADER_HEIGHT;
+          setListHeight(containerRef.current.offsetHeight - headerHeight);
+        }
+      }
+    }
+    
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    
+    return () => {
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, []);
+
+  // Effect 4: Setup height and resize listener
+  useEffect(() => {
+    function updateHeight() {
+      if (containerRef.current) {
+        const textContainerElement = containerRef.current.querySelector(`.${styles.textContainer}`);
+        if (textContainerElement) {
+          // Use the actual available height of the text container
+          setListHeight(textContainerElement.offsetHeight);
+        } else {
+          // Fallback to the old calculation
+          const headerElement = containerRef.current.querySelector(`.${styles.header}`);
+          const headerHeight = headerElement ? headerElement.offsetHeight : HEADER_HEIGHT;
+          setListHeight(containerRef.current.offsetHeight - headerHeight);
+        }
       }
     }
     
@@ -327,7 +361,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Effect 5: Update height when textLines changes
   useEffect(() => {
     if (textLines.length > 0 && containerRef.current) {
-      setListHeight(containerRef.current.offsetHeight - HEADER_HEIGHT);
+      const textContainerElement = containerRef.current.querySelector(`.${styles.textContainer}`);
+      if (textContainerElement) {
+        // Use the actual available height of the text container
+        setListHeight(textContainerElement.offsetHeight);
+      } else {
+        // Fallback to the old calculation
+        const headerElement = containerRef.current.querySelector(`.${styles.header}`);
+        const headerHeight = headerElement ? headerElement.offsetHeight : HEADER_HEIGHT;
+        setListHeight(containerRef.current.offsetHeight - headerHeight);
+      }
     }
   }, [textLines]);
 
@@ -845,7 +888,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Early return after all hooks
   if (textLines.length === 0) {
     return (
-      <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ width: `${width}%` }}>
+      <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
         <div className={styles.loading}>Loading text...</div>
       </div>
     );
