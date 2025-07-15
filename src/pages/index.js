@@ -8,8 +8,16 @@ import { useSession, signIn } from 'next-auth/react';
 
 function getLayoutMode() {
   if (typeof window === 'undefined') return { mode: 'desktop', isPortrait: false };
-  const isMobile = window.innerWidth <= 768;
-  const isPortrait = isMobile && window.matchMedia('(orientation: portrait)').matches;
+  
+  // Check for mobile/tablet devices using multiple criteria
+  const isMobile = window.innerWidth <= 1024 || 
+                   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // Check orientation using both media query and aspect ratio
+  const mediaQueryPortrait = window.matchMedia('(orientation: portrait)').matches;
+  const aspectRatioPortrait = window.innerHeight > window.innerWidth;
+  const isPortrait = mediaQueryPortrait || aspectRatioPortrait;
+  
   if (isMobile && isPortrait) return { mode: 'mobile-portrait', isPortrait: true };
   if (isMobile && !isPortrait) return { mode: 'mobile-landscape', isPortrait: false };
   return { mode: 'desktop', isPortrait: false };
@@ -21,6 +29,7 @@ export default function Home() {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [bookTitle, setBookTitle] = useState("Romeo and Juliet");
+  const [scrollProgress, setScrollProgress] = useState(0);
   const textPanelRef = useRef();
   const containerRef = useRef();
   const { data: session } = useSession();
@@ -131,6 +140,11 @@ export default function Home() {
     if (textPanelRef.current && textPanelRef.current.scrollToRatio) {
       textPanelRef.current.scrollToRatio(ratio);
     }
+  }, []);
+
+  // Update scroll progress when text panel scrolls
+  const handleScrollProgress = useCallback((progress) => {
+    setScrollProgress(progress);
   }, []);
 
   const handleTextSelection = useCallback(async (selection) => {
@@ -420,6 +434,8 @@ export default function Home() {
                   onFollowUpQuestion={handleFollowUpQuestion}
                   selectedText={messages.length > 0 ? messages[0]?.content : ''}
                   scrollToText={quote => textPanelRef.current?.scrollToText?.(quote)}
+                  bookTitle={bookTitle}
+                  scrollProgress={scrollProgress}
                 />
               </div>
               <div style={{ height: 20, width: '100%', flex: 'none' }}>
@@ -427,6 +443,7 @@ export default function Home() {
                   onResize={handleResize} 
                   leftWidth={panelSize}
                   onScrollDivider={handleDividerScroll}
+                  progress={scrollProgress}
                 />
               </div>
               <div style={{ height: `var(--panel-height, 50vh)`, width: '100%', flex: 'none', marginTop: 6 }}>
@@ -434,6 +451,7 @@ export default function Home() {
                   ref={textPanelRef}
                   onTextSelection={handleTextSelection}
                   title={bookTitle}
+                  onScrollProgress={handleScrollProgress}
                 />
               </div>
             </>
@@ -445,6 +463,7 @@ export default function Home() {
                   width={panelSize}
                   onTextSelection={handleTextSelection}
                   title={bookTitle}
+                  onScrollProgress={handleScrollProgress}
                 />
               </div>
               <div style={{ width: 24, height: '100%', flex: 'none' }}>
@@ -452,6 +471,7 @@ export default function Home() {
                   onResize={handleResize} 
                   leftWidth={panelSize}
                   onScrollDivider={handleDividerScroll}
+                  progress={scrollProgress}
                 />
               </div>
               <div style={{ width: `calc(100% - var(--panel-width, 50%) - 24px)`, height: '100vh', flex: 'none', minWidth: 0 }}>
@@ -462,6 +482,8 @@ export default function Home() {
                   onFollowUpQuestion={handleFollowUpQuestion}
                   selectedText={messages.length > 0 ? messages[0]?.content : ''}
                   scrollToText={quote => textPanelRef.current?.scrollToText?.(quote)}
+                  bookTitle={bookTitle}
+                  scrollProgress={scrollProgress}
                 />
               </div>
             </>

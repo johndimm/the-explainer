@@ -3,9 +3,8 @@ import { FixedSizeList as List } from 'react-window';
 import styles from '@/styles/TextPanel.module.css';
 
 const ROW_HEIGHT = 36; // Increased to accommodate line-height and padding
-const HEADER_HEIGHT = 56; // Adjust if your header is a different height
 
-const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" }, ref) => {
+const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", onScrollProgress }, ref) => {
   console.log('TextPanel component loaded - version without react-window');
   
   // All state hooks - must be called in same order every time
@@ -19,6 +18,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const [submitting, setSubmitting] = useState(false);
   const [flyingText, setFlyingText] = useState(null);
   const [listHeight, setListHeight] = useState(400);
+
 
 
   // All refs - must be called in same order every time
@@ -170,8 +170,20 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
 
   // Function to render line content
   const renderLineContent = useCallback((line, lineIndex) => {
-    if (!isShakespearePlay(title)) return line;
     const trimmed = line.trim();
+    
+    // Title and author styling (first few lines)
+    if (lineIndex === 1) {
+      // Main title
+      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, fontSize: '24px', margin: '20px 0 8px 0', color: '#1e293b' }}>{trimmed}</span>;
+    }
+    if (lineIndex === 2) {
+      // Author line
+      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 500, fontSize: '18px', margin: '0 0 20px 0', color: '#64748b' }}>{trimmed}</span>;
+    }
+    
+    if (!isShakespearePlay(title)) return line;
+    
     // Scene/act headings
     if (/^(act|scene)\b/i.test(trimmed)) {
       return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', margin: '16px 0 8px 0' }}>{trimmed}</span>;
@@ -192,6 +204,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   const splitLongLines = useCallback((text) => {
     return text.split('\n');
   }, []);
+
+
 
   // Imperative handle
   useImperativeHandle(ref, () => ({
@@ -218,7 +232,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     
     if (savedText) {
       const lines = splitLongLines(savedText);
-      setTextLines(lines);
+      // Prepend title and author to the text
+      const titleLines = [
+        '',
+        title,
+        `by ${title.includes(' by ') ? title.split(' by ').pop() : 'William Shakespeare'}`,
+        ''
+      ];
+      setTextLines([...titleLines, ...lines]);
     } else {
       // Fallback to Romeo and Juliet
       fetch('/public-domain-texts/shakespeare-romeo-and-juliet.txt')
@@ -230,14 +251,21 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         })
         .then(text => {
           const lines = splitLongLines(text);
-          setTextLines(lines);
+          // Prepend title and author to the text
+          const titleLines = [
+            '',
+            title,
+            `by ${title.includes(' by ') ? title.split(' by ').pop() : 'William Shakespeare'}`,
+            ''
+          ];
+          setTextLines([...titleLines, ...lines]);
         })
         .catch(error => {
           console.error('Error loading text:', error);
           setTextLines(['Error loading text. Please try again.']);
         });
     }
-  }, [splitLongLines]);
+  }, [splitLongLines, title]);
 
 
 
@@ -275,16 +303,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   useEffect(() => {
     function updateHeight() {
       if (containerRef.current) {
-        const textContainerElement = containerRef.current.querySelector(`.${styles.textContainer}`);
-        if (textContainerElement) {
-          // Use the actual available height of the text container
-          setListHeight(textContainerElement.offsetHeight);
-        } else {
-          // Fallback to the old calculation
-          const headerElement = containerRef.current.querySelector(`.${styles.header}`);
-          const headerHeight = headerElement ? headerElement.offsetHeight : HEADER_HEIGHT;
-          setListHeight(containerRef.current.offsetHeight - headerHeight);
-        }
+        // Since there's no header, use the full container height
+        setListHeight(containerRef.current.offsetHeight);
       }
     }
     
@@ -299,16 +319,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
   // Effect 5: Update height when textLines changes
   useEffect(() => {
     if (textLines.length > 0 && containerRef.current) {
-      const textContainerElement = containerRef.current.querySelector(`.${styles.textContainer}`);
-      if (textContainerElement) {
-        // Use the actual available height of the text container
-        setListHeight(textContainerElement.offsetHeight);
-      } else {
-        // Fallback to the old calculation
-        const headerElement = containerRef.current.querySelector(`.${styles.header}`);
-        const headerHeight = headerElement ? headerElement.offsetHeight : HEADER_HEIGHT;
-        setListHeight(containerRef.current.offsetHeight - headerHeight);
-      }
+      // Since there's no header, use the full container height
+      setListHeight(containerRef.current.offsetHeight);
     }
   }, [textLines]);
 
@@ -509,6 +521,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
     
     return () => clearInterval(interval);
   }, [isMobile, saveBookmark, getCurrentScrollPosition]);
+
+
 
   // Effect 10: Mobile scroll position detection using Intersection Observer - TEMPORARILY DISABLED
   // useEffect(() => {
@@ -750,6 +764,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         currentScrollIndexRef.current = currentIndex;
         setCurrentScrollIndex(currentIndex);
         
+        // Calculate and report progress
+        if (textLines.length > 0 && onScrollProgress) {
+          const progress = Math.min(1, Math.max(0, currentIndex / (textLines.length - 1)));
+          onScrollProgress(progress);
+        }
+        
         // On mobile, save immediately for better reliability
         if (isMobile) {
           saveBookmark(currentIndex);
@@ -761,7 +781,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
         }
       }
     }
-  }, [saveBookmarkDebounced, saveBookmark, isMobile, ROW_HEIGHT]);
+  }, [saveBookmarkDebounced, saveBookmark, isMobile, ROW_HEIGHT, textLines.length, onScrollProgress]);
 
   // Row component for react-window - defined after all handlers
   const Row = useCallback(({ index, style }) => {
@@ -808,14 +828,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text" },
       style={{ '--panel-width': `${width}%` }}
       ref={containerRef}
     >
-      <div className={styles.header}>
-        <h2>{title}</h2>
-        <div className={styles.headerControls}>
-          <span className={styles.lineCount}>
-            {currentScrollIndex + 1} of {textLines.length} lines
-          </span>
-        </div>
-      </div>
+
       
       <div className={styles.textContainer}>
         <List

@@ -43,6 +43,24 @@
   color: #475569;
 }
 
+.progressIndicator {
+  position: absolute;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.fingerIndicator {
+  position: absolute;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+  pointer-events: none;
+}
+
 /* Portrait: horizontal separator */
 @media (max-width: 768px) and (orientation: portrait) {
   .separator {

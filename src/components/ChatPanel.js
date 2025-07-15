@@ -4,7 +4,7 @@ import styles from '@/styles/ChatPanel.module.css';
 import { t, getUserLanguage } from '@/i18n';
 import { useSession, signIn, signOut } from 'next-auth/react';
 
-const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedText, scrollToText }) => {
+const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedText, scrollToText, bookTitle, scrollProgress }) => {
   const [followUpQuestion, setFollowUpQuestion] = useState('');
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
@@ -75,8 +75,11 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
   return (
     <div className={styles.panel}>
       <div className={styles.header}>
-        <h2>{t('chat', lang)}</h2>
+        <h2>{bookTitle || t('chat', lang)}</h2>
         <div className={styles.topRightButtons}>
+          <span className={styles.lineCount}>
+            {scrollProgress !== undefined ? `${Math.round(scrollProgress * 100)}%` : 'Ready'}
+          </span>
           <button 
             className={styles.saveButton}
             onClick={handleSaveChat}

@@ -16,9 +16,11 @@ function isPortrait() {
   return result;
 }
 
-const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
+const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [debug, setDebug] = useState({ orientation: '', value: 0 });
+  const [fingerPosition, setFingerPosition] = useState(0);
+  const [clickedPosition, setClickedPosition] = useState(null);
   const dragModeRef = useRef('landscape'); // 'portrait' or 'landscape'
   const dragActionRef = useRef(null); // 'resize' or 'scroll'
   const dragStartRef = useRef({ x: 0, y: 0 });
@@ -31,9 +33,34 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
     dragActionRef.current = null;
     dragStartRef.current = { x: e.clientX, y: e.clientY };
     setIsDragging(true);
+    setClickedPosition(null); // Clear clicked position when dragging starts
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
   }, []);
+
+  const handleClick = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    let ratio;
+    if (isPortrait()) {
+      // In portrait mode, calculate ratio based on horizontal position
+      const rect = e.currentTarget.getBoundingClientRect();
+      ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    } else {
+      // In landscape mode, calculate ratio based on vertical position
+      const rect = e.currentTarget.getBoundingClientRect();
+      ratio = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+    }
+    
+    // Set clicked position to show indicator
+    setClickedPosition(ratio);
+    
+    // Jump to that position in the text
+    if (typeof onScrollDivider === 'function') {
+      onScrollDivider(ratio);
+    }
+  }, [isPortrait, onScrollDivider]);
 
   const handleTouchStart = useCallback((e) => {
     console.log('handleTouchStart called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
@@ -47,6 +74,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       dragStartRef.current = { x: 0, y: 0 };
     }
     setIsDragging(true);
+    setClickedPosition(null); // Clear clicked position when dragging starts
     document.body.style.userSelect = 'none';
 
     const calcSize = evt => {
@@ -130,9 +158,11 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
         if (dragModeRef.current === 'landscape') {
           // vertical drag in landscape
           ratio = Math.max(0, Math.min(1, clientY / window.innerHeight));
+          setFingerPosition(ratio);
         } else {
           // horizontal drag in portrait
           ratio = Math.max(0, Math.min(1, clientX / window.innerWidth));
+          setFingerPosition(ratio);
         }
         if (typeof onScrollDivider === 'function') onScrollDivider(ratio);
       }
@@ -206,9 +236,11 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       if (dragModeRef.current === 'landscape') {
         // vertical drag in landscape
         ratio = Math.max(0, Math.min(1, e.clientY / window.innerHeight));
+        setFingerPosition(ratio);
       } else {
         // horizontal drag in portrait
         ratio = Math.max(0, Math.min(1, e.clientX / window.innerWidth));
+        setFingerPosition(ratio);
       }
       if (typeof onScrollDivider === 'function') onScrollDivider(ratio);
     }
@@ -244,6 +276,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onPointerDown={handleTouchStart}
+      onClick={handleClick}
       style={{ 
         touchAction: 'none', 
         userSelect: 'none', 
@@ -252,6 +285,12 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider }) => {
         height: isPortrait() ? '20px' : '100%'
       }}
     >
+      <div className={styles.fingerIndicator} style={{ 
+        width: isPortrait() ? '4px' : '100%',
+        height: isPortrait() ? '100%' : '4px',
+        top: isPortrait() ? '0' : `${(dragActionRef.current === 'scroll' && fingerPosition > 0 ? fingerPosition : (clickedPosition !== null ? clickedPosition : progress)) * 100}%`,
+        left: isPortrait() ? `${(dragActionRef.current === 'scroll' && fingerPosition > 0 ? fingerPosition : (clickedPosition !== null ? clickedPosition : progress)) * 100}%` : '0'
+      }} />
       <div className={styles.handle}>
         <GripVertical size={20} />
       </div>
