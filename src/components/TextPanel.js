@@ -828,8 +828,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           className={styles.lineContent} 
           title={line.length > 100 ? line : undefined}
           style={{
-            fontSize: isMobile && isPortrait ? '16px' : '14px',
-            lineHeight: isMobile && isPortrait ? '1.4' : '1.3',
+            fontSize: isMobile && isPortrait ? '24px' : '20px',
+            lineHeight: isMobile && isPortrait ? '1.6' : '1.5',
             wordBreak: 'break-word',
             overflowWrap: 'break-word',
             whiteSpace: 'normal',
