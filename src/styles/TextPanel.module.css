@@ -492,8 +492,8 @@
   }
 
   .lineContent {
-    font-size: 13px;
-    line-height: 1.3;
+    font-size: 11px;
+    line-height: 1.2;
     color: #111215;
     font-weight: 700;
   }
@@ -550,8 +550,8 @@
   }
 
   .lineContent {
-    font-size: 12px;
-    line-height: 1.2;
+    font-size: 10px;
+    line-height: 1.1;
     font-weight: 700;
     word-break: break-word;
     overflow-wrap: break-word;
@@ -571,6 +571,29 @@
     overflow-wrap: anywhere !important;
     width: 100% !important;
     font-size: 15px;
+  }
+}
+
+/* Extra small screens like Samsung S21 */
+@media (max-width: 480px) {
+  .panel {
+    font-size: 14px;
+  }
+  
+  .lineContent {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+  }
+  
+  .lineNumber {
+    font-size: 9px !important;
+    width: 25px !important;
+    margin-right: 6px !important;
+  }
+  
+  .line {
+    padding: 2px 12px !important;
+    min-height: 20px !important;
   }
 }
 
