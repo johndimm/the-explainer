@@ -442,7 +442,7 @@ export default function Home() {
       <Head>
         <title>The Explainer - Understand Difficult Texts</title>
         <meta name="description" content="A progressive app to help you understand difficult texts line by line" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=0.8" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={styles.page}>
