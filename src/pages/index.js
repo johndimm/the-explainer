@@ -211,8 +211,14 @@ export default function Home() {
       }
     }
 
-    // Get LLM settings from localStorage
+    // Get LLM settings from localStorage with defaults
     const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+    
+    // Set default provider if none configured
+    if (!llm.provider) {
+      llm.provider = 'openai';
+      llm.model = 'gpt-4o-mini';
+    }
     try {
       const response = await fetch('/api/explain', {
         method: 'POST',
@@ -344,8 +350,14 @@ export default function Home() {
       }
     }
 
-    // Get LLM settings from localStorage
+    // Get LLM settings from localStorage with defaults
     const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+    
+    // Set default provider if none configured
+    if (!llm.provider) {
+      llm.provider = 'openai';
+      llm.model = 'gpt-4o-mini';
+    }
     try {
       const response = await fetch('/api/explain', {
         method: 'POST',
