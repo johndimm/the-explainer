@@ -198,6 +198,7 @@ export default function Guide() {
               <li>{t('tip3', lang)}</li>
               <li>{t('tip4', lang)}</li>
               <li>{t('tip5', lang)}</li>
+              <li>{t('tip6', lang)}</li>
             </ul>
           </section>
         </div>
