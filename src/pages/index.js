@@ -4,6 +4,7 @@ import TextPanel from '@/components/TextPanel';
 import ChatPanel from '@/components/ChatPanel';
 import DraggableSeparator from '@/components/DraggableSeparator';
 import PaywallModal from '@/components/PaywallModal';
+import ExplanationConfirmDialog from '@/components/ExplanationConfirmDialog';
 import styles from '@/styles/Home.module.css';
 import { useSession, signIn } from 'next-auth/react';
 
@@ -43,6 +44,8 @@ export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallData, setPaywallData] = useState(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingSelection, setPendingSelection] = useState(null);
   const textPanelRef = useRef();
   const containerRef = useRef();
   const { data: session } = useSession();
@@ -172,11 +175,25 @@ export default function Home() {
     setScrollProgress(progress);
   }, []);
 
-  const handleTextSelection = useCallback(async (selection) => {
+  const handleTextSelection = useCallback((selection) => {
     // Accepts { text, speaker }
     const selectedText = typeof selection === 'string' ? selection : selection.text;
     const speaker = typeof selection === 'object' && selection.speaker ? selection.speaker : null;
     if (!selectedText.trim()) return;
+
+    // Store the selection and show confirmation dialog
+    setPendingSelection({ text: selectedText, speaker });
+    setShowConfirmDialog(true);
+  }, []);
+
+  const handleConfirmExplanation = useCallback(async () => {
+    if (!pendingSelection) return;
+    
+    const { text: selectedText, speaker } = pendingSelection;
+    
+    // Close the confirmation dialog
+    setShowConfirmDialog(false);
+    setPendingSelection(null);
 
     // Add user message
     const userMessage = {
@@ -329,7 +346,7 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, [session]);
+  }, [session, pendingSelection]);
 
   const handleFollowUpQuestion = useCallback(async (question) => {
     if (!question.trim()) return;
@@ -558,6 +575,17 @@ export default function Home() {
         onClose={() => setShowPaywall(false)}
         paywallData={paywallData}
         session={session}
+      />
+      
+      <ExplanationConfirmDialog
+        isOpen={showConfirmDialog}
+        onClose={() => {
+          setShowConfirmDialog(false);
+          setPendingSelection(null);
+        }}
+        onConfirm={handleConfirmExplanation}
+        selectedText={pendingSelection?.text || ''}
+        isLoading={isLoading}
       />
     </>
   );

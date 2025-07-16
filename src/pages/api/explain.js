@@ -57,28 +57,26 @@ export default async function handler(req, res) {
       const isByollm = provider === 'custom' && apiKey;
       const creditsNeeded = isByollm ? 0.2 : 1;
 
-      if (user.credits < creditsNeeded) {
-        // Check if user can get hourly credit
-        const canGetHourly = await CreditManager.canGetHourlyCredit(userEmail);
+      // Always check for hourly credit first, regardless of current credit balance
+      const canGetHourly = await CreditManager.canGetHourlyCredit(userEmail);
+      
+      if (canGetHourly) {
+        // Grant hourly credit - this will be used first
+        await CreditManager.grantHourlyCredit(userEmail);
+      } else if (user.credits < creditsNeeded) {
+        // User needs to wait or purchase credits
+        const timeUntilNext = await CreditManager.getTimeUntilNextCredit(userEmail);
+        const minutesUntilNext = Math.ceil(timeUntilNext / (1000 * 60));
         
-        if (canGetHourly) {
-          // Grant hourly credit
-          await CreditManager.grantHourlyCredit(userEmail);
-        } else {
-          // User needs to wait or purchase credits
-          const timeUntilNext = await CreditManager.getTimeUntilNextCredit(userEmail);
-          const minutesUntilNext = Math.ceil(timeUntilNext / (1000 * 60));
-          
-          return res.status(403).json({
-            error: `You need ${creditsNeeded} credit${creditsNeeded === 1 ? '' : 's'} to get an explanation. Your next hourly credit will be available in ${minutesUntilNext} minutes.`,
-            paywall: true,
-            tier: 'signed_in',
-            creditsNeeded,
-            currentCredits: user.credits,
-            minutesUntilNext,
-            purchaseUrl: '/profile#credits'
-          });
-        }
+        return res.status(403).json({
+          error: `You need ${creditsNeeded} credit${creditsNeeded === 1 ? '' : 's'} to get an explanation. Your next hourly credit will be available in ${minutesUntilNext} minutes.`,
+          paywall: true,
+          tier: 'signed_in',
+          creditsNeeded,
+          currentCredits: user.credits,
+          minutesUntilNext,
+          purchaseUrl: '/profile#credits'
+        });
       }
     }
 
