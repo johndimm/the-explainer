@@ -91,96 +91,29 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
           </button>
           <a
             href="/library"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              color: '#3b82f6',
-              textDecoration: 'none',
-              fontSize: 14,
-              fontWeight: 500,
-              padding: '6px 12px',
-              borderRadius: 4,
-              border: '1px solid #3b82f6',
-              background: 'white',
-              transition: 'all 0.2s',
-              height: 32,
-              position: 'relative'
-            }}
+            className={styles.headerButton}
             title="Browse and load books from our library of classic literature"
-            onMouseEnter={e => {
-              e.target.style.background = '#3b82f6';
-              e.target.style.color = 'white';
-            }}
-            onMouseLeave={e => {
-              e.target.style.background = 'white';
-              e.target.style.color = '#3b82f6';
-            }}
           >
             <BookOpen size={16} />
             <span className={styles.buttonText}>{t('library', lang)}</span>
           </a>
           <a
             href="/guide"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              color: '#3b82f6',
-              textDecoration: 'none',
-              fontSize: 14,
-              fontWeight: 500,
-              padding: '6px 12px',
-              borderRadius: 4,
-              border: '1px solid #3b82f6',
-              background: 'white',
-              transition: 'all 0.2s',
-              height: 32,
-              position: 'relative'
-            }}
+            className={styles.headerButton}
             title="Learn how to use The Explainer effectively"
-            onMouseEnter={e => {
-              e.target.style.background = '#3b82f6';
-              e.target.style.color = 'white';
-            }}
-            onMouseLeave={e => {
-              e.target.style.background = 'white';
-              e.target.style.color = '#3b82f6';
-            }}
           >
             <HelpCircle size={16} />
             <span className={styles.buttonText}>Guide</span>
           </a>
           <a
             href={session ? "/profile" : undefined}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#3b82f6',
-              textDecoration: 'none',
-              padding: '6px',
-              borderRadius: 4,
-              border: '1px solid #3b82f6',
-              background: 'white',
-              transition: 'all 0.2s',
-              height: 32,
-              width: 32
-            }}
+            className={styles.headerButtonIcon}
             title={t('profileSettings', lang)}
             onClick={e => {
               if (!session) {
                 e.preventDefault();
                 signIn('google');
               }
-            }}
-            onMouseEnter={e => {
-              e.target.style.background = '#3b82f6';
-              e.target.style.color = 'white';
-            }}
-            onMouseLeave={e => {
-              e.target.style.background = 'white';
-              e.target.style.color = '#3b82f6';
             }}
           >
             <Settings size={16} />

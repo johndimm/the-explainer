@@ -50,7 +50,17 @@ export default function Home() {
       const savedPosition = localStorage.getItem(`explainer:divider:${orientation}`);
       if (savedPosition) {
         const position = parseFloat(savedPosition);
-        if (!isNaN(position) && position >= 20 && position <= 80) {
+        // Adjust constraints based on screen size for landscape mode
+        let minConstraint = 20;
+        let maxConstraint = 80;
+        
+        if (orientation === 'landscape' && typeof window !== 'undefined' && window.innerWidth < 1024) {
+          // For landscape on smaller screens, be more restrictive to ensure chat panel has enough space
+          minConstraint = 20;
+          maxConstraint = 70; // Don't let text panel take more than 70% on smaller screens
+        }
+        
+        if (!isNaN(position) && position >= minConstraint && position <= maxConstraint) {
           return position;
         }
       }
@@ -484,7 +494,7 @@ export default function Home() {
                   progress={scrollProgress}
                 />
               </div>
-              <div style={{ width: `calc(100% - var(--panel-width, 50%) - 24px)`, height: '100vh', flex: 'none', minWidth: 0 }}>
+              <div style={{ width: `calc(100% - var(--panel-width, 50%) - 24px)`, height: '100vh', flex: 'none', minWidth: '200px' }}>
                 <ChatPanel 
                   width={100 - panelSize}
                   messages={messages}

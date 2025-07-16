@@ -92,14 +92,25 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
         return null;
       }
       console.log('calcSize - clientX:', clientX, 'clientY:', clientY, 'window.innerWidth:', window.innerWidth, 'window.innerHeight:', window.innerHeight);
+      
+      // Adjust constraints based on screen size for landscape mode
+      let minConstraint = 20;
+      let maxConstraint = 80;
+      
+      if (!isPortrait() && window.innerWidth < 1024) {
+        // For landscape on smaller screens, be more restrictive to ensure chat panel has enough space
+        minConstraint = 20;
+        maxConstraint = 70; // Don't let text panel take more than 70% on smaller screens
+      }
+      
       if (isPortrait()) {
         // In portrait mode, chat is on top, so dragging up should make chat smaller
         // We invert the calculation: 100 - (clientY / window.innerHeight) * 100
-        const result = Math.max(20, Math.min(80, 100 - (clientY / window.innerHeight) * 100));
+        const result = Math.max(minConstraint, Math.min(maxConstraint, 100 - (clientY / window.innerHeight) * 100));
         console.log('Portrait calculation:', result);
         return result;
       } else {
-        const result = Math.max(20, Math.min(80, (clientX / window.innerWidth) * 100));
+        const result = Math.max(minConstraint, Math.min(maxConstraint, (clientX / window.innerWidth) * 100));
         console.log('Landscape calculation:', result);
         return result;
       }
@@ -147,13 +158,23 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
         }
       }
       if (dragActionRef.current === 'resize') {
+        // Adjust constraints based on screen size for landscape mode
+        let minConstraint = 20;
+        let maxConstraint = 80;
+        
+        if (dragModeRef.current === 'landscape' && window.innerWidth < 1024) {
+          // For landscape on smaller screens, be more restrictive to ensure chat panel has enough space
+          minConstraint = 20;
+          maxConstraint = 70; // Don't let text panel take more than 70% on smaller screens
+        }
+        
         if (dragModeRef.current === 'landscape') {
-          const newSize = Math.max(20, Math.min(80, (clientX / window.innerWidth) * 100));
+          const newSize = Math.max(minConstraint, Math.min(maxConstraint, (clientX / window.innerWidth) * 100));
           if (typeof onResize === 'function') onResize(newSize);
         } else {
           // portrait: vertical drag resizes
           // In portrait mode, chat is on top, so dragging up should make chat smaller
-          const newSize = Math.max(20, Math.min(80, 100 - (clientY / window.innerHeight) * 100));
+          const newSize = Math.max(minConstraint, Math.min(maxConstraint, 100 - (clientY / window.innerHeight) * 100));
           if (typeof onResize === 'function') onResize(newSize);
         }
       } else if (dragActionRef.current === 'scroll') {
@@ -225,13 +246,23 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       }
     }
     if (dragActionRef.current === 'resize') {
+      // Adjust constraints based on screen size for landscape mode
+      let minConstraint = 20;
+      let maxConstraint = 80;
+      
+      if (dragModeRef.current === 'landscape' && window.innerWidth < 1024) {
+        // For landscape on smaller screens, be more restrictive to ensure chat panel has enough space
+        minConstraint = 20;
+        maxConstraint = 70; // Don't let text panel take more than 70% on smaller screens
+      }
+      
       if (dragModeRef.current === 'landscape') {
-        const newSize = Math.max(20, Math.min(80, (e.clientX / window.innerWidth) * 100));
+        const newSize = Math.max(minConstraint, Math.min(maxConstraint, (e.clientX / window.innerWidth) * 100));
         if (typeof onResize === 'function') onResize(newSize);
       } else {
         // portrait: vertical drag resizes
         // In portrait mode, chat is on top, so dragging up should make chat smaller
-        const newSize = Math.max(20, Math.min(80, 100 - (e.clientY / window.innerHeight) * 100));
+        const newSize = Math.max(minConstraint, Math.min(maxConstraint, 100 - (e.clientY / window.innerHeight) * 100));
         if (typeof onResize === 'function') onResize(newSize);
       }
     } else if (dragActionRef.current === 'scroll') {
