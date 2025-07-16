@@ -67,8 +67,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
 
   const handleTouchStart = useCallback((e) => {
     console.log('handleTouchStart called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
-    e.preventDefault();
-    e.stopPropagation();
+    // Don't prevent default immediately - wait to see if this is actually a resize gesture
     dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';
     dragActionRef.current = null;
     if (e.touches && e.touches.length > 0) {
@@ -123,8 +122,11 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     if (initialSize !== null) onResize(initialSize);
 
     const handleMove = evt => {
-      evt.preventDefault();
-      evt.stopPropagation();
+      // Only prevent default if we're actually resizing
+      if (dragActionRef.current === 'resize') {
+        evt.preventDefault();
+        evt.stopPropagation();
+      }
       let clientX, clientY;
       if (evt.touches && evt.touches.length > 0) {
         clientX = evt.touches[0].clientX;
@@ -139,19 +141,22 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       const dy = clientY - dragStartRef.current.y;
       if (!dragActionRef.current) {
         if (dragModeRef.current === 'landscape') {
-          if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+          // In landscape mode, only horizontal movement should trigger resize
+          if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 2) {
             dragActionRef.current = 'resize';
-          } else if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
-            dragActionRef.current = 'scroll';
+          } else if (Math.abs(dy) > 10) {
+            // Vertical movement should be ignored/passed through for scrolling
+            return;
           } else {
             return; // not enough movement yet
           }
         } else {
-          // PORTRAIT MODE
-          if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
+          // In portrait mode, only vertical movement should trigger resize
+          if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx) * 2) {
             dragActionRef.current = 'resize';
-          } else if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
-            dragActionRef.current = 'scroll';
+          } else if (Math.abs(dx) > 10) {
+            // Horizontal movement should be ignored/passed through for scrolling
+            return;
           } else {
             return; // not enough movement yet
           }
@@ -312,7 +317,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       onPointerDown={handleTouchStart}
       onClick={handleClick}
       style={{ 
-        touchAction: 'none', 
+        touchAction: isPortrait() ? 'pan-x' : 'pan-y', // Allow scrolling in the non-resize direction
         userSelect: 'none', 
         zIndex: 1000,
         width: isPortrait() ? '100%' : '24px',

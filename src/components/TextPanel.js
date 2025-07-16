@@ -2,7 +2,13 @@ import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHand
 import { FixedSizeList as List } from 'react-window';
 import styles from '@/styles/TextPanel.module.css';
 
-const ROW_HEIGHT = 36; // Increased to accommodate line-height and padding
+// Function to calculate row height based on font size
+const getRowHeight = (fontSize) => {
+  const baseSize = parseInt(fontSize) || 17;
+  // Calculate height with proper spacing for line height 1.5
+  // Add extra padding to prevent text cutoff
+  return Math.max(36, Math.ceil(baseSize * 1.5) + 20);
+};
 
 const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", onScrollProgress }, ref) => {
   console.log('TextPanel component loaded - version without react-window');
@@ -19,6 +25,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const [submitting, setSubmitting] = useState(false);
   const [flyingText, setFlyingText] = useState(null);
   const [listHeight, setListHeight] = useState(400);
+  const [fontSettings, setFontSettings] = useState({ fontFamily: 'Georgia', fontSize: '17' });
+  const [rowHeight, setRowHeight] = useState(36);
 
 
 
@@ -344,7 +352,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       const scrollElement = listRef.current._outerRef;
       if (scrollElement) {
         const scrollTop = scrollElement.scrollTop;
-        const index = Math.floor(scrollTop / ROW_HEIGHT);
+        const index = Math.floor(scrollTop / rowHeight);
         return Math.max(0, index);
       }
     } catch (error) {
@@ -352,7 +360,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     }
     
     return currentScrollIndexRef.current;
-  }, []);
+  }, [rowHeight]);
 
   // Debounced bookmark saving
   const saveBookmarkDebounced = useCallback((() => {
@@ -393,7 +401,39 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     }
   }, [textLines, loadBookmark, isMobile]);
 
-  // Effect 7: Save bookmark on unmount
+  // Effect 7: Load font settings from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const loadFontSettings = () => {
+        try {
+          const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+          const newFontSettings = {
+            fontFamily: profile.fontFamily || 'Georgia',
+            fontSize: profile.fontSize || '17'
+          };
+          setFontSettings(newFontSettings);
+          setRowHeight(getRowHeight(newFontSettings.fontSize));
+        } catch (error) {
+          console.warn('Failed to load font settings:', error);
+        }
+      };
+
+      // Load initial settings
+      loadFontSettings();
+
+      // Listen for storage changes
+      const handleStorageChange = (e) => {
+        if (e.key === 'explainer:profile') {
+          loadFontSettings();
+        }
+      };
+
+      window.addEventListener('storage', handleStorageChange);
+      return () => window.removeEventListener('storage', handleStorageChange);
+    }
+  }, []);
+
+  // Effect 8: Save bookmark on unmount
   useEffect(() => {
     return () => {
       try {
@@ -775,7 +815,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
 
   const handleScroll = useCallback(({ scrollOffset, scrollUpdateWasRequested }) => {
     if (!scrollUpdateWasRequested) {
-      const currentIndex = Math.floor(scrollOffset / ROW_HEIGHT);
+      const currentIndex = Math.floor(scrollOffset / rowHeight);
       if (currentIndex !== currentScrollIndexRef.current) {
         currentScrollIndexRef.current = currentIndex;
         setCurrentScrollIndex(currentIndex);
@@ -797,7 +837,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         }
       }
     }
-  }, [saveBookmarkDebounced, saveBookmark, isMobile, ROW_HEIGHT, textLines.length, onScrollProgress]);
+  }, [saveBookmarkDebounced, saveBookmark, isMobile, rowHeight, textLines.length, onScrollProgress]);
 
   // Row component for react-window - defined after all handlers
   const Row = useCallback(({ index, style }) => {
@@ -807,7 +847,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     return (
       <div
         className={`${styles.line} ${isSelected ? styles.selected : ''}`}
-        style={{ ...style, width: '100%', height: ROW_HEIGHT }}
+        style={{ 
+          ...style, 
+          width: '100%', 
+          height: rowHeight,
+          display: 'flex',
+          alignItems: 'center',
+          boxSizing: 'border-box'
+        }}
         data-index={index}
         onClick={(event) => {
           event.preventDefault();
@@ -827,12 +874,20 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         <span 
           className={styles.lineContent} 
           title={line.length > 100 ? line : undefined}
+          style={{
+            fontFamily: fontSettings.fontFamily,
+            fontSize: fontSettings.fontSize + 'px',
+            lineHeight: '1.5',
+            padding: '2px 0',
+            display: 'block',
+            width: '100%'
+          }}
         >
           {renderLineContent(line, index)}
         </span>
       </div>
     );
-  }, [selectedLines, textLines, handleLineClick, handleLineTouchStart, handleLineTouchMove, handleLineTouchEnd, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, renderLineContent, isMobile]);
+  }, [selectedLines, textLines, handleLineClick, handleLineTouchStart, handleLineTouchMove, handleLineTouchEnd, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, renderLineContent, isMobile, rowHeight, fontSettings]);
 
   // Early return after all hooks
   if (textLines.length === 0) {
@@ -856,10 +911,10 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           ref={listRef}
           height={listHeight}
           itemCount={textLines.length}
-          itemSize={ROW_HEIGHT}
+          itemSize={rowHeight}
           width={'100%'}
           onScroll={handleScroll}
-          estimatedItemSize={ROW_HEIGHT}
+          estimatedItemSize={rowHeight}
           overscanCount={10}
         >
           {Row}

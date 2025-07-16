@@ -20,6 +20,31 @@ const PROVIDERS = [
   { value: 'custom', label: 'Custom' },
 ];
 
+const FONT_FAMILIES = [
+  { value: 'Georgia', label: 'Georgia (Serif)' },
+  { value: 'Times New Roman', label: 'Times New Roman (Serif)' },
+  { value: 'Arial', label: 'Arial (Sans-serif)' },
+  { value: 'Helvetica', label: 'Helvetica (Sans-serif)' },
+  { value: 'Verdana', label: 'Verdana (Sans-serif)' },
+  { value: 'Tahoma', label: 'Tahoma (Sans-serif)' },
+  { value: 'Consolas', label: 'Consolas (Monospace)' },
+  { value: 'Monaco', label: 'Monaco (Monospace)' },
+  { value: 'Courier New', label: 'Courier New (Monospace)' },
+];
+
+const FONT_SIZES = [
+  { value: '12', label: '12px' },
+  { value: '14', label: '14px' },
+  { value: '16', label: '16px' },
+  { value: '17', label: '17px (Default)' },
+  { value: '18', label: '18px' },
+  { value: '20', label: '20px' },
+  { value: '22', label: '22px' },
+  { value: '24', label: '24px' },
+  { value: '26', label: '26px' },
+  { value: '28', label: '28px' },
+];
+
 const MODELS = {
   openai: [
     { value: 'gpt-4o', label: 'GPT-4o' },
@@ -67,6 +92,8 @@ export default function Profile() {
   const [llmEndpoint, setLlmEndpoint] = useState('');
   const [llmCustomModel, setLlmCustomModel] = useState('');
   const [userStats, setUserStats] = useState(null);
+  const [fontFamily, setFontFamily] = useState('Georgia');
+  const [fontSize, setFontSize] = useState('17');
 
   useEffect(() => {
     setLang(getUserLanguage());
@@ -74,6 +101,8 @@ export default function Profile() {
     setLanguage(profile.language || '');
     setAge(profile.age || '');
     setNationality(profile.nationality || '');
+    setFontFamily(profile.fontFamily || 'Georgia');
+    setFontSize(profile.fontSize || '17');
     // Load translations for the current language
     loadTranslations();
     const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
@@ -205,13 +234,14 @@ export default function Profile() {
         background: '#fff',
         borderRadius: 16,
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        padding: 32,
-        minWidth: 540,
-        maxWidth: 900,
+        padding: window.innerWidth <= 768 ? 16 : 32,
+        minWidth: window.innerWidth <= 768 ? 'auto' : 540,
+        maxWidth: window.innerWidth <= 768 ? '95vw' : 900,
         width: '100%',
         position: 'relative',
-        maxHeight: '90vh',
-        overflow: 'auto'
+        maxHeight: window.innerWidth <= 768 ? '95vh' : '90vh',
+        overflow: 'auto',
+        margin: window.innerWidth <= 768 ? '10px' : '0'
       }}>
         {/* Close button */}
         <button
@@ -244,14 +274,20 @@ export default function Profile() {
         </h1>
         <div className="profile-columns" style={{
           display: 'flex',
-          gap: 32,
+          gap: window.innerWidth <= 768 ? 16 : 32,
           flexWrap: 'wrap',
           alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          minWidth: 0
+          justifyContent: window.innerWidth <= 768 ? 'center' : 'space-between',
+          minWidth: 0,
+          flexDirection: window.innerWidth <= 768 ? 'column' : 'row'
         }}>
           {/* Personal Data Section */}
-          <section className="profile-section" style={{ flex: 1, minWidth: 260, maxWidth: 400 }}>
+          <section className="profile-section" style={{ 
+            flex: 1, 
+            minWidth: window.innerWidth <= 768 ? 'auto' : 260, 
+            maxWidth: window.innerWidth <= 768 ? '100%' : 400,
+            width: window.innerWidth <= 768 ? '100%' : 'auto'
+          }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: '#334155' }}>Personal Data</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
@@ -266,10 +302,10 @@ export default function Profile() {
                   style={{
                     width: '100%',
                     marginTop: 8,
-                    padding: 10,
+                    padding: window.innerWidth <= 768 ? 12 : 10,
                     borderRadius: 8,
                     border: '1px solid #cbd5e1',
-                    fontSize: 16,
+                    fontSize: window.innerWidth <= 768 ? 18 : 16,
                     background: '#fff',
                     transition: 'border-color 0.2s'
                   }}
@@ -295,10 +331,10 @@ export default function Profile() {
                   style={{
                     width: '100%',
                     marginTop: 8,
-                    padding: 10,
+                    padding: window.innerWidth <= 768 ? 12 : 10,
                     borderRadius: 8,
                     border: '1px solid #cbd5e1',
-                    fontSize: 16,
+                    fontSize: window.innerWidth <= 768 ? 18 : 16,
                     background: '#fff',
                     transition: 'border-color 0.2s'
                   }}
@@ -317,10 +353,10 @@ export default function Profile() {
                   style={{
                     width: '100%',
                     marginTop: 8,
-                    padding: 10,
+                    padding: window.innerWidth <= 768 ? 12 : 10,
                     borderRadius: 8,
                     border: '1px solid #cbd5e1',
-                    fontSize: 16,
+                    fontSize: window.innerWidth <= 768 ? 18 : 16,
                     background: '#fff',
                     transition: 'border-color 0.2s'
                   }}
@@ -331,10 +367,99 @@ export default function Profile() {
                   {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </label>
+              
+              {/* Font Settings Section */}
+              <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid #e2e8f0' }}>
+                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16, color: '#334155' }}>
+                  Text Panel Font Settings
+                </h3>
+              </div>
+              
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Font Family
+                <select
+                  value={fontFamily}
+                  onChange={e => {
+                    setFontFamily(e.target.value);
+                    autoSave({ fontFamily: e.target.value });
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: window.innerWidth <= 768 ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: window.innerWidth <= 768 ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s',
+                    fontFamily: fontFamily
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                >
+                  {FONT_FAMILIES.map(f => (
+                    <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>
+                      {f.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Font Size
+                <select
+                  value={fontSize}
+                  onChange={e => {
+                    setFontSize(e.target.value);
+                    autoSave({ fontSize: e.target.value });
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: window.innerWidth <= 768 ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: window.innerWidth <= 768 ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                >
+                  {FONT_SIZES.map(s => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              
+              {/* Font Preview */}
+              <div style={{ 
+                marginTop: 16, 
+                padding: 12, 
+                backgroundColor: '#f8fafc', 
+                borderRadius: 8,
+                border: '1px solid #e2e8f0'
+              }}>
+                <div style={{ 
+                  fontFamily: fontFamily, 
+                  fontSize: fontSize + 'px',
+                  lineHeight: '1.5',
+                  color: '#18181b'
+                }}>
+                  Preview: "To be or not to be, that is the question"
+                </div>
+              </div>
             </div>
           </section>
           {/* Model Selection Section */}
-          <section className="profile-section" style={{ flex: 1, minWidth: 260, maxWidth: 400 }}>
+          <section className="profile-section" style={{ 
+            flex: 1, 
+            minWidth: window.innerWidth <= 768 ? 'auto' : 260, 
+            maxWidth: window.innerWidth <= 768 ? '100%' : 400,
+            width: window.innerWidth <= 768 ? '100%' : 'auto'
+          }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: '#334155' }}>Model & Provider</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
