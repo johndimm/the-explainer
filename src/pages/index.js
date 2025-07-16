@@ -35,7 +35,7 @@ function getLayoutMode() {
 
 export default function Home() {
   const [panelSize, setPanelSize] = useState(50); // width or height %
-  const [layoutMode, setLayoutMode] = useState(getLayoutMode());
+  const [layoutMode, setLayoutMode] = useState({ mode: 'desktop', isPortrait: false });
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [bookTitle, setBookTitle] = useState("Romeo and Juliet");
@@ -93,9 +93,11 @@ export default function Home() {
       setPanelSize(savedPosition);
     }
     
+    // Initialize layout mode after component mounts
+    updateLayout();
+    
     window.addEventListener('resize', updateLayout);
     window.addEventListener('orientationchange', updateLayout);
-    updateLayout();
     
     return () => {
       window.removeEventListener('resize', updateLayout);

@@ -15,6 +15,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartIndex, setDragStartIndex] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [flyingText, setFlyingText] = useState(null);
   const [listHeight, setListHeight] = useState(400);
@@ -272,12 +273,20 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         // Use the same logic as the main page
         const isMobileDevice = window.innerWidth <= 1024 || 
                               /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        console.log(`📱 TextPanel Mobile detection: ${isMobileDevice}, User Agent: ${navigator.userAgent}`);
+        
+        // Check orientation using both media query and aspect ratio
+        const mediaQueryPortrait = window.matchMedia('(orientation: portrait)').matches;
+        const aspectRatioPortrait = window.innerHeight > window.innerWidth;
+        const isPortraitMode = mediaQueryPortrait || aspectRatioPortrait;
+        
+        console.log(`📱 TextPanel Mobile detection: ${isMobileDevice}, Portrait: ${isPortraitMode}, User Agent: ${navigator.userAgent}`);
         console.log(`📱 TextPanel Window dimensions: ${window.innerWidth}x${window.innerHeight}`);
         setIsMobile(isMobileDevice);
+        setIsPortrait(isPortraitMode);
       } catch (error) {
         console.warn('Failed to detect mobile device:', error);
         setIsMobile(false);
+        setIsPortrait(false);
       }
     };
     
@@ -285,6 +294,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     
     try {
       window.addEventListener('resize', checkMobile);
+      window.addEventListener('orientationchange', checkMobile);
     } catch (error) {
       console.warn('Failed to add resize listener:', error);
     }
@@ -292,6 +302,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     return () => {
       try {
         window.removeEventListener('resize', checkMobile);
+        window.removeEventListener('orientationchange', checkMobile);
       } catch (error) {
         console.warn('Failed to remove resize listener:', error);
       }
@@ -816,6 +827,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         <span 
           className={styles.lineContent} 
           title={line.length > 100 ? line : undefined}
+          style={{
+            fontSize: isMobile && isPortrait ? '16px' : '14px',
+            lineHeight: isMobile && isPortrait ? '1.4' : '1.3',
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            whiteSpace: 'normal',
+            maxWidth: '100%',
+            fontWeight: 'normal'
+          }}
+          data-debug={`mobile:${isMobile},portrait:${isPortrait}`}
         >
           {renderLineContent(line, index)}
         </span>
