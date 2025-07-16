@@ -493,8 +493,8 @@
   }
 
   .lineContent {
-    font-size: 7px;
-    line-height: 1.1;
+    font-size: 5px;
+    line-height: 1.0;
     color: #111215;
     font-weight: 700;
     word-break: break-word;
@@ -555,8 +555,8 @@
   }
 
   .lineContent {
-    font-size: 5px;
-    line-height: 1.0;
+    font-size: 7px;
+    line-height: 1.1;
     font-weight: 700;
     word-break: break-word;
     overflow-wrap: break-word;
