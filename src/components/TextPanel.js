@@ -827,16 +827,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         <span 
           className={styles.lineContent} 
           title={line.length > 100 ? line : undefined}
-          style={{
-            fontSize: isMobile && isPortrait ? '24px' : '20px',
-            lineHeight: isMobile && isPortrait ? '1.6' : '1.5',
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
-            whiteSpace: 'normal',
-            maxWidth: '100%',
-            fontWeight: 'normal'
-          }}
-          data-debug={`mobile:${isMobile},portrait:${isPortrait}`}
         >
           {renderLineContent(line, index)}
         </span>
