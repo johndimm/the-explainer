@@ -3,6 +3,7 @@ import Head from "next/head";
 import TextPanel from '@/components/TextPanel';
 import ChatPanel from '@/components/ChatPanel';
 import DraggableSeparator from '@/components/DraggableSeparator';
+import PaywallModal from '@/components/PaywallModal';
 import styles from '@/styles/Home.module.css';
 import { useSession, signIn } from 'next-auth/react';
 
@@ -40,6 +41,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [bookTitle, setBookTitle] = useState("Romeo and Juliet");
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallData, setPaywallData] = useState(null);
   const textPanelRef = useRef();
   const containerRef = useRef();
   const { data: session } = useSession();
@@ -253,6 +256,23 @@ export default function Home() {
         // If the response has an error message, use it; otherwise use the status
         let backendMsg = data.error || data.message || '';
         console.log('Backend error message:', backendMsg);
+        
+        // Handle paywall responses
+        if (response.status === 403 && data.paywall) {
+          setPaywallData(data);
+          setShowPaywall(true);
+          setIsLoading(false);
+          return;
+        }
+        
+        // Handle paywall responses
+        if (response.status === 403 && data.paywall) {
+          setPaywallData(data);
+          setShowPaywall(true);
+          setIsLoading(false);
+          return;
+        }
+        
         if (response.status === 403 && backendMsg.toLowerCase().includes('sign in required')) {
           const errorMessage = {
             type: 'sign-in-required',
@@ -391,6 +411,14 @@ export default function Home() {
       if (!response.ok) {
         // If the response has an error message, use it; otherwise use the status
         let backendMsg = data.error || data.message || '';
+        // Handle paywall responses
+        if (response.status === 403 && data.paywall) {
+          setPaywallData(data);
+          setShowPaywall(true);
+          setIsLoading(false);
+          return;
+        }
+        
         if (response.status === 403 && backendMsg.toLowerCase().includes('sign in required')) {
           const errorMessage = {
             type: 'sign-in-required',
@@ -524,6 +552,13 @@ export default function Home() {
           )}
         </div>
       </div>
+      
+      <PaywallModal 
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        paywallData={paywallData}
+        session={session}
+      />
     </>
   );
 }

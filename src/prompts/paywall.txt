@@ -1,0 +1,11 @@
+
+I want to simulate a paywall.  There are four levels of access:
+
+1.  anonymous -- you get 3 explanations and that's it
+
+2.  signed-in -- you get 1 explanation credit to use every hour, and it must be used in that hour.  If you try again within an hour, the app tells you when the hour is up and you will get another credit.   It also gives you a link to purchase credits to use immediately.  In the simulation, there's no financial activity.  The credits are just immediately awarded for nothing.
+
+3.  paying customer -- you have purchased or been gifted a number of explanation credits to use whenever you want.  Cost is $0.05 per explanation credit, so $5 buys 100.  
+
+4.  paying customer BYOLLM --  If you "Bring your own LLM" by selected a custom model and giving your personal key, you get five explanations for one credit.
+

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { t, getUserLanguage } from '@/i18n';
 import { X } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
+import CreditsDisplay from '@/components/CreditsDisplay';
 
 const LANGUAGES = [
   'English', 'French', 'German', 'Spanish', 'Italian', 'Chinese', 'Japanese', 'Russian', 'Portuguese', 'Arabic', 'Hindi', 'Other'
@@ -433,6 +434,12 @@ export default function Profile() {
             </div>
           </section>
         </div>
+        
+        {/* Credits Section */}
+        <div style={{ maxWidth: 700, marginLeft: 'auto', marginRight: 'auto', marginTop: 32 }}>
+          <CreditsDisplay session={session} />
+        </div>
+        
         {/* Books List Section */}
         {userStats && userStats.books && userStats.books.length > 0 && (
           <div style={{

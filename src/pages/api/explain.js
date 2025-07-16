@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import { Pool } from 'pg';
 import cookie from 'cookie';
+import { CreditManager } from '../../lib/credits.js';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -34,13 +35,50 @@ export default async function handler(req, res) {
       provider, model, apiKey, endpoint, customModel, isFollowUp, speaker, userEmail
     } = req.body;
 
-    // Anonymous user limit: 3 free explanations
+    // Paywall logic - 4 tiers of access
     if (!userEmail) {
-      // Parse cookies
+      // Level 1: Anonymous user limit: 3 free explanations
       const cookies = cookie.parse(req.headers.cookie || '');
       const anonCount = parseInt(cookies.anon_explanations || '0', 10);
       if (anonCount >= 3) {
-        return res.status(403).json({ error: 'Sign in required after 3 free explanations. Please sign in to continue.' });
+        return res.status(403).json({ 
+          error: 'Sign in required after 3 free explanations. Please sign in to continue.',
+          paywall: true,
+          tier: 'anonymous'
+        });
+      }
+    } else {
+      // Level 2+: Signed-in users need credits
+      const user = await CreditManager.getUserCredits(userEmail);
+      if (!user) {
+        return res.status(403).json({ error: 'User not found' });
+      }
+
+      const isByollm = provider === 'custom' && apiKey;
+      const creditsNeeded = isByollm ? 0.2 : 1;
+
+      if (user.credits < creditsNeeded) {
+        // Check if user can get hourly credit
+        const canGetHourly = await CreditManager.canGetHourlyCredit(userEmail);
+        
+        if (canGetHourly) {
+          // Grant hourly credit
+          await CreditManager.grantHourlyCredit(userEmail);
+        } else {
+          // User needs to wait or purchase credits
+          const timeUntilNext = await CreditManager.getTimeUntilNextCredit(userEmail);
+          const minutesUntilNext = Math.ceil(timeUntilNext / (1000 * 60));
+          
+          return res.status(403).json({
+            error: `You need ${creditsNeeded} credit${creditsNeeded === 1 ? '' : 's'} to get an explanation. Your next hourly credit will be available in ${minutesUntilNext} minutes.`,
+            paywall: true,
+            tier: 'signed_in',
+            creditsNeeded,
+            currentCredits: user.credits,
+            minutesUntilNext,
+            purchaseUrl: '/profile#credits'
+          });
+        }
       }
     }
 
@@ -259,13 +297,16 @@ ${nationalityInstruction}`;
         throw new Error('No explanation received from model');
       }
 
-      // Log user activity if userEmail is present
+      // Handle credit usage and activity logging
       if (userEmail) {
+        // Use credits for signed-in users
+        const isByollm = provider === 'custom' && apiKey;
+        await CreditManager.useCredits(userEmail, provider, model, title, isByollm);
+        
+        // Log user activity
         await logUserActivity(userEmail, title, model);
-      }
-
-      // Increment anon_explanations cookie for anonymous users
-      if (!userEmail) {
+      } else {
+        // Increment anon_explanations cookie for anonymous users
         const cookies = cookie.parse(req.headers.cookie || '');
         const anonCount = parseInt(cookies.anon_explanations || '0', 10) + 1;
         res.setHeader('Set-Cookie', cookie.serialize('anon_explanations', String(anonCount), {

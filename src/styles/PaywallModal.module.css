@@ -1,0 +1,219 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 1.5rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.closeButton:hover {
+  background: #f3f4f6;
+}
+
+.content {
+  padding: 20px;
+}
+
+.anonymousLimit ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.anonymousLimit li {
+  padding: 10px 0;
+  font-size: 1.1rem;
+}
+
+.signInButton {
+  width: 100%;
+  background: #4285f4;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.signInButton:hover {
+  background: #3367d6;
+}
+
+.creditNeeded {
+  text-align: center;
+}
+
+.creditNeeded p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.waitTime {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 20px 0;
+}
+
+.creditReady {
+  background: #d1fae5;
+  border: 1px solid #10b981;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 20px 0;
+}
+
+.packages {
+  margin-top: 30px;
+}
+
+.packages h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+.packageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+}
+
+.package {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.package:hover {
+  border-color: #3b82f6;
+}
+
+.package h4 {
+  margin: 0 0 10px 0;
+  color: #111827;
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #059669;
+  margin: 5px 0;
+}
+
+.package p:last-of-type {
+  margin: 10px 0;
+  color: #6b7280;
+}
+
+.purchaseButton {
+  width: 100%;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.purchaseButton:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.purchaseButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.byollmTip {
+  background: #f0f9ff;
+  border: 1px solid #0284c7;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.byollmTip a {
+  color: #0284c7;
+  text-decoration: none;
+}
+
+.byollmTip a:hover {
+  text-decoration: underline;
+}
+
+.success {
+  text-align: center;
+  padding: 20px;
+}
+
+.success h3 {
+  color: #059669;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 640px) {
+  .packageGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .modal {
+    width: 95%;
+  }
+  
+  .content {
+    padding: 15px;
+  }
+}
