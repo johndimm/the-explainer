@@ -560,3 +560,6 @@ TextPanel component loaded - version without react-window
  GET /sw.js 404 in 219ms
  ✓ Compiled in 1889ms (520 modules)
  ✓ Compiled in 602ms (520 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 653ms (566 modules)
+ GET /sw.js 404 in 994ms
