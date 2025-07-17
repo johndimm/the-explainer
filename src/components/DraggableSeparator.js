@@ -141,12 +141,10 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       const dy = clientY - dragStartRef.current.y;
       if (!dragActionRef.current) {
         if (dragModeRef.current === 'landscape') {
-          // In landscape mode, only horizontal movement should trigger resize
-          if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 2) {
+          // In landscape mode, ONLY allow horizontal movement for resize
+          // No scroll functionality on desktop
+          if (Math.abs(dx) > 10) {
             dragActionRef.current = 'resize';
-          } else if (Math.abs(dy) > 10) {
-            // Vertical movement should be ignored/passed through for scrolling
-            return;
           } else {
             return; // not enough movement yet
           }
@@ -232,10 +230,10 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     const dy = e.clientY - dragStartRef.current.y;
     if (!dragActionRef.current) {
       if (dragModeRef.current === 'landscape') {
-        if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) {
+        // In landscape mode, ONLY allow horizontal dragging for resize
+        // No scroll functionality on desktop
+        if (Math.abs(dx) > 8) {
           dragActionRef.current = 'resize';
-        } else if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) {
-          dragActionRef.current = 'scroll';
         } else {
           return; // not enough movement yet
         }

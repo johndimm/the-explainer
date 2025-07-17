@@ -1,6 +1,51 @@
 import fs from 'fs';
 import path from 'path';
 
+// Simple HTML text extraction function
+function extractTextFromHTML(html) {
+  // Remove script and style elements completely
+  let text = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+  text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  
+  // Remove HTML comments
+  text = text.replace(/<!--[\s\S]*?-->/g, '');
+  
+  // Replace common block elements with line breaks
+  text = text.replace(/<\/(div|p|br|h[1-6]|li|tr|td|th)>/gi, '\n');
+  text = text.replace(/<(br|hr)\s*\/?>/gi, '\n');
+  
+  // Remove all remaining HTML tags
+  text = text.replace(/<[^>]*>/g, '');
+  
+  // Decode common HTML entities
+  const entities = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&apos;': "'",
+    '&nbsp;': ' ',
+    '&mdash;': '—',
+    '&ndash;': '–',
+    '&rsquo;': '\u2019',
+    '&lsquo;': '\u2018',
+    '&rdquo;': '\u201D',
+    '&ldquo;': '\u201C'
+  };
+  
+  for (const [entity, char] of Object.entries(entities)) {
+    text = text.replace(new RegExp(entity, 'g'), char);
+  }
+  
+  // Clean up whitespace
+  text = text.replace(/\n\s*\n/g, '\n\n'); // Multiple newlines to double
+  text = text.replace(/[ \t]+/g, ' '); // Multiple spaces to single
+  text = text.trim();
+  
+  return text;
+}
+
 export default async function handler(req, res) {
   const { url } = req.query;
 
@@ -54,9 +99,26 @@ export default async function handler(req, res) {
       res.status(500).json({ error: `Failed to fetch: ${response.status}` });
       return;
     }
+    
+    const contentType = response.headers.get('content-type') || '';
+    let text = await response.text();
+    
+    // If the content appears to be HTML, extract text from it
+    if (contentType.includes('text/html') || text.trim().toLowerCase().startsWith('<!doctype html') || text.trim().toLowerCase().startsWith('<html')) {
+      console.log('Detected HTML content, extracting text...');
+      text = extractTextFromHTML(text);
+      
+      // Validate that we got meaningful text
+      if (!text || text.length < 100) {
+        res.status(400).json({ error: 'The HTML page does not contain enough readable text content.' });
+        return;
+      }
+      
+      console.log('Extracted text length:', text.length);
+    }
+    
     // Set content type to text/plain
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    const text = await response.text();
     res.status(200).send(text);
   } catch (err) {
     res.status(500).json({ error: 'Error fetching content.' });

@@ -35,6 +35,7 @@ const FONT_FAMILIES = [
 const FONT_SIZES = [
   { value: '12', label: '12px' },
   { value: '14', label: '14px' },
+  { value: '15', label: '15px' },
   { value: '16', label: '16px' },
   { value: '17', label: '17px (Default)' },
   { value: '18', label: '18px' },
@@ -94,6 +95,19 @@ export default function Profile() {
   const [userStats, setUserStats] = useState(null);
   const [fontFamily, setFontFamily] = useState('Georgia');
   const [fontSize, setFontSize] = useState('17');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Mobile detection and resize handling
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     setLang(getUserLanguage());
@@ -274,19 +288,19 @@ export default function Profile() {
         </h1>
         <div className="profile-columns" style={{
           display: 'flex',
-          gap: window.innerWidth <= 768 ? 16 : 32,
+          gap: isMobile ? 16 : 32,
           flexWrap: 'wrap',
           alignItems: 'flex-start',
-          justifyContent: window.innerWidth <= 768 ? 'center' : 'space-between',
+          justifyContent: isMobile ? 'center' : 'space-between',
           minWidth: 0,
-          flexDirection: window.innerWidth <= 768 ? 'column' : 'row'
+          flexDirection: isMobile ? 'column' : 'row'
         }}>
           {/* Personal Data Section */}
           <section className="profile-section" style={{ 
             flex: 1, 
-            minWidth: window.innerWidth <= 768 ? 'auto' : 260, 
-            maxWidth: window.innerWidth <= 768 ? '100%' : 400,
-            width: window.innerWidth <= 768 ? '100%' : 'auto'
+            minWidth: isMobile ? 'auto' : 260, 
+            maxWidth: isMobile ? '100%' : 400,
+            width: isMobile ? '100%' : 'auto'
           }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: '#334155' }}>Personal Data</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -302,10 +316,10 @@ export default function Profile() {
                   style={{
                     width: '100%',
                     marginTop: 8,
-                    padding: window.innerWidth <= 768 ? 12 : 10,
+                    padding: isMobile ? 12 : 10,
                     borderRadius: 8,
                     border: '1px solid #cbd5e1',
-                    fontSize: window.innerWidth <= 768 ? 18 : 16,
+                    fontSize: isMobile ? 18 : 16,
                     background: '#fff',
                     transition: 'border-color 0.2s'
                   }}
@@ -331,10 +345,10 @@ export default function Profile() {
                   style={{
                     width: '100%',
                     marginTop: 8,
-                    padding: window.innerWidth <= 768 ? 12 : 10,
+                    padding: isMobile ? 12 : 10,
                     borderRadius: 8,
                     border: '1px solid #cbd5e1',
-                    fontSize: window.innerWidth <= 768 ? 18 : 16,
+                    fontSize: isMobile ? 18 : 16,
                     background: '#fff',
                     transition: 'border-color 0.2s'
                   }}
@@ -353,10 +367,10 @@ export default function Profile() {
                   style={{
                     width: '100%',
                     marginTop: 8,
-                    padding: window.innerWidth <= 768 ? 12 : 10,
+                    padding: isMobile ? 12 : 10,
                     borderRadius: 8,
                     border: '1px solid #cbd5e1',
-                    fontSize: window.innerWidth <= 768 ? 18 : 16,
+                    fontSize: isMobile ? 18 : 16,
                     background: '#fff',
                     transition: 'border-color 0.2s'
                   }}
@@ -386,10 +400,10 @@ export default function Profile() {
                   style={{
                     width: '100%',
                     marginTop: 8,
-                    padding: window.innerWidth <= 768 ? 12 : 10,
+                    padding: isMobile ? 12 : 10,
                     borderRadius: 8,
                     border: '1px solid #cbd5e1',
-                    fontSize: window.innerWidth <= 768 ? 18 : 16,
+                    fontSize: isMobile ? 18 : 16,
                     background: '#fff',
                     transition: 'border-color 0.2s',
                     fontFamily: fontFamily
@@ -416,10 +430,10 @@ export default function Profile() {
                   style={{
                     width: '100%',
                     marginTop: 8,
-                    padding: window.innerWidth <= 768 ? 12 : 10,
+                    padding: isMobile ? 12 : 10,
                     borderRadius: 8,
                     border: '1px solid #cbd5e1',
-                    fontSize: window.innerWidth <= 768 ? 18 : 16,
+                    fontSize: isMobile ? 18 : 16,
                     background: '#fff',
                     transition: 'border-color 0.2s'
                   }}
@@ -456,9 +470,9 @@ export default function Profile() {
           {/* Model Selection Section */}
           <section className="profile-section" style={{ 
             flex: 1, 
-            minWidth: window.innerWidth <= 768 ? 'auto' : 260, 
-            maxWidth: window.innerWidth <= 768 ? '100%' : 400,
-            width: window.innerWidth <= 768 ? '100%' : 'auto'
+            minWidth: isMobile ? 'auto' : 260, 
+            maxWidth: isMobile ? '100%' : 400,
+            width: isMobile ? '100%' : 'auto'
           }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: '#334155' }}>Model & Provider</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

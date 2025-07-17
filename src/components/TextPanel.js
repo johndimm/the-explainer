@@ -205,9 +205,39 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     return <span style={{ marginLeft: 32, display: 'block' }}>{line}</span>;
   }, [title]);
 
-  // Function to split text into lines (no artificial line breaks)
+  // Function to split text into lines with intelligent line breaking
   const splitLongLines = useCallback((text) => {
-    return text.split('\n');
+    const lines = text.split('\n');
+    const processedLines = [];
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        processedLines.push('');
+        continue;
+      }
+      // If line is already reasonably short (under 80 chars), keep it as is
+      if (trimmed.length <= 80) {
+        processedLines.push(trimmed);
+        continue;
+      }
+      // For longer lines, break them intelligently
+      const words = trimmed.split(/\s+/);
+      let currentLine = '';
+      for (const word of words) {
+        // If adding this word would make the line too long, start a new line
+        if (currentLine && (currentLine + ' ' + word).length > 80) {
+          processedLines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = currentLine ? currentLine + ' ' + word : word;
+        }
+      }
+      // Add the last line if it has content
+      if (currentLine) {
+        processedLines.push(currentLine);
+      }
+    }
+    return processedLines;
   }, []);
 
 

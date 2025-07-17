@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { t, getUserLanguage } from '@/i18n';
-import { Clock } from 'lucide-react';
+import { Clock, ArrowLeft } from 'lucide-react';
 import frenchCollection from '../tools/french-literature.json';
 import italianCollectionRaw from '../tools/italian-literature.json';
 import spanishCollectionRaw from '../tools/spanish-literature.json';
@@ -943,6 +943,24 @@ export default function Library() {
             </div>
           </div>
         )}
+        <div style={{ marginBottom: 16 }}>
+          <a href="/" style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: 8,
+            color: '#3b82f6', 
+            textDecoration: 'none', 
+            fontWeight: 500,
+            fontSize: 16,
+            padding: '8px 12px',
+            borderRadius: 8,
+            transition: 'background-color 0.2s',
+            ':hover': { backgroundColor: '#f3f4f6' }
+          }}>
+            <ArrowLeft size={20} />
+            {t('backToApp', lang)}
+          </a>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
           <h1 style={{ fontSize: 38, fontWeight: 800, letterSpacing: -1, color: 'black', margin: 0 }}>Library</h1>
         </div>
@@ -955,7 +973,7 @@ export default function Library() {
             type="url"
             value={customUrl}
             onChange={e => setCustomUrl(e.target.value)}
-            placeholder="Paste a URL to a plain text file (e.g. Project Gutenberg)"
+            placeholder="Paste a URL to a text file or web page (e.g. Project Gutenberg, articles, etc.)"
             style={{ flex: 1, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fffbe8' }}
             disabled={customLoading}
             required
