@@ -22,11 +22,12 @@ function isPortrait() {
 const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [debug, setDebug] = useState({ orientation: '', value: 0 });
-  const [fingerPosition, setFingerPosition] = useState(0);
-  const [clickedPosition, setClickedPosition] = useState(null);
+  const [thumbPosition, setThumbPosition] = useState(0);
+  const isDraggingRef = useRef(false);
   const dragModeRef = useRef('landscape'); // 'portrait' or 'landscape'
   const dragActionRef = useRef(null); // 'resize' or 'scroll'
   const dragStartRef = useRef({ x: 0, y: 0 });
+  const thumbRef = useRef(null);
 
   const handleMouseDown = useCallback((e) => {
     // Reduced logging to avoid spam
@@ -36,34 +37,154 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     dragActionRef.current = null;
     dragStartRef.current = { x: e.clientX, y: e.clientY };
     setIsDragging(true);
-    setClickedPosition(null); // Clear clicked position when dragging starts
     document.body.style.cursor = 'col-resize';
     document.body.style.userSelect = 'none';
   }, []);
 
-  const handleClick = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const updateThumbPosition = useCallback((clientX, clientY, shouldScroll = true) => {
+    if (!thumbRef.current) return 0;
+    
+    // Get the container bounds for relative positioning
+    const containerRect = thumbRef.current.parentElement.getBoundingClientRect();
     
     let ratio;
+    let pixelPosition;
+    
     if (isPortrait()) {
-      // In portrait mode, calculate ratio based on horizontal position
-      const rect = e.currentTarget.getBoundingClientRect();
-      ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      // horizontal drag in portrait - calculate relative to container width
+      pixelPosition = Math.max(0, Math.min(containerRect.width, clientX - containerRect.left));
+      ratio = pixelPosition / containerRect.width;
     } else {
-      // In landscape mode, calculate ratio based on vertical position
-      const rect = e.currentTarget.getBoundingClientRect();
-      ratio = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+      // vertical drag in landscape - calculate relative to container height  
+      pixelPosition = Math.max(0, Math.min(containerRect.height, clientY - containerRect.top));
+      ratio = pixelPosition / containerRect.height;
     }
     
-    // Set clicked position to show indicator
-    setClickedPosition(ratio);
+    console.log('🔴 Setting thumb position immediately:', ratio, 'pixelPosition:', pixelPosition);
     
-    // Jump to that position in the text
-    if (typeof onScrollDivider === 'function') {
-      onScrollDivider(ratio);
+    // 1. Update thumb position immediately in DOM using pixel position (instant visual feedback)
+    if (isPortrait()) {
+      thumbRef.current.style.left = `${pixelPosition - 25}px`;
+      thumbRef.current.style.top = '4px';
+    } else {
+      thumbRef.current.style.top = `${pixelPosition - 15}px`;
+      thumbRef.current.style.left = '4px';
     }
-  }, [isPortrait, onScrollDivider]);
+    
+    // 2. Update React state (for consistency)
+    setThumbPosition(ratio);
+    
+    // 3. Trigger scroll operation asynchronously if requested
+    if (shouldScroll && typeof onScrollDivider === 'function') {
+      // Use setTimeout to ensure DOM update happens first
+      setTimeout(() => {
+        onScrollDivider(ratio);
+      }, 0);
+    }
+    
+    return ratio;
+  }, [onScrollDivider]);
+
+  const handleThumbMouseDown = useCallback((e) => {
+    // Thumb-specific mouse down - force scroll mode
+    console.log('🔴 THUMB CLICKED!', e.target);
+    e.preventDefault();
+    e.stopPropagation();
+    dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';
+    dragActionRef.current = 'scroll'; // Force scroll mode immediately
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
+    setIsDragging(true);
+    isDraggingRef.current = true;
+    document.body.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+  }, []);
+
+  const handleThumbTouchStart = useCallback((e) => {
+    // Thumb-specific touch start - force scroll mode
+    e.preventDefault();
+    e.stopPropagation();
+    dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';
+    dragActionRef.current = 'scroll'; // Force scroll mode immediately
+    if (e.touches && e.touches.length > 0) {
+      dragStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else {
+      dragStartRef.current = { x: 0, y: 0 };
+    }
+    setIsDragging(true);
+    isDraggingRef.current = true;
+    document.body.style.userSelect = 'none';
+
+    // Set up the same move/end handlers as the main touch handler
+    const calcSize = evt => {
+      let clientX, clientY;
+      if (evt.touches && evt.touches.length > 0) {
+        clientX = evt.touches[0].clientX;
+        clientY = evt.touches[0].clientY;
+      } else if (evt.clientX !== undefined && evt.clientY !== undefined) {
+        clientX = evt.clientX;
+        clientY = evt.clientY;
+      } else {
+        return null;
+      }
+      
+      // Adjust constraints based on screen size for landscape mode
+      let minConstraint = 20;
+      let maxConstraint = 80;
+      
+      if (!isPortrait() && window.innerWidth < 1024) {
+        minConstraint = 20;
+        maxConstraint = 70;
+      }
+      
+      if (isPortrait()) {
+        const result = Math.max(minConstraint, Math.min(maxConstraint, 100 - (clientY / window.innerHeight) * 100));
+        return result;
+      } else {
+        const result = Math.max(minConstraint, Math.min(maxConstraint, (clientX / window.innerWidth) * 100));
+        return result;
+      }
+    };
+
+    const handleMove = evt => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      let clientX, clientY;
+      if (evt.touches && evt.touches.length > 0) {
+        clientX = evt.touches[0].clientX;
+        clientY = evt.touches[0].clientY;
+      } else if (evt.clientX !== undefined && evt.clientY !== undefined) {
+        clientX = evt.clientX;
+        clientY = evt.clientY;
+      } else {
+        return;
+      }
+      
+      updateThumbPosition(clientX, clientY);
+    };
+
+    const handleEnd = evt => {
+      if (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+      }
+      setIsDragging(false);
+      isDraggingRef.current = false;
+      document.body.style.userSelect = '';
+      document.removeEventListener('touchmove', handleMove, { passive: false });
+      document.removeEventListener('touchend', handleEnd);
+      document.removeEventListener('touchcancel', handleEnd);
+      document.removeEventListener('pointermove', handleMove);
+      document.removeEventListener('pointerup', handleEnd);
+      document.removeEventListener('pointercancel', handleEnd);
+    };
+
+    document.addEventListener('touchmove', handleMove, { passive: false });
+    document.addEventListener('touchend', handleEnd);
+    document.addEventListener('touchcancel', handleEnd);
+    document.addEventListener('pointermove', handleMove);
+    document.addEventListener('pointerup', handleEnd);
+    document.addEventListener('pointercancel', handleEnd);
+  }, [onResize]);
 
   const handleTouchStart = useCallback((e) => {
     console.log('handleTouchStart called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
@@ -76,7 +197,6 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       dragStartRef.current = { x: 0, y: 0 };
     }
     setIsDragging(true);
-    setClickedPosition(null); // Clear clicked position when dragging starts
     document.body.style.userSelect = 'none';
 
     const calcSize = evt => {
@@ -181,17 +301,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
           if (typeof onResize === 'function') onResize(newSize);
         }
       } else if (dragActionRef.current === 'scroll') {
-        let ratio;
-        if (dragModeRef.current === 'landscape') {
-          // vertical drag in landscape
-          ratio = Math.max(0, Math.min(1, clientY / window.innerHeight));
-          setFingerPosition(ratio);
-        } else {
-          // horizontal drag in portrait
-          ratio = Math.max(0, Math.min(1, clientX / window.innerWidth));
-          setFingerPosition(ratio);
-        }
-        if (typeof onScrollDivider === 'function') onScrollDivider(ratio);
+        updateThumbPosition(clientX, clientY);
       }
       // Log CSS variables
       const root = document.querySelector('.container');
@@ -207,6 +317,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
         evt.stopPropagation();
       }
       setIsDragging(false);
+      isDraggingRef.current = false;
       document.body.style.userSelect = '';
       document.removeEventListener('touchmove', handleMove, { passive: false });
       document.removeEventListener('touchend', handleEnd);
@@ -269,17 +380,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
         if (typeof onResize === 'function') onResize(newSize);
       }
     } else if (dragActionRef.current === 'scroll') {
-      let ratio;
-      if (dragModeRef.current === 'landscape') {
-        // vertical drag in landscape
-        ratio = Math.max(0, Math.min(1, e.clientY / window.innerHeight));
-        setFingerPosition(ratio);
-      } else {
-        // horizontal drag in portrait
-        ratio = Math.max(0, Math.min(1, e.clientX / window.innerWidth));
-        setFingerPosition(ratio);
-      }
-      if (typeof onScrollDivider === 'function') onScrollDivider(ratio);
+      updateThumbPosition(e.clientX, e.clientY);
     }
     // Log CSS variables
     const root = document.querySelector('.container');
@@ -307,30 +408,56 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
+  // Sync thumb position with progress prop, but only when progress actually changes and not dragging
+  useEffect(() => {
+    if (!isDraggingRef.current && Math.abs(thumbPosition - progress) > 0.01) {
+      console.log('🔴 Syncing thumb position from progress:', progress);
+      setThumbPosition(progress);
+    }
+  }, [progress, thumbPosition]);
+
+  console.log('🔴 Rendering thumb with position:', thumbPosition, 'progress:', progress);
+  
   return (
     <div 
-      className={`${styles.separator} ${isDragging ? styles.dragging : ''}`}
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
-      onPointerDown={handleTouchStart}
-      onClick={handleClick}
       style={{ 
-        touchAction: isPortrait() ? 'pan-x' : 'pan-y', // Allow scrolling in the non-resize direction
-        userSelect: 'none', 
-        zIndex: 1000,
+        position: 'relative',
         width: isPortrait() ? '100%' : '24px',
         height: isPortrait() ? '20px' : '100%'
       }}
     >
-      <div className={styles.fingerIndicator} style={{ 
-        width: isPortrait() ? '4px' : '100%',
-        height: isPortrait() ? '100%' : '4px',
-        top: isPortrait() ? '0' : `${(dragActionRef.current === 'scroll' && fingerPosition > 0 ? fingerPosition : (clickedPosition !== null ? clickedPosition : progress)) * 100}%`,
-        left: isPortrait() ? `${(dragActionRef.current === 'scroll' && fingerPosition > 0 ? fingerPosition : (clickedPosition !== null ? clickedPosition : progress)) * 100}%` : '0'
-      }} />
-      <div className={styles.handle}>
-        <GripVertical size={20} />
+      <div 
+        className={`${styles.separator} ${isDragging ? styles.dragging : ''}`}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onPointerDown={handleTouchStart}
+        style={{ 
+          touchAction: isPortrait() ? 'pan-x' : 'pan-y', // Allow scrolling in the non-resize direction
+          userSelect: 'none', 
+          zIndex: 1000,
+          width: '100%',
+          height: '100%'
+        }}
+      >
+        <div className={styles.handle} style={{ opacity: isDragging ? 0.3 : 1 }}>
+          <GripVertical size={20} />
+        </div>
       </div>
+      <div 
+        ref={thumbRef}
+        className={styles.fingerIndicator} 
+        style={{ 
+          position: 'absolute',
+          width: isPortrait() ? '50px' : '16px',
+          height: isPortrait() ? '12px' : '30px',
+          top: isPortrait() ? '4px' : `calc(${thumbPosition * 100}% - 15px)`,
+          left: isPortrait() ? `calc(${thumbPosition * 100}% - 25px)` : '4px',
+          zIndex: 2000
+        }}
+        onMouseDown={handleThumbMouseDown}
+        onTouchStart={handleThumbTouchStart}
+        onPointerDown={handleThumbTouchStart}
+      />
     </div>
   );
 };

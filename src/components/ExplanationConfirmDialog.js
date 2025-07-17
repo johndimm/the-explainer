@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import styles from '../styles/ExplanationConfirmDialog.module.css';
 
@@ -121,6 +121,10 @@ export default function ExplanationConfirmDialog({
     router.push('/credits');
   };
 
+  const handleSignIn = () => {
+    signIn('google');
+  };
+
   const truncateText = (text, maxLength = 200) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
@@ -158,6 +162,15 @@ export default function ExplanationConfirmDialog({
             >
               Cancel
             </button>
+            {!session?.user?.email && getAvailableExplanations() === 0 && (
+              <button 
+                onClick={handleSignIn}
+                className={styles.signInButton}
+                disabled={isLoading}
+              >
+                Sign In with Google
+              </button>
+            )}
             {session?.user?.email && getAvailableExplanations() === 0 && (
               <button 
                 onClick={handleBuyCredits}

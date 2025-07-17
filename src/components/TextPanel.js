@@ -27,6 +27,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const [listHeight, setListHeight] = useState(400);
   const [fontSettings, setFontSettings] = useState({ fontFamily: 'Georgia', fontSize: '17', fontWeight: '400' });
   const [rowHeight, setRowHeight] = useState(36);
+  const [horizontalScrollLeft, setHorizontalScrollLeft] = useState(0);
 
 
 
@@ -601,6 +602,40 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     return () => clearInterval(interval);
   }, [isMobile, saveBookmark, getCurrentScrollPosition]);
 
+  // Effect: Handle horizontal scroll position tracking and restoration
+  useEffect(() => {
+    const scrollContainer = listRef.current?._outerRef;
+    if (!scrollContainer) return;
+    
+    // Set up scroll listener to track horizontal scroll changes
+    const handleScrollChange = () => {
+      const scrollLeft = scrollContainer.scrollLeft;
+      if (scrollLeft !== horizontalScrollLeft) {
+        setHorizontalScrollLeft(scrollLeft);
+      }
+    };
+    
+    scrollContainer.addEventListener('scroll', handleScrollChange, { passive: true });
+    
+    // Restore horizontal scroll position if width changed and we have a saved position
+    if (horizontalScrollLeft > 0) {
+      const timeoutId = setTimeout(() => {
+        if (scrollContainer) {
+          scrollContainer.scrollLeft = horizontalScrollLeft;
+        }
+      }, 50);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        scrollContainer.removeEventListener('scroll', handleScrollChange);
+      };
+    }
+    
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScrollChange);
+    };
+  }, [width, horizontalScrollLeft]);
+
 
 
   // Effect 10: Mobile scroll position detection using Intersection Observer - TEMPORARILY DISABLED
@@ -845,6 +880,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   }, [isDragging, selectedLines, textLines, onTextSelection, dragStartIndex, submitting, title, isMobile]);
 
   const handleScroll = useCallback(({ scrollOffset, scrollUpdateWasRequested }) => {
+    // Track horizontal scroll position
+    if (listRef.current && listRef.current._outerRef) {
+      const scrollLeft = listRef.current._outerRef.scrollLeft;
+      if (scrollLeft !== horizontalScrollLeft) {
+        setHorizontalScrollLeft(scrollLeft);
+      }
+    }
+    
     if (!scrollUpdateWasRequested) {
       const currentIndex = Math.floor(scrollOffset / rowHeight);
       if (currentIndex !== currentScrollIndexRef.current) {
@@ -868,7 +911,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         }
       }
     }
-  }, [saveBookmarkDebounced, saveBookmark, isMobile, rowHeight, textLines.length, onScrollProgress]);
+  }, [saveBookmarkDebounced, saveBookmark, isMobile, rowHeight, textLines.length, onScrollProgress, horizontalScrollLeft]);
 
   // Row component for react-window - defined after all handlers
   const Row = useCallback(({ index, style }) => {

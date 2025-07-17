@@ -10,6 +10,7 @@
   position: relative;
   touch-action: none; /* Prevent default touch behaviors */
   z-index: 10;
+  overflow: visible;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -33,6 +34,8 @@
   color: #94a3b8;
   transition: color 0.15s ease;
   padding: 8px 0;
+  z-index: 1;
+  position: relative;
 }
 
 .separator:hover .handle {
@@ -55,10 +58,37 @@
 .fingerIndicator {
   position: absolute;
   background: linear-gradient(135deg, #ef4444, #dc2626);
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  z-index: 3;
-  pointer-events: none;
+  border-radius: 8px;
+  z-index: 10;
+  pointer-events: auto;
+  border: 2px solid #ffffff;
+  transition: all 0.2s ease;
+  cursor: grab;
+  
+  /* Add subtle inner shadow for depth */
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.4),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.separator:hover .fingerIndicator {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  transform: scale(1.05);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.separator.dragging .fingerIndicator {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  transform: scale(1.1);
+  cursor: grabbing;
+  box-shadow: 
+    0 5px 15px rgba(0, 0, 0, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 /* Portrait: horizontal separator */
@@ -74,6 +104,7 @@
     border-bottom: 2px solid #1d4ed8;
     position: relative;
     z-index: 10;
+    overflow: visible;
   }
 }
 
@@ -90,6 +121,7 @@
     border-right: 1px solid #e2e8f0;
     position: relative;
     z-index: 10;
+    overflow: visible;
   }
 }
 

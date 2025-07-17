@@ -166,6 +166,27 @@
   cursor: not-allowed;
 }
 
+.signInButton {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.signInButton:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.signInButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Mobile styles */
 @media (max-width: 640px) {
   .modal {
@@ -192,7 +213,8 @@
   
   .cancelButton,
   .confirmButton,
-  .buyCreditsButton {
+  .buyCreditsButton,
+  .signInButton {
     width: 100%;
     padding: 12px;
     font-size: 16px;
