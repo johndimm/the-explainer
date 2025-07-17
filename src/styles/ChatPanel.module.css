@@ -105,6 +105,32 @@
   cursor: not-allowed;
 }
 
+.saveButtonBottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 44px;
+  height: 44px;
+}
+
+.saveButtonBottom:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.saveButtonBottom:disabled {
+  background: #f8fafc;
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
 .messagesContainer {
   height: 100%;
   overflow: auto;
@@ -344,6 +370,30 @@
     justify-content: center;
     gap: 0;
   }
+}
+
+/* Handle narrow viewports - ensure all buttons fit */
+@media (max-width: 1024px) {
+  .topRightButtons {
+    gap: 4px;
+  }
+  
+  .buttonText {
+    display: none;
+  }
+  
+  .headerButton, .headerButtonIcon {
+    min-width: 32px;
+    padding: 6px !important;
+    height: 32px !important;
+    width: 32px !important;
+    font-size: 0;
+  }
+  
+  .lineCount {
+    font-size: 12px;
+    padding: 2px 4px;
+  }
 } 
 
 .quoteLink {
@@ -464,7 +514,7 @@
 }
 
 /* Handle narrow chat panels - keep single line but make more compact */
-@container (max-width: 500px) {
+@container (max-width: 600px) {
   .header {
     gap: 6px;
     padding: 0 8px;

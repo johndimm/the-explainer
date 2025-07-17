@@ -1,0 +1,562 @@
+
+> the-explainer-cursor-2@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.3.5
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.71:3000
+   - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
+ ○ Compiling / ...
+ ✓ Compiled / in 5.7s (437 modules)
+TextPanel component loaded - version without react-window
+ GET / 200 in 7079ms
+ ✓ Compiled /api/auth/[...nextauth] in 437ms (104 modules)
+ GET /api/auth/session 200 in 747ms
+ GET /api/auth/session 200 in 760ms
+TextPanel component loaded - version without react-window
+ HEAD / 200 in 306ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 228ms
+ GET /api/auth/session 200 in 11ms
+ GET /api/auth/session 200 in 4ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1177ms (501 modules)
+ GET /sw.js 404 in 1470ms
+ GET /api/auth/session 200 in 54ms
+ GET /api/auth/session 200 in 11ms
+ GET /api/auth/session 200 in 6ms
+ GET /sw.js 404 in 281ms
+ GET /sw.js 404 in 375ms
+ ✓ Compiled in 14.4s (437 modules)
+ ✓ Compiled /api/credit-status in 218ms (103 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-16T17:05:11.474Z',
+  now: '2025-07-17T00:23:49.056Z',
+  hoursPassed: 7.3104394444444445,
+  canGet: true
+}
+Debug time calculation: {
+  lastCredit: '2025-07-16T17:05:11.474Z',
+  nextCredit: '2025-07-16T18:05:11.474Z',
+  now: '2025-07-17T00:23:49.067Z',
+  timeDiffMs: -22717593,
+  timeDiffMin: -378
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 336ms
+ ✓ Compiled /api/explain in 147ms (107 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-16T17:05:11.474Z',
+  now: '2025-07-17T00:23:58.454Z',
+  hoursPassed: 7.31305,
+  canGet: true
+}
+ POST /api/explain 200 in 7252ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T00:24:47.487Z',
+  hoursPassed: 0.013603611111111111,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T00:24:47.499Z',
+  timeDiffMs: 3551015,
+  timeDiffMin: 60
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 74ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T00:24:53.022Z',
+  hoursPassed: 0.01514111111111111,
+  canGet: false
+}
+ POST /api/explain 200 in 8336ms
+ ○ Compiling /profile ...
+ ✓ Compiled /profile in 2.1s (537 modules)
+ GET /profile 200 in 2460ms
+ ✓ Compiled /api/auth/[...nextauth] in 259ms (179 modules)
+ GET /api/auth/session 200 in 295ms
+ GET /api/auth/session 200 in 10ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T00:25:14.802Z',
+  hoursPassed: 0.021191111111111112,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T00:25:14.826Z',
+  timeDiffMs: 3523688,
+  timeDiffMin: 59
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 104ms
+ ✓ Compiled /api/user-stats in 118ms (181 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T00:25:14.920Z',
+  hoursPassed: 0.02122388888888889,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T00:25:14.930Z',
+  timeDiffMs: 3523584,
+  timeDiffMin: 59
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 84ms
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 200 in 217ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 539ms (589 modules)
+ GET /sw.js 404 in 836ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 277ms
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 4ms
+ GET /sw.js 404 in 215ms
+ GET /sw.js 404 in 213ms
+ ○ Compiling /library ...
+ ✓ Compiled /library in 1173ms (604 modules)
+ GET /library 200 in 1547ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 5ms
+ GET /sw.js 404 in 229ms
+ ✓ Compiled /api/fetch-gutenberg in 121ms (231 modules)
+API called with URL: https://www.gutenberg.org/files/1522/1522-0.txt
+ GET /api/fetch-gutenberg?url=https%3A%2F%2Fwww.gutenberg.org%2Ffiles%2F1522%2F1522-0.txt 304 in 8801ms
+API called with URL: https://www.gutenberg.org/files/1522/1522-0.txt
+ GET /api/fetch-gutenberg?url=https%3A%2F%2Fwww.gutenberg.org%2Ffiles%2F1522%2F1522-0.txt 304 in 142ms
+ GET /profile 200 in 346ms
+ GET /api/auth/session 200 in 10ms
+ GET /api/auth/session 200 in 19ms
+ ✓ Compiled /api/user-stats in 114ms (187 modules)
+ ✓ Compiled (189 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T00:29:58.775Z',
+  hoursPassed: 0.1000725,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T00:29:58.789Z',
+  timeDiffMs: 3239725,
+  timeDiffMin: 54
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 347ms
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 304 in 353ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T00:29:58.819Z',
+  hoursPassed: 0.10008472222222223,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T00:29:58.827Z',
+  timeDiffMs: 3239687,
+  timeDiffMin: 54
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 37ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 970ms (609 modules)
+ GET /sw.js 404 in 1250ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 262ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 13ms
+ GET /sw.js 404 in 209ms
+ GET /sw.js 404 in 216ms
+ GET /api/auth/session 200 in 171ms
+ GET /api/auth/session 200 in 8ms
+ GET /sw.js 404 in 406ms
+ GET /sw.js 404 in 214ms
+ GET /sw.js 404 in 212ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T00:57:29.338Z',
+  hoursPassed: 0.5585622222222222,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T00:57:29.354Z',
+  timeDiffMs: 1589160,
+  timeDiffMin: 27
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 190ms
+ ○ Compiling /api/explain ...
+ ✓ Compiled /api/explain in 2.1s (187 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T00:57:33.590Z',
+  hoursPassed: 0.5597433333333334,
+  canGet: false
+}
+ POST /api/explain 200 in 7637ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 752ms (184 modules)
+ GET /api/auth/session 200 in 986ms
+ GET /api/auth/session 200 in 967ms
+ ✓ Compiled in 6.5s (546 modules)
+TextPanel component loaded - version without react-window
+ GET / 200 in 277ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 3ms
+ ✓ Compiled /_error in 185ms (592 modules)
+ GET /sw.js 404 in 463ms
+ ✓ Compiled in 3.7s (592 modules)
+ GET /api/auth/session 200 in 117ms
+ GET /api/auth/session 200 in 119ms
+ GET /api/auth/session 200 in 121ms
+ GET /api/auth/session 200 in 89ms
+ ✓ Compiled in 931ms (546 modules)
+ ✓ Compiled /_error in 246ms (592 modules)
+ GET /sw.js 404 in 534ms
+ ✓ Compiled in 271ms (592 modules)
+ ✓ Compiled in 1871ms (528 modules)
+ ✓ Compiled in 543ms (528 modules)
+ ✓ Compiled in 471ms (528 modules)
+ ✓ Compiled in 483ms (528 modules)
+ ✓ Compiled in 722ms (528 modules)
+ ✓ Compiled in 292ms (528 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 201ms (184 modules)
+ GET /api/auth/session 200 in 255ms
+ GET /profile 200 in 283ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ ✓ Compiled /api/credit-status in 64ms (186 modules)
+ ✓ Compiled (189 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T01:33:28.496Z',
+  hoursPassed: 1.1583283333333334,
+  canGet: true
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T01:33:28.505Z',
+  timeDiffMs: -569991,
+  timeDiffMin: -9
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 215ms
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 200 in 230ms
+ ✓ Compiled /_error in 443ms (597 modules)
+ GET /sw.js 404 in 731ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 356ms
+ GET /profile 200 in 353ms
+ GET /profile 200 in 209ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 212ms
+ GET /api/auth/session 200 in 10ms
+ GET /api/auth/session 200 in 5ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T01:33:42.337Z',
+  hoursPassed: 1.1621730555555556,
+  canGet: true
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T01:33:42.347Z',
+  timeDiffMs: -583833,
+  timeDiffMin: -9
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 101ms
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 304 in 116ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 253ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 256ms
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 13ms
+ GET /sw.js 404 in 212ms
+ ✓ Compiled in 1245ms (592 modules)
+ GET /sw.js 404 in 249ms
+ ✓ Compiled in 1070ms (574 modules)
+ ✓ Compiled /api/credit-status in 99ms (183 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T01:40:06.688Z',
+  hoursPassed: 1.2689372222222222,
+  canGet: true
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  nextCredit: '2025-07-17T01:23:58.514Z',
+  now: '2025-07-17T01:40:06.700Z',
+  timeDiffMs: -968186,
+  timeDiffMin: -16
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 215ms
+ ✓ Compiled /api/explain in 270ms (187 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T00:23:58.514Z',
+  now: '2025-07-17T01:40:16.415Z',
+  hoursPassed: 1.2716391666666667,
+  canGet: true
+}
+ POST /api/explain 200 in 5103ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:41:05.292Z',
+  hoursPassed: 0.013574166666666667,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:41:05.299Z',
+  timeDiffMs: 3551126,
+  timeDiffMin: 60
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 63ms
+ ✓ Compiled /_error in 362ms (574 modules)
+ GET /sw.js 404 in 639ms
+ ✓ Compiled in 1726ms (529 modules)
+ ✓ Compiled in 616ms (528 modules)
+ ✓ Compiled in 398ms (528 modules)
+ ✓ Compiled in 314ms (528 modules)
+ ✓ Compiled in 416ms (528 modules)
+ ✓ Compiled in 687ms (528 modules)
+ ✓ Compiled /api/credit-status in 449ms (183 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:44:44.246Z',
+  hoursPassed: 0.07439472222222222,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:44:44.258Z',
+  timeDiffMs: 3332167,
+  timeDiffMin: 56
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 577ms
+ ✓ Compiled /api/user-stats in 75ms (185 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:44:48.711Z',
+  hoursPassed: 0.075635,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:44:48.722Z',
+  timeDiffMs: 3327703,
+  timeDiffMin: 56
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 260ms
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 200 in 273ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:44:48.747Z',
+  hoursPassed: 0.075645,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:44:48.758Z',
+  timeDiffMs: 3327667,
+  timeDiffMin: 56
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 32ms
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 304 in 41ms
+ ✓ Compiled in 1148ms (528 modules)
+ ✓ Compiled in 482ms (528 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 107ms (184 modules)
+ GET /api/auth/session 200 in 142ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 658ms (592 modules)
+ GET /sw.js 404 in 997ms
+ ✓ Compiled in 711ms (592 modules)
+ ✓ Compiled in 1679ms (592 modules)
+ ✓ Compiled in 1094ms (528 modules)
+ ✓ Compiled in 942ms (528 modules)
+ ✓ Compiled in 841ms (528 modules)
+ ✓ Compiled in 956ms (528 modules)
+ GET /profile 200 in 306ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 750ms (574 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 1054ms
+ ✓ Compiled /api/auth/[...nextauth] in 359ms (229 modules)
+ GET /api/auth/session 200 in 411ms
+ GET /api/auth/session 200 in 13ms
+ ✓ Compiled /api/user-stats in 96ms (232 modules)
+ ✓ Compiled (234 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:50:27.048Z',
+  hoursPassed: 0.1696175,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:50:27.059Z',
+  timeDiffMs: 2989366,
+  timeDiffMin: 50
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 269ms
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 304 in 277ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:50:27.104Z',
+  hoursPassed: 0.16963305555555555,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:50:27.111Z',
+  timeDiffMs: 2989314,
+  timeDiffMin: 50
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 34ms
+ GET /sw.js 404 in 248ms
+ ✓ Compiled in 1877ms (523 modules)
+ ✓ Compiled in 853ms (523 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 164ms (182 modules)
+ GET /api/auth/session 200 in 279ms
+ ✓ Compiled /api/user-stats in 122ms (184 modules)
+ GET /api/auth/session 200 in 229ms
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 304 in 305ms
+ ✓ Compiled in 851ms (543 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 918ms (569 modules)
+ GET /sw.js 404 in 1182ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 322ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 285ms
+ ✓ Compiled /api/auth/[...nextauth] in 329ms (227 modules)
+ GET /api/auth/session 200 in 532ms
+ GET /api/auth/session 200 in 14ms
+ GET /sw.js 404 in 261ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 269ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 218ms
+ GET /api/auth/session 200 in 56ms
+ GET /api/auth/session 200 in 13ms
+ GET /sw.js 404 in 213ms
+ ○ Compiling /library ...
+ ✓ Compiled /library in 1041ms (599 modules)
+ GET /library 200 in 1545ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 245ms
+ GET /api/auth/session 200 in 16ms
+ GET /api/auth/session 200 in 7ms
+ GET /sw.js 404 in 208ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 220ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 209ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 10ms
+ GET /profile 200 in 234ms
+ GET /sw.js 404 in 222ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 210ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 3ms
+ ✓ Compiled /api/user-stats in 103ms (229 modules)
+ GET /api/user-stats?email=john.r.dimm%40gmail.com 304 in 190ms
+ GET /sw.js 404 in 219ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 239ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 214ms
+ GET /api/auth/session 200 in 17ms
+ GET /api/auth/session 200 in 5ms
+ GET /sw.js 404 in 229ms
+ ✓ Compiled in 1851ms (603 modules)
+ ✓ Compiled in 754ms (591 modules)
+ ○ Compiling /credits ...
+ ✓ Compiled /credits in 1119ms (583 modules)
+ GET /credits 200 in 1422ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 252ms
+ ✓ Compiled /api/auth/[...nextauth] in 101ms (233 modules)
+ GET /api/auth/session 200 in 139ms
+ GET /api/auth/session 200 in 11ms
+ ✓ Compiled /api/credit-status in 219ms (236 modules)
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:57:43.133Z',
+  hoursPassed: 0.29075222222222225,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:57:43.143Z',
+  timeDiffMs: 2553282,
+  timeDiffMin: 43
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 472ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:57:43.227Z',
+  hoursPassed: 0.29077833333333336,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:57:43.234Z',
+  timeDiffMs: 2553191,
+  timeDiffMin: 43
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 33ms
+Debug canGetHourlyCredit: {
+  userEmail: 'john.r.dimm@gmail.com',
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  now: '2025-07-17T01:57:43.268Z',
+  hoursPassed: 0.2907897222222222,
+  canGet: false
+}
+Debug time calculation: {
+  lastCredit: '2025-07-17T01:40:16.425Z',
+  nextCredit: '2025-07-17T02:40:16.425Z',
+  now: '2025-07-17T01:57:43.275Z',
+  timeDiffMs: 2553150,
+  timeDiffMin: 43
+}
+ GET /api/credit-status?userEmail=john.r.dimm%40gmail.com 200 in 32ms
+ GET /sw.js 404 in 262ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 270ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 210ms
+ GET /api/auth/session 200 in 10ms
+ GET /api/auth/session 200 in 49ms
+ GET /sw.js 404 in 210ms
+ GET /sw.js 404 in 219ms
+ ✓ Compiled in 1889ms (520 modules)
+ ✓ Compiled in 602ms (520 modules)

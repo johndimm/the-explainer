@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { t, getUserLanguage } from '@/i18n';
 import { X } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
-import CreditsDisplay from '@/components/CreditsDisplay';
 
 const LANGUAGES = [
   'English', 'French', 'German', 'Spanish', 'Italian', 'Chinese', 'Japanese', 'Russian', 'Portuguese', 'Arabic', 'Hindi', 'Other'
@@ -216,6 +215,18 @@ export default function Profile() {
 
   const handleClose = () => {
     router.back();
+  };
+
+  const handleBookClick = async (book) => {
+    try {
+      // Store the book title in localStorage
+      localStorage.setItem('explainer:current-text', book.title);
+      
+      // Navigate to the main app
+      router.push('/');
+    } catch (error) {
+      console.error('Error loading book:', error);
+    }
   };
 
   // Guard: Only render UI if translations are loaded
@@ -574,11 +585,6 @@ export default function Profile() {
           </section>
         </div>
         
-        {/* Credits Section */}
-        <div style={{ maxWidth: 700, marginLeft: 'auto', marginRight: 'auto', marginTop: 32 }}>
-          <CreditsDisplay session={session} />
-        </div>
-        
         {/* Books List Section */}
         {userStats && userStats.books && userStats.books.length > 0 && (
           <div style={{
@@ -598,7 +604,25 @@ export default function Profile() {
             <ul style={{ margin: 0, padding: 0, listStyle: 'none', columns: 2, columnGap: 32 }}>
               {userStats.books.map((book, idx) => (
                 <li key={book.title + idx} style={{ marginBottom: 8, breakInside: 'avoid' }}>
-                  <span style={{ color: '#3b82f6', fontWeight: 500 }}>{book.title}</span>
+                  <button
+                    onClick={() => handleBookClick(book)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      color: '#3b82f6',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      fontSize: 'inherit',
+                      fontFamily: 'inherit',
+                      textAlign: 'left'
+                    }}
+                    onMouseEnter={e => e.target.style.color = '#1d4ed8'}
+                    onMouseLeave={e => e.target.style.color = '#3b82f6'}
+                  >
+                    {book.title}
+                  </button>
                   <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 8 }}>
                     ({book.count} explanation{book.count !== 1 ? 's' : ''})
                   </span>

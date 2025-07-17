@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { Send, Save, MessageSquare, Settings, BookOpen, HelpCircle } from 'lucide-react';
+import { Send, Save, MessageSquare, Settings, BookOpen, HelpCircle, CreditCard } from 'lucide-react';
 import styles from '@/styles/ChatPanel.module.css';
 import { t, getUserLanguage } from '@/i18n';
 import { useSession, signIn, signOut } from 'next-auth/react';
@@ -80,15 +80,6 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
           <span className={styles.lineCount}>
             {scrollProgress !== undefined ? `${Math.round(scrollProgress * 100)}%` : 'Ready'}
           </span>
-          <button 
-            className={styles.saveButton}
-            onClick={handleSaveChat}
-            disabled={messages.length === 0}
-            title={t('saveChat', lang)}
-          >
-            <Save size={16} />
-            <span className={styles.saveButtonText}>Save Chat</span>
-          </button>
           <a
             href="/library"
             className={styles.headerButton}
@@ -104,6 +95,20 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
           >
             <HelpCircle size={16} />
             <span className={styles.buttonText}>Guide</span>
+          </a>
+          <a
+            href={session ? "/credits" : undefined}
+            className={styles.headerButton}
+            title="View and purchase credits"
+            onClick={e => {
+              if (!session) {
+                e.preventDefault();
+                signIn('google');
+              }
+            }}
+          >
+            <CreditCard size={16} />
+            <span className={styles.buttonText}>Credits</span>
           </a>
           <a
             href={session ? "/profile" : undefined}
@@ -218,6 +223,14 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
           className={styles.sendButton}
         >
           <Send size={16} />
+        </button>
+        <button 
+          className={styles.saveButtonBottom}
+          onClick={handleSaveChat}
+          disabled={messages.length === 0}
+          title={t('saveChat', lang)}
+        >
+          <Save size={14} />
         </button>
       </form>
     </div>

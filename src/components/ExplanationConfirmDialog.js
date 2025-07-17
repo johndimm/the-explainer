@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import styles from '../styles/ExplanationConfirmDialog.module.css';
 
 export default function ExplanationConfirmDialog({ 
@@ -10,6 +11,7 @@ export default function ExplanationConfirmDialog({
   isLoading 
 }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [creditStatus, setCreditStatus] = useState(null);
   const [anonUsage, setAnonUsage] = useState(0);
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
@@ -114,6 +116,11 @@ export default function ExplanationConfirmDialog({
     return getAvailableExplanations() > 0;
   };
 
+  const handleBuyCredits = () => {
+    onClose();
+    router.push('/credits');
+  };
+
   const truncateText = (text, maxLength = 200) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
@@ -151,6 +158,15 @@ export default function ExplanationConfirmDialog({
             >
               Cancel
             </button>
+            {session?.user?.email && getAvailableExplanations() === 0 && (
+              <button 
+                onClick={handleBuyCredits}
+                className={styles.buyCreditsButton}
+                disabled={isLoading}
+              >
+                Buy Credits
+              </button>
+            )}
             <button 
               onClick={onConfirm} 
               className={`${styles.confirmButton} ${!canSubmit() ? styles.disabled : ''}`}
