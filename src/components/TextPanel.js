@@ -25,7 +25,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const [submitting, setSubmitting] = useState(false);
   const [flyingText, setFlyingText] = useState(null);
   const [listHeight, setListHeight] = useState(400);
-  const [fontSettings, setFontSettings] = useState({ fontFamily: 'Georgia', fontSize: '17' });
+  const [fontSettings, setFontSettings] = useState({ fontFamily: 'Georgia', fontSize: '17', fontWeight: '400' });
   const [rowHeight, setRowHeight] = useState(36);
 
 
@@ -439,7 +439,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
           const newFontSettings = {
             fontFamily: profile.fontFamily || 'Georgia',
-            fontSize: profile.fontSize || '17'
+            fontSize: profile.fontSize || '17',
+            fontWeight: profile.fontWeight || '400'
           };
           setFontSettings(newFontSettings);
           setRowHeight(getRowHeight(newFontSettings.fontSize));
@@ -907,6 +908,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           style={{
             fontFamily: fontSettings.fontFamily,
             fontSize: fontSettings.fontSize + 'px',
+            fontWeight: fontSettings.fontWeight,
             lineHeight: '1.5',
             padding: '2px 0',
             display: 'block',

@@ -45,6 +45,14 @@ const FONT_SIZES = [
   { value: '28', label: '28px' },
 ];
 
+const FONT_WEIGHTS = [
+  { value: '300', label: 'Light' },
+  { value: '400', label: 'Normal (Default)' },
+  { value: '500', label: 'Medium' },
+  { value: '600', label: 'Semi-bold' },
+  { value: '700', label: 'Bold' },
+];
+
 const MODELS = {
   openai: [
     { value: 'gpt-4o', label: 'GPT-4o' },
@@ -94,6 +102,7 @@ export default function Profile() {
   const [userStats, setUserStats] = useState(null);
   const [fontFamily, setFontFamily] = useState('Georgia');
   const [fontSize, setFontSize] = useState('17');
+  const [fontWeight, setFontWeight] = useState('400');
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -116,6 +125,7 @@ export default function Profile() {
     setNationality(profile.nationality || '');
     setFontFamily(profile.fontFamily || 'Georgia');
     setFontSize(profile.fontSize || '17');
+    setFontWeight(profile.fontWeight || '400');
     // Load translations for the current language
     loadTranslations();
     const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
@@ -459,6 +469,35 @@ export default function Profile() {
                 </select>
               </label>
               
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Font Weight
+                <select
+                  value={fontWeight}
+                  onChange={e => {
+                    setFontWeight(e.target.value);
+                    autoSave({ fontWeight: e.target.value });
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                >
+                  {FONT_WEIGHTS.map(w => (
+                    <option key={w.value} value={w.value}>
+                      {w.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              
               {/* Font Preview */}
               <div style={{ 
                 marginTop: 16, 
@@ -470,6 +509,7 @@ export default function Profile() {
                 <div style={{ 
                   fontFamily: fontFamily, 
                   fontSize: fontSize + 'px',
+                  fontWeight: fontWeight,
                   lineHeight: '1.5',
                   color: '#18181b'
                 }}>

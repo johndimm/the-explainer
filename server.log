@@ -563,3 +563,233 @@ TextPanel component loaded - version without react-window
  ○ Compiling /_error ...
  ✓ Compiled /_error in 653ms (566 modules)
  GET /sw.js 404 in 994ms
+ ✓ Compiled in 738ms (159 modules)
+ ✓ Compiled in 166ms (159 modules)
+ ✓ Compiled in 151ms (159 modules)
+ ✓ Compiled in 152ms (159 modules)
+ ✓ Compiled in 126ms (159 modules)
+ ✓ Compiled in 1181ms (520 modules)
+ ✓ Compiled in 2s (520 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 781ms (566 modules)
+ GET /sw.js 404 in 835ms
+ ✓ Compiled in 556ms (566 modules)
+ ✓ Compiled in 391ms (520 modules)
+ ✓ Compiled in 376ms (520 modules)
+ ✓ Compiled /_error in 184ms (566 modules)
+ GET /sw.js 404 in 208ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 3.8s (177 modules)
+ GET /api/auth/session 200 in 4158ms
+ ✓ Compiled /_error in 155ms (566 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET / 500 in 1670ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 55ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET /sw.js 500 in 18ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET / 500 in 26ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 27ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET /sw.js 500 in 13ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET /_next/static/webpack/16dab07bcb22de40.webpack.hot-update.json 500 in 38ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET / 500 in 144ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 83ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages/_document.js'
+}
+ GET /sw.js 500 in 19ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 6ms
+ GET / 404 in 6ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 4ms
+ GET / 404 in 6ms
+ GET / 404 in 4ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 6ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 6ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 6ms
+ GET / 404 in 4ms
+ GET / 404 in 4ms
+ GET / 404 in 6ms
+ GET / 404 in 5ms
+ GET / 404 in 6ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 4ms
+ GET / 404 in 4ms
+ GET / 404 in 4ms
+ GET / 404 in 4ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 5ms
+ GET / 404 in 6ms
+ GET / 404 in 4ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages-manifest.json'
+}
+ GET / 500 in 30ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/server/pages-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/server/pages-manifest.json'
+}
+ GET / 500 in 22ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/build-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/build-manifest.json'
+}
+ GET / 500 in 488ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/build-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/johndimm/Projects/the-explainer/.next/build-manifest.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/johndimm/Projects/the-explainer/.next/build-manifest.json'
+}
+ GET / 500 in 457ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 29ms
+TextPanel component loaded - version without react-window
+ GET / 200 in 12ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 22ms
+ ✓ Compiled /api/auth/[...nextauth] in 419ms (218 modules)
+ GET /api/auth/session 200 in 475ms
+ GET /api/auth/session 200 in 3ms
+ GET /sw.js 404 in 11ms
+[?25h
