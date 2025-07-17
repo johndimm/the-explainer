@@ -62,7 +62,7 @@
   z-index: 10;
   pointer-events: auto;
   border: 2px solid #ffffff;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   cursor: grab;
   
   /* Add subtle inner shadow for depth */
