@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+
 import { GripVertical } from 'lucide-react';
 import styles from '@/styles/DraggableSeparator.module.css';
 
 function isMobile() {
   if (typeof window === 'undefined') return false;
   const result = window.innerWidth <= 768;
-  console.log('isMobile() called, window.innerWidth:', window.innerWidth, 'result:', result);
+  // Mobile detection completed
   return result;
 }
 
@@ -60,7 +61,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       ratio = pixelPosition / containerRect.height;
     }
     
-    console.log('🔴 Setting thumb position immediately:', ratio, 'pixelPosition:', pixelPosition);
+    // Setting thumb position
     
     // 1. Update thumb position immediately in DOM using pixel position (instant visual feedback)
     if (isPortrait()) {
@@ -87,7 +88,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
 
   const handleThumbMouseDown = useCallback((e) => {
     // Thumb-specific mouse down - force scroll mode
-    console.log('🔴 THUMB CLICKED!', e.target);
+    // Thumb clicked
     e.preventDefault();
     e.stopPropagation();
     dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';
@@ -187,7 +188,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
   }, [onResize]);
 
   const handleTouchStart = useCallback((e) => {
-    console.log('handleTouchStart called, isMobile:', isMobile(), 'isPortrait:', isPortrait());
+    // Touch start detected
     // Don't prevent default immediately - wait to see if this is actually a resize gesture
     dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';
     dragActionRef.current = null;
@@ -210,7 +211,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       } else {
         return null;
       }
-      console.log('calcSize - clientX:', clientX, 'clientY:', clientY, 'window.innerWidth:', window.innerWidth, 'window.innerHeight:', window.innerHeight);
+      // Calculating size
       
       // Adjust constraints based on screen size for landscape mode
       let minConstraint = 20;
@@ -226,18 +227,18 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
         // In portrait mode, chat is on top, so dragging up should make chat smaller
         // We invert the calculation: 100 - (clientY / window.innerHeight) * 100
         const result = Math.max(minConstraint, Math.min(maxConstraint, 100 - (clientY / window.innerHeight) * 100));
-        console.log('Portrait calculation:', result);
+        // Portrait calculation completed
         return result;
       } else {
         const result = Math.max(minConstraint, Math.min(maxConstraint, (clientX / window.innerWidth) * 100));
-        console.log('Landscape calculation:', result);
+        // Landscape calculation completed
         return result;
       }
     };
 
     const orientation = isPortrait() ? 'portrait' : 'landscape';
     const initialSize = calcSize(e);
-    console.log('Initial size calculated:', initialSize, 'orientation:', orientation);
+    // Initial size calculated
     setDebug({ orientation, value: initialSize });
     if (initialSize !== null) onResize(initialSize);
 
@@ -308,7 +309,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       if (root) {
         const w = root.style.getPropertyValue('--panel-width');
         const h = root.style.getPropertyValue('--panel-height');
-        console.log('DEBUG: orientation', isPortrait() ? 'portrait' : 'landscape', 'panel-width', w, 'panel-height', h);
+        // Orientation debug info
       }
     };
     const handleEnd = evt => {
@@ -335,7 +336,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
   }, [onResize, onScrollDivider]);
 
   const handleMouseMove = useCallback((e) => {
-    console.log('handleMouseMove called, isDragging:', isDragging, 'isMobile:', isMobile(), 'isPortrait:', isPortrait());
+    // Mouse move detected
     if (!isDragging) return;
     const dx = e.clientX - dragStartRef.current.x;
     const dy = e.clientY - dragStartRef.current.y;
@@ -387,7 +388,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     if (root) {
       const w = root.style.getPropertyValue('--panel-width');
       const h = root.style.getPropertyValue('--panel-height');
-      console.log('DEBUG: orientation landscape panel-width', w, 'panel-height', h);
+      // Landscape orientation debug
     }
   }, [isDragging, onResize, onScrollDivider]);
 
@@ -411,12 +412,12 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
   // Sync thumb position with progress prop, but only when progress actually changes and not dragging
   useEffect(() => {
     if (!isDraggingRef.current && Math.abs(thumbPosition - progress) > 0.01) {
-      console.log('🔴 Syncing thumb position from progress:', progress);
+      // Syncing thumb position
       setThumbPosition(progress);
     }
   }, [progress, thumbPosition]);
 
-  console.log('🔴 Rendering thumb with position:', thumbPosition, 'progress:', progress);
+      // Rendering thumb
   
   return (
     <div 

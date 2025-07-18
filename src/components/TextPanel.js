@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import styles from '@/styles/TextPanel.module.css';
+import dynamic from 'next/dynamic';
+
+// Dynamically import PDFViewerNew to avoid SSR issues
+const PDFViewerNew = dynamic(() => import('./PDFViewerNew'), { ssr: false });
 
 // Function to calculate row height based on font size
 const getRowHeight = (fontSize) => {
@@ -11,8 +15,6 @@ const getRowHeight = (fontSize) => {
 };
 
 const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", onScrollProgress }, ref) => {
-  console.log('TextPanel component loaded - version without react-window');
-  
   // All state hooks - must be called in same order every time
   const [textLines, setTextLines] = useState([]);
   const [selectedLines, setSelectedLines] = useState(new Set());
@@ -28,6 +30,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const [fontSettings, setFontSettings] = useState({ fontFamily: 'Georgia', fontSize: '17', fontWeight: '400' });
   const [rowHeight, setRowHeight] = useState(36);
   const [horizontalScrollLeft, setHorizontalScrollLeft] = useState(0);
+  const [isPDFMode, setIsPDFMode] = useState(false);
+  const [pdfData, setPdfData] = useState(null);
+  const [pdfFileName, setPdfFileName] = useState('');
 
 
 
@@ -77,10 +82,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       const bookmarkKey = getBookmarkKey();
       if (bookmarkKey && scrollIndex > 0) {
         localStorage.setItem(bookmarkKey, scrollIndex.toString());
-        // Reduced logging to avoid spam
-        if (process.env.NODE_ENV === 'development' && scrollIndex % 50 === 0) {
-          console.log(`💾 Bookmark saved: line ${scrollIndex + 1}`);
-        }
+        // Silent bookmark saving
       }
     } catch (error) {
       console.warn('Failed to save bookmark:', error);
@@ -117,10 +119,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         if (savedIndex) {
           const index = parseInt(savedIndex, 10);
           if (!isNaN(index) && index >= 0) {
-            console.log('Bookmark loaded:', index);
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`📖 Bookmark loaded from ${source}: line ${index + 1}`);
-            }
             return index;
           }
         }
@@ -262,9 +260,57 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     }
   }), [textLines]);
 
-  // Effect 1: Load text on mount
-  useEffect(() => {
-    const savedText = localStorage.getItem('explainer:bookText');
+  // Helper function to load PDF from IndexedDB
+  const loadPDFFromIndexedDB = async () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('ExplainerPDFs', 1);
+      
+      request.onerror = () => reject(new Error('Failed to open IndexedDB'));
+      
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction(['pdfs'], 'readonly');
+        const store = transaction.objectStore('pdfs');
+        const getRequest = store.get('current-pdf');
+        
+        getRequest.onsuccess = () => {
+          if (getRequest.result) {
+            resolve(getRequest.result.data);
+          } else {
+            reject(new Error('PDF data not found in IndexedDB'));
+          }
+        };
+        
+        getRequest.onerror = () => reject(new Error('Failed to retrieve PDF from IndexedDB'));
+      };
+    });
+  };
+
+  // Helper function to load text content
+  const loadTextContent = useCallback(() => {
+    console.log('TextPanel: Loading text content, clearing PDF mode');
+    
+    // Clear PDF mode and data
+    setIsPDFMode(false);
+    setPdfData(null);
+    setPdfFileName('');
+    
+    // Clear any PDF-related storage
+    sessionStorage.removeItem('explainer:pdfData');
+    sessionStorage.removeItem('explainer:pdfSource');
+    
+    // Check both sessionStorage and localStorage for text content
+    let savedText = sessionStorage.getItem('explainer:bookText');
+    if (!savedText) {
+      savedText = localStorage.getItem('explainer:bookText');
+    }
+    
+    console.log('TextPanel: Text content check:', {
+      sessionStorageText: !!sessionStorage.getItem('explainer:bookText'),
+      localStorageText: !!localStorage.getItem('explainer:bookText'),
+      foundText: !!savedText,
+      textLength: savedText ? savedText.length : 0
+    });
     
     if (savedText) {
       const lines = splitLongLines(savedText);
@@ -301,8 +347,86 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           setTextLines(['Error loading text. Please try again.']);
         });
     }
-  }, [splitLongLines, title]);
+  }, [title]);
 
+  // Effect 1: Load text or PDF on mount
+  useEffect(() => {
+    console.log('TextPanel: Starting PDF detection...');
+    // Check for PDF data first
+    const pdfSource = sessionStorage.getItem('explainer:pdfSource');
+    const storedPdfData = sessionStorage.getItem('explainer:pdfData');
+    const storedFileName = sessionStorage.getItem('explainer:bookTitle');
+    
+    console.log('TextPanel: PDF detection results:', {
+      pdfSource,
+      hasStoredPdfData: !!storedPdfData,
+      storedFileName,
+      pdfDataLength: storedPdfData ? storedPdfData.length : 0
+    });
+    
+    if (pdfSource === 'sessionstorage' && storedPdfData) {
+      // PDF is stored in sessionStorage
+      console.log('TextPanel: Loading PDF from sessionStorage');
+      setIsPDFMode(true);
+      setPdfData(storedPdfData);
+      setPdfFileName(storedFileName || 'PDF Document');
+      return;
+    } else if (pdfSource === 'indexeddb') {
+      // PDF is stored in IndexedDB
+      console.log('TextPanel: Loading PDF from IndexedDB');
+      loadPDFFromIndexedDB().then(pdfDataFromIndexedDB => {
+        if (pdfDataFromIndexedDB) {
+          console.log('TextPanel: Successfully loaded PDF from IndexedDB');
+          setIsPDFMode(true);
+          setPdfData(pdfDataFromIndexedDB);
+          setPdfFileName(storedFileName || 'PDF Document');
+        } else {
+          console.log('TextPanel: No PDF data found in IndexedDB, falling back to text');
+          // Fall back to text mode
+          loadTextContent();
+        }
+      }).catch(error => {
+        console.error('TextPanel: Error loading PDF from IndexedDB:', error);
+        // Fall back to text mode
+        loadTextContent();
+      });
+      return;
+    }
+    
+    // No PDF data, load text content
+    console.log('TextPanel: No PDF data found, loading text content');
+    loadTextContent();
+  }, [title, loadTextContent]);
+
+  // Effect 2: Listen for storage changes to handle file uploads
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      console.log('TextPanel: Storage change detected:', e.key);
+      if (e.key === 'explainer:bookText' || e.key === 'explainer:pdfData' || e.key === 'explainer:pdfSource') {
+        console.log('TextPanel: Relevant storage change, reloading content');
+        // Force a reload of content when storage changes
+        setTimeout(() => {
+          const pdfSource = sessionStorage.getItem('explainer:pdfSource');
+          const storedPdfData = sessionStorage.getItem('explainer:pdfData');
+          
+          if (pdfSource && storedPdfData) {
+            // PDF data was added
+            console.log('TextPanel: PDF data detected in storage change');
+            setIsPDFMode(true);
+            setPdfData(storedPdfData);
+            setPdfFileName(sessionStorage.getItem('explainer:bookTitle') || 'PDF Document');
+          } else if (sessionStorage.getItem('explainer:bookText') || localStorage.getItem('explainer:bookText')) {
+            // Text data was added
+            console.log('TextPanel: Text data detected in storage change');
+            loadTextContent();
+          }
+        }, 100); // Small delay to ensure storage is updated
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [loadTextContent]);
 
 
   // Effect 3: Detect mobile device
@@ -318,8 +442,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         const aspectRatioPortrait = window.innerHeight > window.innerWidth;
         const isPortraitMode = mediaQueryPortrait || aspectRatioPortrait;
         
-        console.log(`📱 TextPanel Mobile detection: ${isMobileDevice}, Portrait: ${isPortraitMode}, User Agent: ${navigator.userAgent}`);
-        console.log(`📱 TextPanel Window dimensions: ${window.innerWidth}x${window.innerHeight}`);
+        // Mobile detection completed
         setIsMobile(isMobileDevice);
         setIsPortrait(isPortraitMode);
       } catch (error) {
@@ -419,10 +542,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
               listRef.current.scrollToItem(bookmarkIndex, 'start');
               setCurrentScrollIndex(bookmarkIndex);
               currentScrollIndexRef.current = bookmarkIndex;
-              console.log('Bookmark restored to position:', bookmarkIndex);
-              if (process.env.NODE_ENV === 'development') {
-                console.log(`📍 Bookmark restored to line ${bookmarkIndex + 1}`);
-              }
+              // Bookmark restored
             }
           } catch (error) {
             console.warn('Failed to restore bookmark position:', error);
@@ -472,9 +592,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         const currentPosition = getCurrentScrollPosition();
         if (currentPosition > 0) {
           saveBookmark(currentPosition);
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`💾 Final bookmark save on unmount: line ${currentPosition + 1}`);
-          }
+          // Final bookmark save on unmount
         }
       } catch (error) {
         console.warn('Failed to save bookmark on unmount:', error);
@@ -571,7 +689,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         const dx = Math.abs(event.clientX - mouseStartPos.current.x);
         const dy = Math.abs(event.clientY - mouseStartPos.current.y);
         if (dx > 10 || dy > 10) { // Increased threshold to prevent accidental drag detection
-          console.log(`🖱️ Drag detected: dx=${dx}, dy=${dy}`);
+          // Drag detected
           mouseMoved.current = true;
           setIsDragging(true);
           setSelectedLines(new Set([dragStartIndex]));
@@ -732,15 +850,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   }, [isMobile, firstClickIndex, textLines, onTextSelection, isDragging, submitting, title]);
 
   const handleLineClick = useCallback((index, event) => {
-    console.log(`🎯 handleLineClick called for line ${index + 1}, isMobile: ${isMobile}, submitting: ${submitting}`);
+          // handleLineClick called
     
     if (isMobile) {
-      console.log(`📱 Mobile mode - calling handleLineSelection`);
+      // Mobile mode - calling handleLineSelection
       handleLineSelection(index);
     } else {
       // Desktop: immediate single-click selection
       if (submitting) {
-        console.log(`⏳ Already submitting, ignoring click`);
         return;
       }
       
@@ -750,14 +867,10 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       setSelectedLines(new Set([index]));
       setSubmitting(true);
       
-      // Add visual feedback for debugging
-      console.log(`📝 Line ${index + 1} clicked and highlighted`);
-      
       setTimeout(() => {
-        console.log(`⏰ Timeout fired - sending text to chat`);
         setSelectedLines(new Set());
         setSubmitting(false);
-      }, 800); // Increased delay to make highlighting more visible
+      }, 800);
     }
   }, [isMobile, handleLineSelection, textLines, onTextSelection, submitting, title]);
 
@@ -779,26 +892,20 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   }, [isMobile]);
 
   const handleLineTouchEnd = useCallback((event) => {
-    console.log('🔍 handleLineTouchEnd called, isMobile:', isMobile, 'submitting:', submitting, 'firstClickIndex:', firstClickIndex);
     if (!isMobile || submitting) {
-      console.log('❌ Early return: !isMobile or submitting');
       return;
     }
     if (touchMoved.current) {
-      console.log('❌ Early return: touchMoved');
       return; // User was scrolling, not tapping
     }
     const index = parseInt(event.currentTarget.dataset.index);
-    console.log('📱 Touch on line:', index);
     
     if (firstClickIndex === null) {
       // First tap - select this line
-      console.log('✅ First tap - highlighting line', index);
       setFirstClickIndex(index);
       setSelectedLines(new Set([index]));
     } else if (firstClickIndex === index) {
       // Second tap on same line - submit after highlight
-      console.log('✅ Second tap on same line - submitting');
       const selectedText = textLines[index];
       const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
       onTextSelection({ text: selectedText, speaker });
@@ -809,7 +916,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       }, 300);
     } else {
       // Tap on different line - submit range after highlight
-      console.log('✅ Second tap on different line - submitting range');
       const start = Math.min(firstClickIndex, index);
       const end = Math.max(firstClickIndex, index);
       const rangeSelection = new Set();
@@ -847,8 +953,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   }, [isDragging, dragStartIndex]);
 
   const handleMouseUp = useCallback((event) => {
-    console.log(`🖱️ Mouse up called - isMobile: ${isMobile}, isDragging: ${isDragging}, selectedLines.size: ${selectedLines.size}, mouseMoved: ${mouseMoved.current}`);
-    
     if (isDragging && selectedLines.size > 0) {
       const selectedText = Array.from(selectedLines)
         .sort((a, b) => a - b)
@@ -864,7 +968,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       }, 300);
     } else if (!mouseMoved.current && dragStartIndex !== null) {
       // Simple click - no drag detected
-      console.log(`🖱️ Simple click detected on line ${dragStartIndex + 1}`);
       const selectedText = textLines[dragStartIndex];
       const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, dragStartIndex) : null;
       onTextSelection({ text: selectedText, speaker });
@@ -903,9 +1006,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         // On mobile, save immediately for better reliability
         if (isMobile) {
           saveBookmark(currentIndex);
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`📱 Mobile scroll (immediate save): offset=${scrollOffset}, index=${currentIndex}, line=${currentIndex + 1}`);
-          }
         } else {
           saveBookmarkDebounced(currentIndex);
         }
@@ -964,23 +1064,100 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     );
   }, [selectedLines, textLines, handleLineClick, handleLineTouchStart, handleLineTouchMove, handleLineTouchEnd, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, renderLineContent, isMobile, rowHeight, fontSettings]);
 
+  // Handler for PDF text selection
+  const handlePDFTextSelection = useCallback((selectedText, metadata) => {
+    if (selectedText && selectedText.trim().length > 0) {
+      // Clean the text as a backup (in case it wasn't cleaned in PDFViewer)
+      const cleanedText = cleanPDFText(selectedText.trim());
+          // PDF text selection processed
+      
+      if (cleanedText.length > 0 && onTextSelection) {
+        onTextSelection({
+          text: cleanedText,
+          speaker: null,
+          source: 'pdf',
+          metadata
+        });
+      }
+    }
+  }, [onTextSelection]);
+
+  // Clean extracted text from PDF (backup function)
+  const cleanPDFText = useCallback((text) => {
+    if (!text) return '';
+    
+    return text
+      // Remove common PDF artifacts and special characters
+      .replace(/[^\w\s.,!?;:()\-'"]/g, ' ') // Remove special characters except basic punctuation
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .replace(/\n\s*\n/g, '\n') // Remove empty lines
+      .replace(/^\s+|\s+$/g, '') // Trim whitespace
+      // Remove common PDF positioning artifacts
+      .replace(/\d+\.\d+/g, '') // Remove decimal numbers (often positioning data)
+      .replace(/[A-Z]{2,}\d+/g, '') // Remove uppercase words followed by numbers
+      .replace(/[a-z]{1,2}\d+/g, '') // Remove short lowercase words followed by numbers
+      // Remove specific garbled patterns
+      .replace(/['"]{2,}/g, '') // Remove multiple quotes
+      .replace(/\.{3,}/g, '') // Remove multiple dots
+      .replace(/[<>]/g, '') // Remove angle brackets
+      .replace(/[~`]/g, '') // Remove tildes and backticks
+      .replace(/[|\\]/g, '') // Remove pipes and backslashes
+      .replace(/[{}[\]]/g, '') // Remove brackets
+      .replace(/[=+]/g, '') // Remove equals and plus signs
+      .replace(/[&^%$#@!]/g, '') // Remove other special characters
+      // Remove specific garbled patterns from the image
+      .replace(/[a-z]+\d+[a-z]*/g, '') // Remove mixed letter-number sequences
+      .replace(/\d+[a-z]+\d*/g, '') // Remove number-letter sequences
+      // Removed overly aggressive mixed case pattern removal that deletes valid words like "Her"
+      // Clean up remaining artifacts
+      .replace(/\s+/g, ' ') // Final space cleanup
+      .trim();
+  }, []);
+
+  // Handler for PDF load completion
+  const handlePDFLoadComplete = useCallback((info) => {
+    // PDF loaded successfully
+  }, []);
+
   // Early return after all hooks
-  if (textLines.length === 0) {
+  if (textLines.length === 0 && !isPDFMode) {
+    // Loading state
     return (
       <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
-        <div className={styles.loading}>Loading text...</div>
+        <div className={styles.loading}>Loading content...</div>
       </div>
     );
   }
 
+  // Render PDF viewer if in PDF mode
+  if (isPDFMode && pdfData) {
+    return (
+      <div 
+        className={styles.panel}
+        style={{ '--panel-width': `${width}%` }}
+        ref={containerRef}
+      >
+        <PDFViewerNew
+          key={`pdf-${pdfFileName}-${pdfData ? pdfData.substring(0, 50) : 'null'}`}
+          pdfData={pdfData}
+          fileName={pdfFileName}
+          onTextSelection={handlePDFTextSelection}
+          onLoadComplete={handlePDFLoadComplete}
+          width="100%"
+          height="100%"
+        />
+      </div>
+    );
+  }
+
+  // Render text content
   return (
     <div 
+      key={`text-${title}-${textLines.length}`}
       className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
       style={{ '--panel-width': `${width}%` }}
       ref={containerRef}
     >
-
-      
       <div className={styles.textContainer}>
         <List
           ref={listRef}
