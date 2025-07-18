@@ -438,6 +438,8 @@ export default function Library() {
   const [customError, setCustomError] = useState('');
   const [fileUploadLoading, setFileUploadLoading] = useState(false);
   const [fileUploadError, setFileUploadError] = useState('');
+  const [fileUploadType, setFileUploadType] = useState(''); // Track file type for loading message
+  const [fileUploadSize, setFileUploadSize] = useState(0); // Track file size for loading message
   const [recentBooks, setRecentBooks] = useState([]);
 
   useEffect(() => {
@@ -838,7 +840,22 @@ export default function Library() {
     setCustomLoading(true);
     try {
       const res = await fetch(`/api/fetch-gutenberg?url=${encodeURIComponent(customUrl.trim())}`);
-      if (!res.ok) throw new Error('Failed to fetch text from the provided URL.');
+      if (!res.ok) {
+        // Try to get the specific error message from the response
+        let errorMessage = 'Failed to fetch text from the provided URL.';
+        try {
+          const errorData = await res.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (jsonError) {
+          // If JSON parsing fails, use a generic message based on status code
+          if (res.status === 413) {
+            errorMessage = 'The file is too large for URL processing. Please upload it directly instead.';
+          } else if (res.status === 400) {
+            errorMessage = 'The URL could not be processed. Please check the URL or try uploading the file directly.';
+          }
+        }
+        throw new Error(errorMessage);
+      }
       const text = await res.text();
       if (!text || text.length < 100) throw new Error('The file appears to be empty or too short.');
       localStorage.setItem('explainer:bookText', text);
@@ -854,37 +871,43 @@ export default function Library() {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
-    setFileUploadError('');
+
     setFileUploadLoading(true);
-    
+    setFileUploadError('');
+    setFileUploadType(file.type);
+    setFileUploadSize(file.size);
+
     try {
-      // Check file type
-      if (!file.name.toLowerCase().endsWith('.txt')) {
-        throw new Error('Please select a .txt file.');
+      if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+        // Handle text files
+        const text = await file.text();
+        console.log('Library: Uploading text file:', {
+          fileName: file.name,
+          textLength: text.length,
+          textPreview: text.substring(0, 100) + '...'
+        });
+        sessionStorage.setItem('explainer:bookText', text);
+        sessionStorage.setItem('explainer:bookTitle', file.name);
+        sessionStorage.removeItem('explainer:pdfData'); // Clear any previous PDF data
+        console.log('Library: Text file stored in sessionStorage, navigating to /');
+        router.push('/');
+      } else {
+        // Only text files are supported
+        throw new Error('Only .txt files are supported. Please select a text file.');
       }
-      
-      // Check file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        throw new Error('File size must be less than 10MB.');
-      }
-      
-      const text = await file.text();
-      if (!text || text.length < 100) {
-        throw new Error('The file appears to be empty or too short.');
-      }
-      
-      localStorage.setItem('explainer:bookText', text);
-      localStorage.setItem('explainer:bookTitle', file.name);
-      router.push('/');
     } catch (err) {
+      console.error('File upload error:', err);
       setFileUploadError(err.message || 'Failed to load the file.');
     } finally {
       setFileUploadLoading(false);
+      setFileUploadType(''); // Clear file type
+      setFileUploadSize(0); // Clear file size
       // Reset the file input
       e.target.value = '';
     }
   };
+
+
 
   // Responsive grid for the whole page: up to 3 columns if space allows
   const pageGridStyle = {
@@ -987,6 +1010,9 @@ export default function Library() {
           </button>
         </form>
         {customError && <div style={{ color: '#dc2626', marginBottom: 16, fontWeight: 500 }}>{customError}</div>}
+        <div style={{ color: '#6b7280', fontSize: 12, marginBottom: 16 }}>
+          💡 <strong>Tip:</strong> Upload text files (.txt) to analyze them with The Explainer.
+        </div>
         
         {/* File upload UI */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 24, alignItems: 'center' }}>
@@ -1011,7 +1037,7 @@ export default function Library() {
             onMouseOver={e => !fileUploadLoading && (e.target.style.background = '#059669')}
             onMouseOut={e => !fileUploadLoading && (e.target.style.background = '#10b981')}
           >
-            📁 {fileUploadLoading ? t('loading', lang) : 'Upload Text File'}
+            📁 {fileUploadLoading ? t('loading', lang) : t('uploadFile', lang)}
           </label>
           <input
             id="file-upload"
@@ -1022,7 +1048,7 @@ export default function Library() {
             disabled={fileUploadLoading}
           />
           <span style={{ color: '#6b7280', fontSize: 14 }}>
-            Select a .txt file from your computer
+            {t('uploadFileDesc', lang)}
           </span>
         </div>
         {fileUploadError && <div style={{ color: '#dc2626', marginBottom: 16, fontWeight: 500 }}>{fileUploadError}</div>}

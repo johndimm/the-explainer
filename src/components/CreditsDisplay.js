@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import styles from '../styles/CreditsDisplay.module.css';
+import ConfirmationDialog from './ConfirmationDialog';
 
 export default function CreditsDisplay({ session }) {
   const [creditStatus, setCreditStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isPurchasing, setIsPurchasing] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingPackage, setPendingPackage] = useState(null);
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -26,8 +29,15 @@ export default function CreditsDisplay({ session }) {
     }
   };
 
-  const handlePurchase = async (packageType) => {
+  const handlePurchase = (packageType) => {
+    setPendingPackage(packageType);
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmPurchase = async () => {
+    setShowConfirmDialog(false);
     setIsPurchasing(true);
+    
     try {
       const response = await fetch('/api/purchase-credits', {
         method: 'POST',
@@ -36,7 +46,7 @@ export default function CreditsDisplay({ session }) {
         },
         body: JSON.stringify({
           userEmail: session.user.email,
-          package: packageType
+          package: pendingPackage
         }),
       });
 
@@ -49,7 +59,13 @@ export default function CreditsDisplay({ session }) {
       console.error('Error purchasing credits:', error);
     } finally {
       setIsPurchasing(false);
+      setPendingPackage(null);
     }
+  };
+
+  const handleCancelPurchase = () => {
+    setShowConfirmDialog(false);
+    setPendingPackage(null);
   };
 
   if (!session?.user?.email) return null;
@@ -150,6 +166,14 @@ export default function CreditsDisplay({ session }) {
       <div className={styles.note}>
         <p><strong>Note:</strong> This is a simulation. No actual payment processing occurs.</p>
       </div>
+
+      <ConfirmationDialog
+        isOpen={showConfirmDialog}
+        onConfirm={handleConfirmPurchase}
+        onCancel={handleCancelPurchase}
+        title="Free Credits!"
+        message="If this were the real product, you would be getting your credit card out now. But it's not and all credits are currently free. Enjoy!"
+      />
     </div>
   );
 }

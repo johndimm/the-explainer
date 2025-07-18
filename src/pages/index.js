@@ -20,15 +20,7 @@ function getLayoutMode() {
   const aspectRatioPortrait = window.innerHeight > window.innerWidth;
   const isPortrait = mediaQueryPortrait || aspectRatioPortrait;
   
-  console.log('🔍 Layout detection:', {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    isMobile,
-    mediaQueryPortrait,
-    aspectRatioPortrait,
-    isPortrait,
-    userAgent: navigator.userAgent
-  });
+  // Layout detection completed
   
   if (isMobile && isPortrait) return { mode: 'mobile-portrait', isPortrait: true };
   if (isMobile && !isPortrait) return { mode: 'mobile-landscape', isPortrait: false };
@@ -46,6 +38,7 @@ export default function Home() {
   const [paywallData, setPaywallData] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingSelection, setPendingSelection] = useState(null);
+  const [textPanelKey, setTextPanelKey] = useState(0); // Key to force re-mounting
   const textPanelRef = useRef();
   const containerRef = useRef();
   const { data: session } = useSession();
@@ -132,6 +125,10 @@ export default function Home() {
       if (e.key === 'explainer:bookTitle' && e.newValue) {
         setBookTitle(e.newValue);
       }
+      // Force re-mounting when switching between PDF and text modes
+      if (e.key === 'explainer:bookText' || e.key === 'explainer:pdfData' || e.key === 'explainer:pdfSource') {
+        setTextPanelKey(prev => prev + 1);
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -146,16 +143,15 @@ export default function Home() {
     if (layoutMode.mode === 'mobile-portrait') {
       containerRef.current.style.setProperty('--panel-height', `${panelSize}vh`);
       containerRef.current.style.setProperty('--panel-width', `100%`);
-      console.log('Portrait mode - set --panel-height:', `${panelSize}vh`, '--panel-width: 100%');
+      // Portrait mode CSS variables set
     } else {
       containerRef.current.style.setProperty('--panel-width', `${panelSize}%`);
       containerRef.current.style.setProperty('--panel-height', `100vh`);
-      console.log('Landscape/Desktop mode - set --panel-width:', `${panelSize}%`, '--panel-height: 100vh');
+      // Landscape/Desktop mode CSS variables set
     }
   }, [panelSize, layoutMode]);
 
   const handleResize = useCallback((newSize) => {
-    console.log('handleResize called with:', newSize, 'layoutMode:', layoutMode.mode);
     setPanelSize(newSize);
     
     // Save the position for the current orientation
@@ -527,6 +523,7 @@ export default function Home() {
               </div>
               <div style={{ height: `var(--panel-height, 50vh)`, width: '100%', flex: 'none', marginTop: 6 }}>
                 <TextPanel 
+                  key={textPanelKey}
                   ref={textPanelRef}
                   onTextSelection={handleTextSelection}
                   title={bookTitle}
@@ -538,6 +535,7 @@ export default function Home() {
             <>
               <div style={{ width: `var(--panel-width, 50%)`, height: '100vh', flex: 'none' }}>
                 <TextPanel 
+                  key={textPanelKey}
                   ref={textPanelRef}
                   width={panelSize}
                   onTextSelection={handleTextSelection}

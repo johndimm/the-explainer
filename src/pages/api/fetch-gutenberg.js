@@ -101,6 +101,17 @@ export default async function handler(req, res) {
     }
     
     const contentType = response.headers.get('content-type') || '';
+    
+    // Check if it's a PDF - no longer supported
+    if (contentType.includes('application/pdf') || url.toLowerCase().endsWith('.pdf')) {
+      console.log('PDF detected via URL - not supported');
+      res.status(400).json({ 
+        error: 'PDF files are not supported. Please use text files (.txt) instead.' 
+      });
+      return;
+    }
+    
+    // Handle HTML and text content
     let text = await response.text();
     
     // If the content appears to be HTML, extract text from it

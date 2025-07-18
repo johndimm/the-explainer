@@ -58,6 +58,7 @@ This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-appl
 - **AI Explanations**: Get detailed explanations of difficult or archaic language with context
 - **Confirmation Dialog**: Preview selected text and credit costs before submitting explanations
 - **Multiple Text Sources**: Support for various classic texts including Shakespeare's works
+- **PDF Support**: Upload and extract text from PDF documents for analysis
 
 ### Credit System
 - **Anonymous Users**: 3 free explanations to try the service
@@ -77,17 +78,19 @@ This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-appl
 - **Session Management**: Secure authentication with NextAuth.js
 - **Database Integration**: PostgreSQL for user data and credit tracking
 - **Real-time Updates**: Dynamic credit status and explanation availability
+- **PDF Processing**: Server-side PDF text extraction using pdf-parse library
 
 ## How It Works
 
 ### Text Selection & Explanation Flow
-1. **Select Text**: Click a line (desktop) or double-tap (mobile) to select text for explanation
-2. **Confirmation Dialog**: A dialog appears showing:
+1. **Choose Your Text**: Select from the library, upload a .txt or .pdf file, or paste a URL
+2. **Select Text**: Click a line (desktop) or double-tap (mobile) to select text for explanation
+3. **Confirmation Dialog**: A dialog appears showing:
    - The selected text preview
    - Your available explanations count
    - Credit cost information (free hourly credit vs. purchased credits)
-3. **Get Explanation**: Click "Get Explanation" to receive an AI-powered explanation
-4. **Follow-up Questions**: Ask additional questions about the text in the chat panel
+4. **Get Explanation**: Click "Get Explanation" to receive an AI-powered explanation
+5. **Follow-up Questions**: Ask additional questions about the text in the chat panel
 
 ### Credit Usage Priority
 - **Free Hourly Credits**: Always used first when available

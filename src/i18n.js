@@ -54,7 +54,7 @@ const translations = {
     poetry: 'Poetry Collection',
     poetryDesc: 'A diverse collection of poetry from different cultures and time periods.',
     customText: 'Custom Text Files',
-    customTextDesc: 'You can also load your own content by pasting a URL to a plain text file or web page. The app will automatically extract text from HTML pages. The URL must be publicly accessible.',
+    customTextDesc: 'You can also load your own content by pasting a URL to a plain text file or web page, or by uploading .txt files. The app will automatically extract text from HTML pages. The URL must be publicly accessible.',
     chatFeatures: 'Chat Features',
     followUpQuestions: 'Follow-up Questions',
     followUpQuestionsDesc: 'Ask additional questions about the text or request clarification on any explanation.',
@@ -67,6 +67,7 @@ const translations = {
     backToApp: 'Back to App',
     userGuide: 'User Guide',
     exploreLibrary: 'Explore classic literature in many languages. Click a book to start reading!',
+    libraryDesc: 'Access a vast collection of classic literature, upload your own text files (.txt), or paste URLs to web pages. The app automatically extracts text from various sources.',
     nationalityDesc: 'Help the AI provide culturally relevant explanations and context.',
     tip1: 'Select complete sentences or paragraphs for more comprehensive explanations.',
     tip2: 'Use follow-up questions to dive deeper into specific aspects of the text.',
@@ -74,6 +75,9 @@ const translations = {
     tip4: 'Save interesting conversations for future reference.',
     tip5: 'Experiment with different books and genres to expand your understanding.',
     tip6: 'Language learners: Set your age to 8 years old and nationality to your target country for simple explanations in your learning language.',
+    uploadFile: 'Upload File',
+    uploadFileDesc: 'Select a .txt file from your computer',
+
   },
   fr: {
     chat: 'Discussion',
@@ -128,7 +132,7 @@ const translations = {
     poetry: 'Collection de Poésie',
     poetryDesc: 'Une collection diverse de poésie de différentes cultures et époques.',
     customText: 'Fichiers Texte Personnalisés',
-    customTextDesc: 'Vous pouvez également charger votre propre contenu en collant une URL vers un fichier texte brut ou une page web. L\'application extraira automatiquement le texte des pages HTML. L\'URL doit être publiquement accessible.',
+    customTextDesc: 'Vous pouvez également charger votre propre contenu en collant une URL vers un fichier texte brut ou une page web, ou en téléchargeant des fichiers .txt. L\'application extraira automatiquement le texte des pages HTML. L\'URL doit être publiquement accessible.',
     chatFeatures: 'Fonctionnalités de Discussion',
     followUpQuestions: 'Questions de Suivi',
     followUpQuestionsDesc: 'Posez des questions supplémentaires sur le texte ou demandez des clarifications sur toute explication.',
@@ -141,6 +145,7 @@ const translations = {
     backToApp: 'Retour à l\'App',
     userGuide: 'Guide Utilisateur',
     exploreLibrary: 'Explorez la littérature classique dans de nombreuses langues. Cliquez sur un livre pour commencer à lire !',
+    libraryDesc: 'Accédez à une vaste collection de littérature classique, téléchargez vos propres fichiers texte (.txt), ou collez des URL vers des pages web. L\'application extrait automatiquement le texte de diverses sources.',
     nationalityDesc: 'Aidez l\'IA à fournir des explications et un contexte culturellement pertinents.',
     tip1: 'Sélectionnez des phrases ou paragraphes complets pour des explications plus complètes.',
     tip2: 'Utilisez des questions de suivi pour approfondir des aspects spécifiques du texte.',
@@ -148,6 +153,9 @@ const translations = {
     tip4: 'Sauvegardez les conversations intéressantes pour référence future.',
     tip5: 'Expérimentez avec différents livres et genres pour élargir votre compréhension.',
     tip6: 'Apprenants de langues : Définissez votre âge à 8 ans et votre nationalité à votre pays cible pour des explications simples dans la langue que vous apprenez.',
+    uploadFile: 'Télécharger un Fichier',
+    uploadFileDesc: 'Sélectionnez un fichier .txt depuis votre ordinateur',
+
   }
 };
 

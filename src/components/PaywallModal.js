@@ -1,19 +1,28 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import styles from '../styles/PaywallModal.module.css';
+import ConfirmationDialog from './ConfirmationDialog';
 
 export default function PaywallModal({ isOpen, onClose, paywallData, session }) {
   const [isLoading, setIsLoading] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingPackage, setPendingPackage] = useState(null);
 
   const handleSignIn = () => {
     signIn('google');
   };
 
-  const handlePurchase = async (packageType) => {
+  const handlePurchase = (packageType) => {
     if (!session?.user?.email) return;
-    
+    setPendingPackage(packageType);
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmPurchase = async () => {
+    setShowConfirmDialog(false);
     setIsLoading(true);
+    
     try {
       const response = await fetch('/api/purchase-credits', {
         method: 'POST',
@@ -22,7 +31,7 @@ export default function PaywallModal({ isOpen, onClose, paywallData, session }) 
         },
         body: JSON.stringify({
           userEmail: session.user.email,
-          package: packageType
+          package: pendingPackage
         }),
       });
 
@@ -39,7 +48,13 @@ export default function PaywallModal({ isOpen, onClose, paywallData, session }) 
       console.error('Error purchasing credits:', error);
     } finally {
       setIsLoading(false);
+      setPendingPackage(null);
     }
+  };
+
+  const handleCancelPurchase = () => {
+    setShowConfirmDialog(false);
+    setPendingPackage(null);
   };
 
   if (!isOpen) return null;
@@ -154,6 +169,14 @@ export default function PaywallModal({ isOpen, onClose, paywallData, session }) 
           )}
         </div>
       </div>
+
+      <ConfirmationDialog
+        isOpen={showConfirmDialog}
+        onConfirm={handleConfirmPurchase}
+        onCancel={handleCancelPurchase}
+        title="Free Credits!"
+        message="If this were the real product, you would be getting your credit card out now. But it's not and all credits are currently free. Enjoy!"
+      />
     </div>
   );
 }
