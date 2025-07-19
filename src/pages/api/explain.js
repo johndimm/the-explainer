@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
   try {
     const {
-      text, bookTitle, bookAuthor, userLanguage, userAge, userNationality,
+      text, bookTitle, bookAuthor, userLanguage, userAge, userNationality, userEducationalLevel,
       provider, model, apiKey, endpoint, customModel, isFollowUp, speaker, userEmail
     } = req.body;
 
@@ -111,7 +111,7 @@ export default async function handler(req, res) {
     const title = bookTitle || 'Romeo and Juliet';
     const author = bookAuthor || 'William Shakespeare';
 
-    // System prompt for text explanation, now including author, title, age, and nationality
+    // System prompt for text explanation, now including author, title, age, nationality, and educational level
     const languageInstruction = userLanguage ? `Please respond in ${userLanguage}.` : 'Respond in the same language as the input text unless specifically asked otherwise.';
     let ageInstruction = '';
     if (userAge) {
@@ -130,6 +130,37 @@ export default async function handler(req, res) {
     if (userNationality) {
       nationalityInstruction = `The user is from ${userNationality}. When explaining cultural references, historical context, or social customs, consider what might be familiar or unfamiliar to someone from this background.`;
     }
+    let educationalLevelInstruction = '';
+    if (userEducationalLevel) {
+      switch (userEducationalLevel) {
+        case 'High School Dropout':
+          educationalLevelInstruction = `The user has a high school dropout level of education. Use very simple, clear language. Avoid academic jargon and complex terminology. Explain concepts using everyday examples and analogies. Be patient and thorough in your explanations.`;
+          break;
+        case 'High School Graduate':
+          educationalLevelInstruction = `The user has a high school education. Use clear, accessible language. You can use some academic terms but always explain them. Provide context and background information that would be familiar to someone with a high school education.`;
+          break;
+        case 'Some College':
+          educationalLevelInstruction = `The user has some college education. You can use more sophisticated language and concepts, but still explain specialized terms. You can reference college-level knowledge and concepts.`;
+          break;
+        case 'Associate Degree':
+          educationalLevelInstruction = `The user has an associate degree. You can use more advanced vocabulary and concepts. You can assume familiarity with basic academic concepts and terminology.`;
+          break;
+        case 'Bachelor\'s Degree':
+          educationalLevelInstruction = `The user has a bachelor's degree. You can use sophisticated academic language and concepts. You can reference advanced theories and academic frameworks.`;
+          break;
+        case 'Master\'s Degree':
+          educationalLevelInstruction = `The user has a master's degree. You can use highly sophisticated academic language and concepts. You can reference advanced theories, research methodologies, and academic discourse.`;
+          break;
+        case 'Doctorate/PhD':
+          educationalLevelInstruction = `The user has a doctorate/PhD. You can use the most sophisticated academic language and concepts. You can reference advanced theories, research methodologies, and engage in complex academic discourse.`;
+          break;
+        case 'Professional Degree (MD, JD, etc.)':
+          educationalLevelInstruction = `The user has a professional degree (MD, JD, etc.). You can use highly sophisticated language and concepts. You can reference advanced theories, professional terminology, and engage in complex discourse appropriate for a professional audience.`;
+          break;
+        default:
+          educationalLevelInstruction = '';
+      }
+    }
     const systemPrompt = `You are a helpful assistant that explains difficult texts in an engaging and educational way. The user is reading "${title}" by ${author}. When explaining text, you write about interesting information that answers these suggested questions. Do not repeat the questions in your response.
 
 1. Explain difficult or archaic words and what they mean
@@ -145,7 +176,8 @@ Make your explanations compelling and not boring. Feel free to make occasional j
 
 ${languageInstruction}
 ${ageInstruction}
-${nationalityInstruction}`;
+${nationalityInstruction}
+${educationalLevelInstruction}`;
     let userPrompt;
     if (isFollowUp) {
       userPrompt = `The user has a follow-up question about the text. Please answer their question clearly and helpfully.\n\nQuestion: ${text}`;

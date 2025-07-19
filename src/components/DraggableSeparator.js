@@ -102,8 +102,13 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
 
   const handleThumbTouchStart = useCallback((e) => {
     // Thumb-specific touch start - force scroll mode
-    e.preventDefault();
-    e.stopPropagation();
+    // Only prevent default if we can (non-passive listener)
+    try {
+      e.preventDefault();
+      e.stopPropagation();
+    } catch (error) {
+      // Ignore preventDefault errors in passive listeners
+    }
     dragModeRef.current = isPortrait() ? 'portrait' : 'landscape';
     dragActionRef.current = 'scroll'; // Force scroll mode immediately
     if (e.touches && e.touches.length > 0) {
@@ -147,8 +152,13 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     };
 
     const handleMove = evt => {
-      evt.preventDefault();
-      evt.stopPropagation();
+      // Only prevent default if we can (non-passive listener)
+      try {
+        evt.preventDefault();
+        evt.stopPropagation();
+      } catch (error) {
+        // Ignore preventDefault errors in passive listeners
+      }
       let clientX, clientY;
       if (evt.touches && evt.touches.length > 0) {
         clientX = evt.touches[0].clientX;
@@ -165,8 +175,13 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
 
     const handleEnd = evt => {
       if (evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
+        // Only prevent default if we can (non-passive listener)
+        try {
+          evt.preventDefault();
+          evt.stopPropagation();
+        } catch (error) {
+          // Ignore preventDefault errors in passive listeners
+        }
       }
       setIsDragging(false);
       isDraggingRef.current = false;
@@ -245,8 +260,12 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     const handleMove = evt => {
       // Only prevent default if we're actually resizing
       if (dragActionRef.current === 'resize') {
-        evt.preventDefault();
-        evt.stopPropagation();
+        try {
+          evt.preventDefault();
+          evt.stopPropagation();
+        } catch (error) {
+          // Ignore preventDefault errors in passive listeners
+        }
       }
       let clientX, clientY;
       if (evt.touches && evt.touches.length > 0) {
@@ -314,8 +333,13 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     };
     const handleEnd = evt => {
       if (evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
+        // Only prevent default if we can (non-passive listener)
+        try {
+          evt.preventDefault();
+          evt.stopPropagation();
+        } catch (error) {
+          // Ignore preventDefault errors in passive listeners
+        }
       }
       setIsDragging(false);
       isDraggingRef.current = false;
@@ -419,30 +443,24 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
 
       // Rendering thumb
   
+      
   return (
     <div 
+      className={`${styles.separator} ${isDragging ? styles.dragging : ''}`}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      onPointerDown={handleTouchStart}
       style={{ 
-        position: 'relative',
-        width: isPortrait() ? '100%' : '24px',
-        height: isPortrait() ? '20px' : '100%'
+        touchAction: isPortrait() ? 'pan-x' : 'pan-y', // Allow scrolling in the non-resize direction
+        userSelect: 'none', 
+        zIndex: 1000,
+        width: '100%',
+        height: '100%',
+        position: 'relative'
       }}
     >
-      <div 
-        className={`${styles.separator} ${isDragging ? styles.dragging : ''}`}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        onPointerDown={handleTouchStart}
-        style={{ 
-          touchAction: isPortrait() ? 'pan-x' : 'pan-y', // Allow scrolling in the non-resize direction
-          userSelect: 'none', 
-          zIndex: 1000,
-          width: '100%',
-          height: '100%'
-        }}
-      >
-        <div className={styles.handle} style={{ opacity: isDragging ? 0.3 : 1 }}>
-          <GripVertical size={20} />
-        </div>
+      <div className={styles.handle} style={{ opacity: isDragging ? 0.3 : 1 }}>
+        <GripVertical size={20} />
       </div>
       <div 
         ref={thumbRef}

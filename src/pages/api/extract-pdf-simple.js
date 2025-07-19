@@ -1,5 +1,15 @@
 import pdf from 'pdf-parse';
 
+// Configure body parser for this route
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '15mb', // Allow up to 15MB for PDF uploads (base64 encoding makes files ~33% larger)
+    },
+    responseLimit: false, // No limit on response size
+  },
+};
+
 // Helper function to add timeout to async operations
 function withTimeout(promise, timeoutMs = 30000) {
   return Promise.race([

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { Send, Save, MessageSquare, Settings, BookOpen, HelpCircle, CreditCard } from 'lucide-react';
+import { Send, Save, MessageSquare, Settings, BookOpen } from 'lucide-react';
 import styles from '@/styles/ChatPanel.module.css';
 import { t, getUserLanguage } from '@/i18n';
 import { useSession, signIn, signOut } from 'next-auth/react';
@@ -89,39 +89,12 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
             <span className={styles.buttonText}>{t('library', lang)}</span>
           </a>
           <a
-            href="/guide"
+            href="/profile"
             className={styles.headerButton}
-            title="Learn how to use The Explainer effectively"
-          >
-            <HelpCircle size={16} />
-            <span className={styles.buttonText}>Guide</span>
-          </a>
-          <a
-            href={session ? "/credits" : undefined}
-            className={styles.headerButton}
-            title="View and purchase credits"
-            onClick={e => {
-              if (!session) {
-                e.preventDefault();
-                signIn('google');
-              }
-            }}
-          >
-            <CreditCard size={16} />
-            <span className={styles.buttonText}>Credits</span>
-          </a>
-          <a
-            href={session ? "/profile" : undefined}
-            className={styles.headerButtonIcon}
             title={t('profileSettings', lang)}
-            onClick={e => {
-              if (!session) {
-                e.preventDefault();
-                signIn('google');
-              }
-            }}
           >
             <Settings size={16} />
+            <span className={styles.buttonText}>Settings</span>
           </a>
         </div>
       </div>

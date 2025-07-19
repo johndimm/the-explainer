@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { t, getUserLanguage } from '@/i18n';
-import { X } from 'lucide-react';
-import { useSession, signOut } from 'next-auth/react';
+import { X, HelpCircle, CreditCard } from 'lucide-react';
+import { useSession, signOut, signIn } from 'next-auth/react';
 
 const LANGUAGES = [
   'English', 'French', 'German', 'Spanish', 'Italian', 'Chinese', 'Japanese', 'Russian', 'Portuguese', 'Arabic', 'Hindi', 'Other'
@@ -10,13 +10,15 @@ const LANGUAGES = [
 const COUNTRIES = [
   'United States', 'France', 'Germany', 'Spain', 'Italy', 'China', 'Japan', 'Russia', 'Brazil', 'India', 'United Kingdom', 'Canada', 'Other'
 ];
-
-const PROVIDERS = [
-  { value: 'openai', label: 'OpenAI' },
-  { value: 'anthropic', label: 'Anthropic (Claude)' },
-  { value: 'deepseek', label: 'DeepSeek' },
-  { value: 'gemini', label: 'Gemini (Google)' },
-  { value: 'custom', label: 'Custom' },
+const EDUCATIONAL_LEVELS = [
+  'High School Dropout',
+  'High School Graduate',
+  'Some College',
+  'Associate Degree',
+  'Bachelor\'s Degree',
+  'Master\'s Degree',
+  'Doctorate/PhD',
+  'Professional Degree (MD, JD, etc.)'
 ];
 
 const FONT_FAMILIES = [
@@ -53,52 +55,16 @@ const FONT_WEIGHTS = [
   { value: '700', label: 'Bold' },
 ];
 
-const MODELS = {
-  openai: [
-    { value: 'gpt-4o', label: 'GPT-4o' },
-    { value: 'gpt-4.1', label: 'GPT-4.1' },
-    { value: 'gpt-4.1-mini', label: 'GPT-4.1 Mini' },
-    { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
-    { value: 'gpt-4', label: 'GPT-4 (legacy)' },
-    { value: 'gpt-4-32k', label: 'GPT-4 32k (legacy)' },
-    { value: 'gpt-3.5-turbo-16k', label: 'GPT-3.5 Turbo 16k (legacy)' },
-  ],
-  anthropic: [
-    { value: 'claude-3-opus', label: 'Claude 3 Opus' },
-    { value: 'claude-3-sonnet', label: 'Claude 3 Sonnet' },
-    { value: 'claude-3-haiku', label: 'Claude 3 Haiku' },
-    { value: 'claude-3-5-sonnet', label: 'Claude 3.5 Sonnet' },
-    { value: 'claude-3-5-haiku', label: 'Claude 3.5 Haiku' },
-    { value: 'claude-2.1', label: 'Claude 2.1' },
-    { value: 'claude-2.0', label: 'Claude 2.0' },
-  ],
-  deepseek: [
-    { value: 'deepseek-chat', label: 'DeepSeek LLM' },
-  ],
-  gemini: [
-    { value: 'gemini-1.5-pro-latest', label: 'Gemini 1.5 Pro' },
-    { value: 'gemini-1.0-pro', label: 'Gemini 1.0 Pro' },
-    { value: 'gemini-1.5-flash-latest', label: 'Gemini 1.5 Flash' },
-  ],
-  custom: [
-    { value: '', label: 'Custom' },
-  ],
-};
-
 export default function Profile() {
   const router = useRouter();
   const { data: session } = useSession();
   const [language, setLanguage] = useState('');
   const [age, setAge] = useState('');
   const [nationality, setNationality] = useState('');
+  const [educationalLevel, setEducationalLevel] = useState('');
   const [lang, setLang] = useState('en');
   const [showSaved, setShowSaved] = useState(false);
   const [translations, setTranslations] = useState({});
-  const [llmProvider, setLlmProvider] = useState('openai');
-  const [llmModel, setLlmModel] = useState('gpt-4o');
-  const [llmKey, setLlmKey] = useState('');
-  const [llmEndpoint, setLlmEndpoint] = useState('');
-  const [llmCustomModel, setLlmCustomModel] = useState('');
   const [userStats, setUserStats] = useState(null);
   const [fontFamily, setFontFamily] = useState('Georgia');
   const [fontSize, setFontSize] = useState('17');
@@ -106,7 +72,6 @@ export default function Profile() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Mobile detection and resize handling
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -123,30 +88,13 @@ export default function Profile() {
     setLanguage(profile.language || '');
     setAge(profile.age || '');
     setNationality(profile.nationality || '');
+    setEducationalLevel(profile.educationalLevel || '');
     setFontFamily(profile.fontFamily || 'Georgia');
     setFontSize(profile.fontSize || '17');
     setFontWeight(profile.fontWeight || '400');
-    // Load translations for the current language
     loadTranslations();
-    const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
-    const provider = llm.provider || 'openai';
-    setLlmProvider(provider);
-    // Set a valid model for the provider
-    const savedModel = llm.model;
-    const availableModels = MODELS[provider] || MODELS.openai;
-    const validModel = availableModels.find(m => m.value === savedModel) ? savedModel : availableModels[0]?.value || 'gpt-4o';
-    setLlmModel(validModel);
-    // Update localStorage with the valid model if it changed
-    if (validModel !== savedModel) {
-      const updatedLlm = { ...llm, model: validModel };
-      localStorage.setItem('explainer:llm', JSON.stringify(updatedLlm));
-    }
-    setLlmKey(llm.key || '');
-    setLlmEndpoint(llm.endpoint || '');
-    setLlmCustomModel(llm.customModel || '');
   }, []);
 
-  // Fetch user stats on load if logged in
   useEffect(() => {
     async function fetchStats() {
       if (session?.user?.email) {
@@ -166,22 +114,24 @@ export default function Profile() {
 
   const loadTranslations = async () => {
     const currentLang = getUserLanguage();
-    if (currentLang === 'en') {
+    if (currentLang === 'fr') {
       setTranslations({
-        profileSettings: 'Profile Settings',
-        aboutYourInfo: 'About Your Information',
-        aboutYourInfoDesc: 'This information is stored locally on your device (no accounts or servers). It helps the AI craft age-appropriate responses and make cultural references relevant to your background. For example, a 6-year-old will get simpler explanations than an adult, and someone from France might get different cultural context than someone from Japan.',
-        language: 'Language',
-        age: 'Age',
-        nationality: 'Nationality',
-        selectLanguage: 'Select language',
-        selectNationality: 'Select nationality',
-        yourAge: 'Your age',
-        profileSaved: 'Settings saved automatically'
+        profileSettings: 'Paramètres du profil',
+        aboutYourInfo: 'À Propos de Vos Informations',
+        aboutYourInfoDesc: 'Ces informations sont stockées localement sur votre appareil (aucun compte ni serveur). Elles aident l\'IA à créer des réponses adaptées à l\'âge et à faire des références culturelles pertinentes pour votre contexte.',
+        language: 'Langue',
+        age: 'Âge',
+        nationality: 'Nationalité',
+        educationalLevel: 'Niveau d\'éducation',
+        selectLanguage: 'Choisir la langue',
+        selectNationality: 'Choisir la nationalité',
+        selectEducationalLevel: 'Sélectionner le niveau d\'éducation',
+        yourAge: 'Votre âge',
+        profileSaved: 'Paramètres enregistrés automatiquement'
       });
     } else {
       try {
-        const keys = ['profileSettings', 'aboutYourInfo', 'aboutYourInfoDesc', 'language', 'age', 'nationality', 'selectLanguage', 'selectNationality', 'yourAge', 'profileSaved'];
+        const keys = ['profileSettings', 'aboutYourInfo', 'aboutYourInfoDesc', 'language', 'age', 'nationality', 'educationalLevel', 'selectLanguage', 'selectNationality', 'selectEducationalLevel', 'yourAge', 'profileSaved'];
         const translationPromises = keys.map(key => t(key, currentLang));
         const results = await Promise.all(translationPromises);
         const newTranslations = {};
@@ -193,12 +143,14 @@ export default function Profile() {
         setTranslations({
           profileSettings: 'Profile Settings',
           aboutYourInfo: 'About Your Information',
-          aboutYourInfoDesc: 'This information is stored locally on your device (no accounts or servers). It helps the AI craft age-appropriate responses and make cultural references relevant to your background. For example, a 6-year-old will get simpler explanations than an adult, and someone from France might get different cultural context than someone from Japan.',
+          aboutYourInfoDesc: 'This information is stored locally on your device (no accounts or servers). It helps the AI craft age-appropriate responses and make cultural references relevant to your background.',
           language: 'Language',
           age: 'Age',
           nationality: 'Nationality',
+          educationalLevel: 'Educational Level',
           selectLanguage: 'Select language',
           selectNationality: 'Select nationality',
+          selectEducationalLevel: 'Select educational level',
           yourAge: 'Your age',
           profileSaved: 'Settings saved automatically'
         });
@@ -206,19 +158,10 @@ export default function Profile() {
     }
   };
 
-  // Auto-save function
   const autoSave = (updates) => {
     const currentProfile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
     const newProfile = { ...currentProfile, ...updates };
     localStorage.setItem('explainer:profile', JSON.stringify(newProfile));
-    setShowSaved(true);
-    setTimeout(() => setShowSaved(false), 2000);
-  };
-
-  const autoSaveLlm = (updates) => {
-    const currentLlm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
-    const newLlm = { ...currentLlm, ...updates };
-    localStorage.setItem('explainer:llm', JSON.stringify(newLlm));
     setShowSaved(true);
     setTimeout(() => setShowSaved(false), 2000);
   };
@@ -229,18 +172,14 @@ export default function Profile() {
 
   const handleBookClick = async (book) => {
     try {
-      // Store the book title in localStorage
       localStorage.setItem('explainer:current-text', book.title);
-      
-      // Navigate to the main app
       router.push('/');
     } catch (error) {
       console.error('Error loading book:', error);
     }
   };
 
-  // Guard: Only render UI if translations are loaded
-  if (!translations.profileSettings || !translations.aboutYourInfo || !translations.aboutYourInfoDesc) {
+  if (!translations.profileSettings) {
     return (
       <div style={{ padding: 32, textAlign: 'center' }}>
         <span>Loading translations...</span>
@@ -261,7 +200,6 @@ export default function Profile() {
       alignItems: 'center',
       zIndex: 1000,
       color: '#18181b',
-      // Add important to override any global or media query
       WebkitTextFillColor: '#18181b',
       textShadow: 'none',
     }}>
@@ -269,14 +207,14 @@ export default function Profile() {
         background: '#fff',
         borderRadius: 16,
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        padding: window.innerWidth <= 768 ? 16 : 32,
-        minWidth: window.innerWidth <= 768 ? 'auto' : 540,
-        maxWidth: window.innerWidth <= 768 ? '95vw' : 900,
+        padding: isMobile ? 16 : 32,
+        minWidth: isMobile ? 'auto' : 540,
+        maxWidth: isMobile ? '95vw' : 900,
         width: '100%',
         position: 'relative',
-        maxHeight: window.innerWidth <= 768 ? '95vh' : '90vh',
+        maxHeight: isMobile ? '95vh' : '90vh',
         overflow: 'auto',
-        margin: window.innerWidth <= 768 ? '10px' : '0'
+        margin: isMobile ? '10px' : '0'
       }}>
         {/* Close button */}
         <button
@@ -304,420 +242,490 @@ export default function Profile() {
         >
           <X size={20} />
         </button>
+
         <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 24, color: '#1e293b', paddingRight: 40 }}>
-          {translations.profileSettings || 'Profile Settings'}
+          Settings
         </h1>
-        <div className="profile-columns" style={{
-          display: 'flex',
-          gap: isMobile ? 16 : 32,
-          flexWrap: 'wrap',
-          alignItems: 'flex-start',
-          justifyContent: isMobile ? 'center' : 'space-between',
-          minWidth: 0,
-          flexDirection: isMobile ? 'column' : 'row'
+
+        {/* Account Section */}
+        <section style={{ 
+          marginBottom: 32,
+          padding: 24,
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: 12
         }}>
-          {/* Personal Data Section */}
-          <section className="profile-section" style={{ 
-            flex: 1, 
-            minWidth: isMobile ? 'auto' : 260, 
-            maxWidth: isMobile ? '100%' : 400,
-            width: isMobile ? '100%' : 'auto'
-          }}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: '#334155' }}>Personal Data</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                {translations.language || 'Language'}
-                <select
-                  value={language}
-                  onChange={e => {
-                    setLanguage(e.target.value);
-                    autoSave({ language: e.target.value });
-                    setTimeout(() => loadTranslations(), 100);
-                  }}
-                  style={{
-                    width: '100%',
-                    marginTop: 8,
-                    padding: isMobile ? 12 : 10,
-                    borderRadius: 8,
-                    border: '1px solid #cbd5e1',
-                    fontSize: isMobile ? 18 : 16,
-                    background: '#fff',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                >
-                  <option value="">{translations.selectLanguage || 'Select language'}</option>
-                  {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-                </select>
-              </label>
-              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                {translations.age || 'Age'}
-                <input
-                  type="number"
-                  min="1"
-                  max="120"
-                  value={age}
-                  onChange={e => {
-                    setAge(e.target.value);
-                    autoSave({ age: e.target.value });
-                  }}
-                  placeholder={translations.yourAge || 'Your age'}
-                  style={{
-                    width: '100%',
-                    marginTop: 8,
-                    padding: isMobile ? 12 : 10,
-                    borderRadius: 8,
-                    border: '1px solid #cbd5e1',
-                    fontSize: isMobile ? 18 : 16,
-                    background: '#fff',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                />
-              </label>
-              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                {translations.nationality || 'Nationality'}
-                <select
-                  value={nationality}
-                  onChange={e => {
-                    setNationality(e.target.value);
-                    autoSave({ nationality: e.target.value });
-                  }}
-                  style={{
-                    width: '100%',
-                    marginTop: 8,
-                    padding: isMobile ? 12 : 10,
-                    borderRadius: 8,
-                    border: '1px solid #cbd5e1',
-                    fontSize: isMobile ? 18 : 16,
-                    background: '#fff',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                >
-                  <option value="">{translations.selectNationality || 'Select nationality'}</option>
-                  {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </label>
-              
-              {/* Font Settings Section */}
-              <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid #e2e8f0' }}>
-                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16, color: '#334155' }}>
-                  Text Panel Font Settings
-                </h3>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Account</h2>
+          {session ? (
+            <div style={{
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: 16,
+              alignItems: isMobile ? 'stretch' : 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, marginBottom: 4, color: '#166534' }}>✓ Signed in as {session.user.email}</div>
+                <div style={{ fontSize: 14, color: '#64748b' }}>You have access to hourly credits and can purchase additional credits.</div>
               </div>
-              
-              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                Font Family
-                <select
-                  value={fontFamily}
-                  onChange={e => {
-                    setFontFamily(e.target.value);
-                    autoSave({ fontFamily: e.target.value });
-                  }}
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                <a
+                  href="/credits"
                   style={{
-                    width: '100%',
-                    marginTop: 8,
-                    padding: isMobile ? 12 : 10,
-                    borderRadius: 8,
-                    border: '1px solid #cbd5e1',
-                    fontSize: isMobile ? 18 : 16,
-                    background: '#fff',
-                    transition: 'border-color 0.2s',
-                    fontFamily: fontFamily
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '10px 16px',
+                    background: '#3b82f6',
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: 6,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    transition: 'background 0.2s'
                   }}
-                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                  onMouseEnter={e => e.target.style.background = '#2563eb'}
+                  onMouseLeave={e => e.target.style.background = '#3b82f6'}
                 >
-                  {FONT_FAMILIES.map(f => (
-                    <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              
-              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                Font Size
-                <select
-                  value={fontSize}
-                  onChange={e => {
-                    setFontSize(e.target.value);
-                    autoSave({ fontSize: e.target.value });
-                  }}
+                  <CreditCard size={16} />
+                  View Credits
+                </a>
+                <button
+                  onClick={() => signOut()}
                   style={{
-                    width: '100%',
-                    marginTop: 8,
-                    padding: isMobile ? 12 : 10,
-                    borderRadius: 8,
-                    border: '1px solid #cbd5e1',
-                    fontSize: isMobile ? 18 : 16,
-                    background: '#fff',
-                    transition: 'border-color 0.2s'
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '10px 16px',
+                    background: '#ef4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 6,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    transition: 'background 0.2s'
                   }}
-                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                  onMouseEnter={e => e.target.style.background = '#dc2626'}
+                  onMouseLeave={e => e.target.style.background = '#ef4444'}
                 >
-                  {FONT_SIZES.map(s => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              
-              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                Font Weight
-                <select
-                  value={fontWeight}
-                  onChange={e => {
-                    setFontWeight(e.target.value);
-                    autoSave({ fontWeight: e.target.value });
-                  }}
-                  style={{
-                    width: '100%',
-                    marginTop: 8,
-                    padding: isMobile ? 12 : 10,
-                    borderRadius: 8,
-                    border: '1px solid #cbd5e1',
-                    fontSize: isMobile ? 18 : 16,
-                    background: '#fff',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                >
-                  {FONT_WEIGHTS.map(w => (
-                    <option key={w.value} value={w.value}>
-                      {w.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              
-              {/* Font Preview */}
-              <div style={{ 
-                marginTop: 16, 
-                padding: 12, 
-                backgroundColor: '#f8fafc', 
-                borderRadius: 8,
-                border: '1px solid #e2e8f0'
-              }}>
-                <div style={{ 
-                  fontFamily: fontFamily, 
-                  fontSize: fontSize + 'px',
-                  fontWeight: fontWeight,
-                  lineHeight: '1.5',
-                  color: '#18181b'
-                }}>
-                  Preview: "To be or not to be, that is the question"
-                </div>
+                  Sign Out
+                </button>
               </div>
             </div>
-          </section>
-          {/* Model Selection Section */}
-          <section className="profile-section" style={{ 
-            flex: 1, 
-            minWidth: isMobile ? 'auto' : 260, 
-            maxWidth: isMobile ? '100%' : 400,
-            width: isMobile ? '100%' : 'auto'
-          }}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, color: '#334155' }}>Model & Provider</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                LLM Provider
-                <select
-                  value={llmProvider}
-                  onChange={e => {
-                    setLlmProvider(e.target.value);
-                    setLlmModel(MODELS[e.target.value][0]?.value || '');
-                    autoSaveLlm({ provider: e.target.value, model: MODELS[e.target.value][0]?.value || '' });
-                  }}
-                  style={{ width: '100%', marginTop: 8, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
-                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                >
-                  {PROVIDERS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
-                </select>
-              </label>
-              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                Model
-                <select
-                  value={llmModel}
-                  onChange={e => {
-                    setLlmModel(e.target.value);
-                    autoSaveLlm({ model: e.target.value });
-                  }}
-                  style={{ width: '100%', marginTop: 8, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
-                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                >
-                  {MODELS[llmProvider].map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-                </select>
-              </label>
-              {llmProvider === 'custom' ? (
-                <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                  API Key
-                  <input
-                    type="password"
-                    value={llmKey}
-                    onChange={e => {
-                      setLlmKey(e.target.value);
-                      autoSaveLlm({ key: e.target.value });
-                    }}
-                    placeholder="Paste your API key here"
-                    style={{ width: '100%', marginTop: 8, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
-                    onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                    onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                  />
-                </label>
-              ) : (
-                <div style={{
-                  background: '#f0f9ff',
-                  padding: 10,
-                  borderRadius: 8,
-                  border: '1px solid #bae6fd',
+          ) : (
+            <div style={{
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: 16,
+              alignItems: isMobile ? 'stretch' : 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, marginBottom: 4, color: '#92400e' }}>Sign in to unlock more features</div>
+                <div style={{ fontSize: 14, color: '#64748b' }}>
+                  Get 1 free explanation every hour and the ability to purchase additional credits.
+                </div>
+              </div>
+              <button
+                onClick={() => signIn('google')}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '10px 16px',
+                  background: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: 6,
                   fontSize: 14,
-                  color: '#0369a1',
-                  marginTop: 8
-                }}>
-                  ✓ Using API key from server configuration
-                </div>
-              )}
-              {llmProvider === 'custom' && (
-                <>
-                  <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                    Custom Endpoint
-                    <input
-                      type="text"
-                      value={llmEndpoint}
-                      onChange={e => {
-                        setLlmEndpoint(e.target.value);
-                        autoSaveLlm({ endpoint: e.target.value });
-                      }}
-                      placeholder="https://api.your-llm.com/v1/chat"
-                      style={{ width: '100%', marginTop: 8, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
-                      onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                      onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                    />
-                  </label>
-                  <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-                    Custom Model Name
-                    <input
-                      type="text"
-                      value={llmCustomModel}
-                      onChange={e => {
-                        setLlmCustomModel(e.target.value);
-                        autoSaveLlm({ customModel: e.target.value });
-                      }}
-                      placeholder="your-model-name"
-                      style={{ width: '100%', marginTop: 8, padding: 10, borderRadius: 8, border: '1px solid #cbd5e1', fontSize: 16, background: '#fff', transition: 'border-color 0.2s' }}
-                      onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                      onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-                    />
-                  </label>
-                </>
-              )}
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={e => e.target.style.background = '#2563eb'}
+                onMouseLeave={e => e.target.style.background = '#3b82f6'}
+              >
+                Sign in with Google
+              </button>
             </div>
-          </section>
-        </div>
-        
-        {/* Books List Section */}
-        {userStats && userStats.books && userStats.books.length > 0 && (
-          <div style={{
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: 10,
-            padding: 18,
-            margin: '32px 0 0 0',
-            fontSize: 16,
-            maxWidth: 700,
-            marginLeft: 'auto',
-            marginRight: 'auto',
+          )}
+        </section>
+
+        {/* Profile Section */}
+        <section style={{ 
+          marginBottom: 32,
+          padding: 24,
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: 12
+        }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Profile</h2>
+          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>
+            {translations.aboutYourInfoDesc}
+          </p>
+          
+          {/* Personal Info - Two Columns */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+            gap: 16, 
+            marginBottom: 24 
           }}>
-            <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 10, color: '#334155' }}>
-              Books you&apos;ve explored
-            </div>
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none', columns: 2, columnGap: 32 }}>
-              {userStats.books.map((book, idx) => (
-                <li key={book.title + idx} style={{ marginBottom: 8, breakInside: 'avoid' }}>
-                  <button
-                    onClick={() => handleBookClick(book)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      color: '#3b82f6',
-                      fontWeight: 500,
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      fontSize: 'inherit',
-                      fontFamily: 'inherit',
-                      textAlign: 'left'
-                    }}
-                    onMouseEnter={e => e.target.style.color = '#1d4ed8'}
-                    onMouseLeave={e => e.target.style.color = '#3b82f6'}
-                  >
-                    {book.title}
-                  </button>
-                  <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 8 }}>
-                    ({book.count} explanation{book.count !== 1 ? 's' : ''})
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              {translations.language || 'Language'}
+              <select
+                value={language}
+                onChange={e => {
+                  setLanguage(e.target.value);
+                  autoSave({ language: e.target.value });
+                  setTimeout(() => loadTranslations(), 100);
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                <option value="">{translations.selectLanguage || 'Select language'}</option>
+                {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </label>
+            
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              {translations.age || 'Age'}
+              <input
+                type="number"
+                min="1"
+                max="120"
+                value={age}
+                onChange={e => {
+                  setAge(e.target.value);
+                  autoSave({ age: e.target.value });
+                }}
+                placeholder={translations.yourAge || 'Your age'}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              />
+            </label>
+            
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              {translations.nationality || 'Nationality'}
+              <select
+                value={nationality}
+                onChange={e => {
+                  setNationality(e.target.value);
+                  autoSave({ nationality: e.target.value });
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                <option value="">{translations.selectNationality || 'Select nationality'}</option>
+                {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </label>
+            
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              {translations.educationalLevel || 'Educational Level'}
+              <select
+                value={educationalLevel}
+                onChange={e => {
+                  setEducationalLevel(e.target.value);
+                  autoSave({ educationalLevel: e.target.value });
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                <option value="">{translations.selectEducationalLevel || 'Select educational level'}</option>
+                {EDUCATIONAL_LEVELS.map(level => <option key={level} value={level}>{level}</option>)}
+              </select>
+                        </label>
           </div>
-        )}
-        {/* User stats summary card moved to bottom */}
+        </section>
+
+
+        {/* Font Settings Section */}
+        <section style={{ 
+          marginBottom: 32,
+          padding: 24,
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: 12
+        }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Font Settings</h2>
+          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>
+            Customize the appearance of the text panel to improve readability.
+          </p>
+          
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+            gap: 16 
+          }}>
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              Font Family
+              <select
+                value={fontFamily}
+                onChange={e => {
+                  setFontFamily(e.target.value);
+                  autoSave({ fontFamily: e.target.value });
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s',
+                  fontFamily: fontFamily
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                {FONT_FAMILIES.map(f => (
+                  <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              Font Size
+              <select
+                value={fontSize}
+                onChange={e => {
+                  setFontSize(e.target.value);
+                  autoSave({ fontSize: e.target.value });
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                {FONT_SIZES.map(s => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              Font Weight
+              <select
+                value={fontWeight}
+                onChange={e => {
+                  setFontWeight(e.target.value);
+                  autoSave({ fontWeight: e.target.value });
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                {FONT_WEIGHTS.map(w => (
+                  <option key={w.value} value={w.value}>
+                    {w.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          
+          {/* Font Preview */}
+          <div style={{ 
+            marginTop: 16, 
+            padding: 12, 
+            backgroundColor: '#f8fafc', 
+            borderRadius: 8,
+            border: '1px solid #e2e8f0'
+          }}>
+            <div style={{ 
+              fontFamily: fontFamily, 
+              fontSize: fontSize + 'px',
+              fontWeight: fontWeight,
+              lineHeight: '1.5',
+              color: '#18181b'
+            }}>
+              Preview: "To be or not to be, that is the question"
+            </div>
+          </div>
+        </section>
+
+        {/* History Section */}
         {userStats && (
-          <div style={{
+          <section style={{ 
+            marginBottom: 32,
+            padding: 24,
             background: '#f8fafc',
             border: '1px solid #e2e8f0',
-            borderRadius: 10,
-            padding: 18,
-            margin: '32px 0 0 0',
-            display: 'flex',
-            gap: 32,
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            fontSize: 16,
-            maxWidth: 700,
-            marginLeft: 'auto',
-            marginRight: 'auto',
+            borderRadius: 12
           }}>
-            <div><strong>First login:</strong> {new Date(userStats.created_at).toLocaleDateString()}</div>
-            <div><strong>Total explanations:</strong> {userStats.total_explanations}</div>
-            <div><strong>Today:</strong> {userStats.todays_explanations}</div>
-          </div>
+            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>History</h2>
+            
+            {/* User stats summary - Two Columns */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
+              gap: 16,
+              marginBottom: 20
+            }}>
+              <div style={{ fontSize: 16 }}>
+                <strong>First login:</strong><br />
+                {new Date(userStats.created_at).toLocaleDateString()}
+              </div>
+              <div style={{ fontSize: 16 }}>
+                <strong>Total explanations:</strong><br />
+                {userStats.total_explanations}
+              </div>
+              <div style={{ fontSize: 16 }}>
+                <strong>Today:</strong><br />
+                {userStats.todays_explanations}
+              </div>
+            </div>
+
+            {/* Books List */}
+            {userStats.books && userStats.books.length > 0 && (
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: '#334155' }}>
+                  Books you&apos;ve explored
+                </h3>
+                <ul style={{ 
+                  margin: 0, 
+                  padding: 0, 
+                  listStyle: 'none', 
+                  columns: isMobile ? 1 : 2, 
+                  columnGap: 32 
+                }}>
+                  {userStats.books.map((book, idx) => (
+                    <li key={book.title + idx} style={{ marginBottom: 8, breakInside: 'avoid' }}>
+                      <button
+                        onClick={() => handleBookClick(book)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          color: '#3b82f6',
+                          fontWeight: 500,
+                          cursor: 'pointer',
+                          textDecoration: 'underline',
+                          fontSize: 'inherit',
+                          fontFamily: 'inherit',
+                          textAlign: 'left'
+                        }}
+                        onMouseEnter={e => e.target.style.color = '#1d4ed8'}
+                        onMouseLeave={e => e.target.style.color = '#3b82f6'}
+                      >
+                        {book.title}
+                      </button>
+                      <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 8 }}>
+                        ({book.count} explanation{book.count !== 1 ? 's' : ''})
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
         )}
-        {/* Sign-out button at the very bottom */}
-        {session && (
-          <button
-            onClick={() => signOut()}
+
+        {/* Help & Guide Section */}
+        <section style={{ 
+          marginBottom: 32,
+          padding: 24,
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: 12
+        }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Help & Guide</h2>
+          <a
+            href="/guide"
             style={{
-              display: 'block',
-              margin: '36px auto 0 auto',
-              padding: '12px 32px',
-              background: '#ef4444',
-              color: '#fff',
-              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              padding: 16,
+              background: '#fff',
+              border: '1px solid #e2e8f0',
               borderRadius: 8,
-              fontSize: 18,
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-              transition: 'background 0.2s',
+              color: '#3b82f6',
+              textDecoration: 'none',
+              fontWeight: 500,
+              transition: 'all 0.2s'
             }}
-            onMouseEnter={e => e.target.style.background = '#dc2626'}
-            onMouseLeave={e => e.target.style.background = '#ef4444'}
+            onMouseEnter={e => {
+              e.target.style.background = '#f1f5f9';
+              e.target.style.borderColor = '#cbd5e1';
+            }}
+            onMouseLeave={e => {
+              e.target.style.background = '#fff';
+              e.target.style.borderColor = '#e2e8f0';
+            }}
           >
-            Sign out
-          </button>
-        )}
+            <HelpCircle size={20} />
+            <div>
+              <div style={{ fontWeight: 600, marginBottom: 4 }}>User Guide</div>
+              <div style={{ fontSize: 14, color: '#64748b' }}>Learn how to use The Explainer effectively</div>
+            </div>
+          </a>
+        </section>
+
         {/* Auto-save indicator */}
         {showSaved && (
           <div style={{
@@ -734,17 +742,6 @@ export default function Profile() {
           </div>
         )}
       </div>
-      <style jsx>{`
-        @media (max-width: 700px) {
-          .profile-columns {
-            flex-direction: column;
-            gap: 16px;
-          }
-          .profile-section {
-            max-width: 100% !important;
-          }
-        }
-      `}</style>
     </div>
   );
 } 
