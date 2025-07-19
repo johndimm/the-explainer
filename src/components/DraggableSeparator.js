@@ -16,7 +16,16 @@ function isPortrait() {
   const mediaQueryPortrait = window.matchMedia('(orientation: portrait)').matches;
   const aspectRatioPortrait = window.innerHeight > window.innerWidth;
   const result = mediaQueryPortrait || aspectRatioPortrait;
-  // Reduced logging to avoid spam
+  
+  // Debug logging for orientation detection
+  console.log('isPortrait() called:', {
+    mediaQueryPortrait,
+    aspectRatioPortrait,
+    windowWidth: window.innerWidth,
+    windowHeight: window.innerHeight,
+    result
+  });
+  
   return result;
 }
 
@@ -24,6 +33,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
   const [isDragging, setIsDragging] = useState(false);
   const [debug, setDebug] = useState({ orientation: '', value: 0 });
   const [thumbPosition, setThumbPosition] = useState(0);
+  const [isClient, setIsClient] = useState(false);
   const isDraggingRef = useRef(false);
   const dragModeRef = useRef('landscape'); // 'portrait' or 'landscape'
   const dragActionRef = useRef(null); // 'resize' or 'scroll'
@@ -53,22 +63,32 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     
     if (isPortrait()) {
       // horizontal drag in portrait - calculate relative to container width
-      pixelPosition = Math.max(0, Math.min(containerRect.width, clientX - containerRect.left));
-      ratio = pixelPosition / containerRect.width;
+      const offset = isMobile ? 40 : 25;
+      const maxPosition = containerRect.width - offset;
+      pixelPosition = Math.max(offset, Math.min(maxPosition, clientX - containerRect.left));
+      ratio = (pixelPosition - offset) / maxPosition;
     } else {
       // vertical drag in landscape - calculate relative to container height  
-      pixelPosition = Math.max(0, Math.min(containerRect.height, clientY - containerRect.top));
-      ratio = pixelPosition / containerRect.height;
+      const offset = isMobile ? 20 : 15;
+      const maxPosition = containerRect.height - offset;
+      pixelPosition = Math.max(offset, Math.min(maxPosition, clientY - containerRect.top));
+      ratio = (pixelPosition - offset) / maxPosition;
     }
     
     // Setting thumb position
     
     // 1. Update thumb position immediately in DOM using pixel position (instant visual feedback)
     if (isPortrait()) {
-      thumbRef.current.style.left = `${pixelPosition - 25}px`;
+      const offset = isMobile ? 40 : 25;
+      const maxPosition = containerRect.width - offset;
+      const leftPosition = offset + (ratio * maxPosition);
+      thumbRef.current.style.left = `${leftPosition - offset}px`;
       thumbRef.current.style.top = '4px';
     } else {
-      thumbRef.current.style.top = `${pixelPosition - 15}px`;
+      const offset = isMobile ? 20 : 15;
+      const maxPosition = containerRect.height - offset;
+      const topPosition = offset + (ratio * maxPosition);
+      thumbRef.current.style.top = `${topPosition - offset}px`;
       thumbRef.current.style.left = '4px';
     }
     
@@ -443,17 +463,56 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       if (thumbRef.current) {
         const containerRect = thumbRef.current.parentElement.getBoundingClientRect();
         if (isPortrait()) {
-          const pixelPosition = progress * containerRect.width;
-          thumbRef.current.style.left = `${pixelPosition - (isMobile ? 40 : 25)}px`;
+          const offset = isMobile ? 40 : 25;
+          const maxPosition = containerRect.width - offset;
+          const leftPosition = offset + (progress * maxPosition);
+          thumbRef.current.style.left = `${leftPosition - offset}px`;
           thumbRef.current.style.top = '4px';
         } else {
-          const pixelPosition = progress * containerRect.height;
-          thumbRef.current.style.top = `${pixelPosition - (isMobile ? 20 : 15)}px`;
+          const offset = isMobile ? 20 : 15;
+          const maxPosition = containerRect.height - offset;
+          const topPosition = offset + (progress * maxPosition);
+          thumbRef.current.style.top = `${topPosition - offset}px`;
           thumbRef.current.style.left = '4px';
         }
       }
     }
   }, [progress, thumbPosition]);
+
+  // Set client flag after hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Initialize thumb position on mount
+  useEffect(() => {
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (thumbRef.current && !isDraggingRef.current) {
+        const containerRect = thumbRef.current.parentElement.getBoundingClientRect();
+        const portrait = isPortrait();
+        console.log('Initializing thumb position:', { portrait, progress, containerRect });
+        
+        if (portrait) {
+          const offset = isMobile ? 40 : 25;
+          const maxPosition = containerRect.width - offset;
+          const leftPosition = offset + (progress * maxPosition);
+          thumbRef.current.style.left = `${leftPosition - offset}px`;
+          thumbRef.current.style.top = '4px';
+          console.log('Portrait positioning:', { progress, offset, maxPosition, leftPosition, left: thumbRef.current.style.left });
+        } else {
+          const offset = isMobile ? 20 : 15;
+          const maxPosition = containerRect.height - offset;
+          const topPosition = offset + (progress * maxPosition);
+          thumbRef.current.style.top = `${topPosition - offset}px`;
+          thumbRef.current.style.left = '4px';
+          console.log('Landscape positioning:', { progress, offset, maxPosition, topPosition, top: thumbRef.current.style.top });
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [progress]);
 
       // Rendering thumb
   
@@ -481,13 +540,19 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
         className={styles.fingerIndicator} 
         style={{ 
           position: 'absolute',
-          width: isPortrait() ? (isMobile ? '80px' : '50px') : (isMobile ? '24px' : '16px'),
-          height: isPortrait() ? (isMobile ? '20px' : '12px') : (isMobile ? '40px' : '30px'),
-          top: isPortrait() ? '4px' : `calc(${thumbPosition * 100}% - ${isMobile ? '20px' : '15px'})`,
-          left: isPortrait() ? `calc(${thumbPosition * 100}% - ${isMobile ? '40px' : '25px'})` : '4px',
+          width: isClient && isPortrait() ? (isMobile ? '80px' : '50px') : (isClient && isMobile ? '24px' : '16px'),
+          height: isClient && isPortrait() ? (isMobile ? '20px' : '12px') : (isClient && isMobile ? '40px' : '30px'),
+          top: isClient && isPortrait() ? '4px' : `calc(${isClient && isMobile ? '20px' : '15px'} + (${thumbPosition} * (100% - ${isClient && isMobile ? '40px' : '30px'})))`,
+          left: isClient && isPortrait() ? `calc(${isClient && isMobile ? '40px' : '25px'} + (${thumbPosition} * (100% - ${isClient && isMobile ? '80px' : '50px'})))` : '4px',
           zIndex: 2000,
           cursor: 'grab',
-          touchAction: 'none'
+          touchAction: 'none',
+          transform: 'none', // Ensure no rotation
+          // Force correct dimensions for portrait mode
+          minWidth: isClient && isPortrait() ? (isMobile ? '80px' : '50px') : 'auto',
+          minHeight: isClient && isPortrait() ? (isMobile ? '20px' : '12px') : 'auto',
+          maxWidth: isClient && isPortrait() ? (isMobile ? '80px' : '50px') : 'auto',
+          maxHeight: isClient && isPortrait() ? (isMobile ? '20px' : '12px') : 'auto'
         }}
         onMouseDown={handleThumbMouseDown}
         onTouchStart={handleThumbTouchStart}

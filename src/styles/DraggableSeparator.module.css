@@ -84,6 +84,36 @@
   }
 }
 
+/* Portrait mode specific styling for horizontal thumb */
+@media (max-width: 768px) and (orientation: portrait) {
+  .fingerIndicator {
+    /* Ensure horizontal orientation in portrait mode */
+    transform: rotate(0deg) !important;
+    /* Force horizontal dimensions */
+    width: 80px !important;
+    height: 20px !important;
+    min-width: 80px !important;
+    min-height: 20px !important;
+    max-width: 80px !important;
+    max-height: 20px !important;
+  }
+}
+
+/* Desktop portrait mode */
+@media (min-width: 769px) and (orientation: portrait) {
+  .fingerIndicator {
+    /* Ensure horizontal orientation in portrait mode */
+    transform: rotate(0deg) !important;
+    /* Force horizontal dimensions */
+    width: 50px !important;
+    height: 12px !important;
+    min-width: 50px !important;
+    min-height: 12px !important;
+    max-width: 50px !important;
+    max-height: 12px !important;
+  }
+}
+
 .separator:hover .fingerIndicator {
   background: linear-gradient(135deg, #f87171, #ef4444);
   transform: scale(1.05);

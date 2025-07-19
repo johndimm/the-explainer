@@ -351,7 +351,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           setTextLines(['Error loading text. Please try again.']);
         });
     }
-  }, [title]);
+  }, []); // Removed title dependency to prevent recreation
 
   // Search functionality
   const performSearch = useCallback((query) => {
@@ -459,7 +459,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     // No PDF data, load text content
     console.log('TextPanel: No PDF data found, loading text content');
     loadTextContent();
-  }, [title, loadTextContent]);
+  }, [title]); // Removed loadTextContent dependency to prevent cycles
 
   // Effect 2: Listen for storage changes to handle file uploads
   useEffect(() => {
@@ -489,7 +489,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, [loadTextContent]);
+  }, []); // Removed loadTextContent dependency to prevent cycles
 
 
   // Effect 3: Detect mobile device
