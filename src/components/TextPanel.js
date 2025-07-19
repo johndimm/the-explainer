@@ -303,6 +303,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     sessionStorage.removeItem('explainer:pdfData');
     sessionStorage.removeItem('explainer:pdfSource');
     
+    // Get current title from localStorage or use prop as fallback
+    const currentTitle = localStorage.getItem('explainer:bookTitle') || title || 'Romeo and Juliet';
+    
     // Check both sessionStorage and localStorage for text content
     let savedText = sessionStorage.getItem('explainer:bookText');
     if (!savedText) {
@@ -313,7 +316,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       sessionStorageText: !!sessionStorage.getItem('explainer:bookText'),
       localStorageText: !!localStorage.getItem('explainer:bookText'),
       foundText: !!savedText,
-      textLength: savedText ? savedText.length : 0
+      textLength: savedText ? savedText.length : 0,
+      currentTitle
     });
     
     if (savedText) {
@@ -321,8 +325,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       // Prepend title and author to the text
       const titleLines = [
         '',
-        title,
-        `by ${title.includes(' by ') ? title.split(' by ').pop() : 'William Shakespeare'}`,
+        currentTitle,
+        `by ${currentTitle.includes(' by ') ? currentTitle.split(' by ').pop() : 'William Shakespeare'}`,
         ''
       ];
       setTextLines([...titleLines, ...lines]);
@@ -340,8 +344,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           // Prepend title and author to the text
           const titleLines = [
             '',
-            title,
-            `by ${title.includes(' by ') ? title.split(' by ').pop() : 'William Shakespeare'}`,
+            currentTitle,
+            `by ${currentTitle.includes(' by ') ? currentTitle.split(' by ').pop() : 'William Shakespeare'}`,
             ''
           ];
           setTextLines([...titleLines, ...lines]);
