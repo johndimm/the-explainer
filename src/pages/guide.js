@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { ArrowLeft, BookOpen, MessageSquare, MousePointer, Smartphone, Settings, Globe } from 'lucide-react';
+import { ArrowLeft, BookOpen, MessageSquare, MousePointer, Smartphone, Settings, Globe, Search } from 'lucide-react';
 import { t, getUserLanguage } from '@/i18n';
 import styles from '@/styles/Guide.module.css';
 
@@ -187,6 +187,35 @@ export default function Guide() {
                 <h4>{t('nationality', lang)}</h4>
                 <p>{t('nationalityDesc', lang)}</p>
               </div>
+              
+              <div className={styles.setting}>
+                <h4>{t('educationalLevel', lang)}</h4>
+                <p>{t('educationalLevelDesc', lang)}</p>
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.section}>
+            <h2>
+              <Search size={24} />
+              {t('searchInterface', lang)}
+            </h2>
+            
+            <div className={styles.searchFeatures}>
+              <div className={styles.feature}>
+                <h4>{t('textSearch', lang)}</h4>
+                <p>{t('textSearchDesc', lang)}</p>
+              </div>
+              
+              <div className={styles.feature}>
+                <h4>{t('searchNavigation', lang)}</h4>
+                <p>{t('searchNavigationDesc', lang)}</p>
+              </div>
+              
+              <div className={styles.feature}>
+                <h4>{t('searchKeyboard', lang)}</h4>
+                <p>{t('searchKeyboardDesc', lang)}</p>
+              </div>
             </div>
           </section>
 
@@ -199,6 +228,7 @@ export default function Guide() {
               <li>{t('tip4', lang)}</li>
               <li>{t('tip5', lang)}</li>
               <li>{t('tip6', lang)}</li>
+              <li>{t('tip7', lang)}</li>
             </ul>
           </section>
         </div>

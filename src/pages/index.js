@@ -217,12 +217,14 @@ export default function Home() {
     let userLanguage = null;
     let userAge = null;
     let userNationality = null;
+    let userEducationalLevel = null;
     if (userProfile) {
       try {
         const profile = JSON.parse(userProfile);
         userLanguage = profile.language;
         userAge = profile.age;
         userNationality = profile.nationality;
+        userEducationalLevel = profile.educationalLevel;
       } catch (e) {
         console.error('Error parsing user profile:', e);
       }
@@ -249,6 +251,7 @@ export default function Home() {
           userLanguage: userLanguage,
           userAge: userAge,
           userNationality: userNationality,
+          userEducationalLevel: userEducationalLevel,
           provider: llm.provider,
           model: llm.model,
           apiKey: llm.provider === 'custom' ? llm.key : undefined,
@@ -373,12 +376,14 @@ export default function Home() {
     let userLanguage = null;
     let userAge = null;
     let userNationality = null;
+    let userEducationalLevel = null;
     if (userProfile) {
       try {
         const profile = JSON.parse(userProfile);
         userLanguage = profile.language;
         userAge = profile.age;
         userNationality = profile.nationality;
+        userEducationalLevel = profile.educationalLevel;
       } catch (e) {
         console.error('Error parsing user profile:', e);
       }
@@ -405,6 +410,7 @@ export default function Home() {
           userLanguage: userLanguage,
           userAge: userAge,
           userNationality: userNationality,
+          userEducationalLevel: userEducationalLevel,
           isFollowUp: true,
           provider: llm.provider,
           model: llm.model,
@@ -514,7 +520,7 @@ export default function Home() {
                   scrollProgress={scrollProgress}
                 />
               </div>
-              <div style={{ height: 20, width: '100%', flex: 'none' }}>
+              <div style={{ height: 32, width: '100%', flex: 'none' }}>
                 <DraggableSeparator 
                   onResize={handleResize} 
                   leftWidth={panelSize}
@@ -544,7 +550,7 @@ export default function Home() {
                   onScrollProgress={handleScrollProgress}
                 />
               </div>
-              <div style={{ width: 24, height: '100%', flex: 'none' }}>
+              <div style={{ width: 32, height: '100%', flex: 'none' }}>
                 <DraggableSeparator 
                   onResize={handleResize} 
                   leftWidth={panelSize}
@@ -552,7 +558,7 @@ export default function Home() {
                   progress={scrollProgress}
                 />
               </div>
-              <div style={{ width: `calc(100% - var(--panel-width, 50%) - 24px)`, height: '100vh', flex: 'none', minWidth: '200px' }}>
+              <div style={{ width: `calc(100% - var(--panel-width, 50%) - 32px)`, height: '100vh', flex: 'none', minWidth: '200px' }}>
                 <ChatPanel 
                   width={100 - panelSize}
                   messages={messages}

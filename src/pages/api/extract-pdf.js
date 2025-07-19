@@ -1,5 +1,15 @@
 import pdf from 'pdf-parse';
 
+// Configure body parser for this route
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '15mb', // Allow up to 15MB for PDF uploads (base64 encoding makes files ~33% larger)
+    },
+    responseLimit: false, // No limit on response size
+  },
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });

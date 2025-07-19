@@ -33,6 +33,10 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const [isPDFMode, setIsPDFMode] = useState(false);
   const [pdfData, setPdfData] = useState(null);
   const [pdfFileName, setPdfFileName] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [currentSearchIndex, setCurrentSearchIndex] = useState(0);
+  const [showSearch, setShowSearch] = useState(false);
 
 
 
@@ -349,6 +353,65 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     }
   }, [title]);
 
+  // Search functionality
+  const performSearch = useCallback((query) => {
+    if (!query.trim() || textLines.length === 0) {
+      setSearchResults([]);
+      setCurrentSearchIndex(0);
+      return;
+    }
+
+    const results = [];
+    const searchTerm = query.toLowerCase();
+    
+    textLines.forEach((line, index) => {
+      if (line.toLowerCase().includes(searchTerm)) {
+        results.push({
+          lineIndex: index,
+          line: line,
+          matchIndex: line.toLowerCase().indexOf(searchTerm)
+        });
+      }
+    });
+
+    setSearchResults(results);
+    setCurrentSearchIndex(0);
+    
+    // Scroll to first result if found
+    if (results.length > 0 && listRef.current) {
+      listRef.current.scrollToItem(results[0].lineIndex, 'center');
+    }
+  }, [textLines]);
+
+  const goToNextResult = useCallback(() => {
+    if (searchResults.length === 0) return;
+    
+    const nextIndex = (currentSearchIndex + 1) % searchResults.length;
+    setCurrentSearchIndex(nextIndex);
+    
+    if (listRef.current) {
+      listRef.current.scrollToItem(searchResults[nextIndex].lineIndex, 'center');
+    }
+  }, [searchResults, currentSearchIndex]);
+
+  const goToPreviousResult = useCallback(() => {
+    if (searchResults.length === 0) return;
+    
+    const prevIndex = currentSearchIndex === 0 ? searchResults.length - 1 : currentSearchIndex - 1;
+    setCurrentSearchIndex(prevIndex);
+    
+    if (listRef.current) {
+      listRef.current.scrollToItem(searchResults[prevIndex].lineIndex, 'center');
+    }
+  }, [searchResults, currentSearchIndex]);
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setCurrentSearchIndex(0);
+    setShowSearch(false);
+  }, []);
+
   // Effect 1: Load text or PDF on mount
   useEffect(() => {
     console.log('TextPanel: Starting PDF detection...');
@@ -475,8 +538,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   useEffect(() => {
     function updateHeight() {
       if (containerRef.current) {
-        // Since there's no header, use the full container height
-        setListHeight(containerRef.current.offsetHeight);
+        // Account for search bar height (approximately 60px)
+        const searchBarHeight = 60;
+        setListHeight(containerRef.current.offsetHeight - searchBarHeight);
       }
     }
     
@@ -491,12 +555,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   // Effect 5: Update height when textLines changes
   useEffect(() => {
     if (textLines.length > 0 && containerRef.current) {
-      // Since there's no header, use the full container height
-      setListHeight(containerRef.current.offsetHeight);
+      // Account for search bar height (approximately 60px)
+      const searchBarHeight = 60;
+      setListHeight(containerRef.current.offsetHeight - searchBarHeight);
     }
   }, [textLines]);
 
-
+  // Effect 7: Perform search when query changes
+  useEffect(() => {
+    performSearch(searchQuery);
+  }, [searchQuery, performSearch]);
 
   // Function to get current scroll position from react-window
   const getCurrentScrollPosition = useCallback(() => {
@@ -1017,10 +1085,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const Row = useCallback(({ index, style }) => {
     const isSelected = selectedLines.has(index);
     const line = textLines[index] || '';
+    
+    // Check if this line is a search result
+    const searchResult = searchResults.find(result => result.lineIndex === index);
+    const isCurrentSearchResult = searchResult && searchResults[currentSearchIndex]?.lineIndex === index;
 
     return (
       <div
-        className={`${styles.line} ${isSelected ? styles.selected : ''}`}
+        className={`${styles.line} ${isSelected ? styles.selected : ''} ${searchResult ? styles.searchResult : ''} ${isCurrentSearchResult ? styles.currentSearchResult : ''}`}
         style={{ 
           ...style, 
           width: '100%', 
@@ -1058,11 +1130,21 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
             width: '100%'
           }}
         >
-          {renderLineContent(line, index)}
+          {searchResult && searchQuery ? (
+            <span>
+              {line.substring(0, searchResult.matchIndex)}
+              <span className={styles.searchHighlight}>
+                {line.substring(searchResult.matchIndex, searchResult.matchIndex + searchQuery.length)}
+              </span>
+              {line.substring(searchResult.matchIndex + searchQuery.length)}
+            </span>
+          ) : (
+            renderLineContent(line, index)
+          )}
         </span>
       </div>
     );
-  }, [selectedLines, textLines, handleLineClick, handleLineTouchStart, handleLineTouchMove, handleLineTouchEnd, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, renderLineContent, isMobile, rowHeight, fontSettings]);
+  }, [selectedLines, textLines, searchResults, currentSearchIndex, searchQuery, handleLineClick, handleLineTouchStart, handleLineTouchMove, handleLineTouchEnd, handleLineMouseDown, handleLineMouseEnter, handleMouseUp, renderLineContent, isMobile, rowHeight, fontSettings]);
 
   // Handler for PDF text selection
   const handlePDFTextSelection = useCallback((selectedText, metadata) => {
@@ -1158,6 +1240,55 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       style={{ '--panel-width': `${width}%` }}
       ref={containerRef}
     >
+      {/* Search Interface */}
+      <div className={styles.searchContainer}>
+        <div className={styles.searchBar}>
+          <input
+            type="text"
+            placeholder="Search text..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={styles.searchInput}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.shiftKey ? goToPreviousResult() : goToNextResult();
+              } else if (e.key === 'Escape') {
+                clearSearch();
+              }
+            }}
+          />
+          {searchQuery && (
+            <div className={styles.searchControls}>
+              <span className={styles.searchResults}>
+                {searchResults.length > 0 ? `${currentSearchIndex + 1} of ${searchResults.length}` : 'No results'}
+              </span>
+              <button 
+                onClick={goToPreviousResult}
+                disabled={searchResults.length === 0}
+                className={styles.searchButton}
+                title="Previous result (Shift+Enter)"
+              >
+                ↑
+              </button>
+              <button 
+                onClick={goToNextResult}
+                disabled={searchResults.length === 0}
+                className={styles.searchButton}
+                title="Next result (Enter)"
+              >
+                ↓
+              </button>
+              <button 
+                onClick={clearSearch}
+                className={styles.searchButton}
+                title="Clear search (Esc)"
+              >
+                ×
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
       <div className={styles.textContainer}>
         <List
           ref={listRef}
