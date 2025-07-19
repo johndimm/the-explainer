@@ -5,6 +5,7 @@ import ChatPanel from '@/components/ChatPanel';
 import DraggableSeparator from '@/components/DraggableSeparator';
 import PaywallModal from '@/components/PaywallModal';
 import ExplanationConfirmDialog from '@/components/ExplanationConfirmDialog';
+import InstallPrompt from '@/components/InstallPrompt';
 import styles from '@/styles/Home.module.css';
 import { useSession, signIn } from 'next-auth/react';
 
@@ -585,6 +586,8 @@ export default function Home() {
         selectedText={pendingSelection?.text || ''}
         isLoading={isLoading}
       />
+      
+      <InstallPrompt />
     </>
   );
 }
