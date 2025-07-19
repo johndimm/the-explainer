@@ -3,9 +3,17 @@ export function register() {
     window.addEventListener('load', () => {
       const swUrl = '/sw.js';
 
+      // Add timeout to prevent hanging
+      const timeout = setTimeout(() => {
+        console.warn('Service worker registration timed out');
+      }, 10000);
+
       navigator.serviceWorker
         .register(swUrl)
         .then((registration) => {
+          clearTimeout(timeout);
+          console.log('Service worker registered successfully');
+          
           // onupdatefound will let us know when there's a new service worker
           registration.onupdatefound = () => {
             const installingWorker = registration.installing;
@@ -38,7 +46,9 @@ export function register() {
           };
         })
         .catch((error) => {
+          clearTimeout(timeout);
           console.error('Error during service worker registration:', error);
+          // Don't crash the app if service worker fails
         });
     });
   }
