@@ -438,6 +438,20 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     if (!isDraggingRef.current && Math.abs(thumbPosition - progress) > 0.01) {
       // Syncing thumb position
       setThumbPosition(progress);
+      
+      // Also update the DOM position to match
+      if (thumbRef.current) {
+        const containerRect = thumbRef.current.parentElement.getBoundingClientRect();
+        if (isPortrait()) {
+          const pixelPosition = progress * containerRect.width;
+          thumbRef.current.style.left = `${pixelPosition - (isMobile ? 40 : 25)}px`;
+          thumbRef.current.style.top = '4px';
+        } else {
+          const pixelPosition = progress * containerRect.height;
+          thumbRef.current.style.top = `${pixelPosition - (isMobile ? 20 : 15)}px`;
+          thumbRef.current.style.left = '4px';
+        }
+      }
     }
   }, [progress, thumbPosition]);
 
@@ -467,11 +481,13 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
         className={styles.fingerIndicator} 
         style={{ 
           position: 'absolute',
-          width: isPortrait() ? '50px' : '16px',
-          height: isPortrait() ? '12px' : '30px',
-          top: isPortrait() ? '4px' : `calc(${thumbPosition * 100}% - 15px)`,
-          left: isPortrait() ? `calc(${thumbPosition * 100}% - 25px)` : '4px',
-          zIndex: 2000
+          width: isPortrait() ? (isMobile ? '80px' : '50px') : (isMobile ? '24px' : '16px'),
+          height: isPortrait() ? (isMobile ? '20px' : '12px') : (isMobile ? '40px' : '30px'),
+          top: isPortrait() ? '4px' : `calc(${thumbPosition * 100}% - ${isMobile ? '20px' : '15px'})`,
+          left: isPortrait() ? `calc(${thumbPosition * 100}% - ${isMobile ? '40px' : '25px'})` : '4px',
+          zIndex: 2000,
+          cursor: 'grab',
+          touchAction: 'none'
         }}
         onMouseDown={handleThumbMouseDown}
         onTouchStart={handleThumbTouchStart}
