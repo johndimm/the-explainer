@@ -55,6 +55,38 @@ const FONT_WEIGHTS = [
   { value: '700', label: 'Bold' },
 ];
 
+const LLM_PROVIDERS = [
+  { value: 'openai', label: 'OpenAI (GPT-4, GPT-3.5)' },
+  { value: 'anthropic', label: 'Anthropic (Claude)' },
+  { value: 'deepseek', label: 'DeepSeek' },
+  { value: 'gemini', label: 'Google Gemini' },
+  { value: 'custom', label: 'Custom/BYOLLM' },
+];
+
+const OPENAI_MODELS = [
+  { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Fast & Cheap)' },
+  { value: 'gpt-4o', label: 'GPT-4o (Best Quality)' },
+  { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
+  { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
+];
+
+const ANTHROPIC_MODELS = [
+  { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet (Latest)' },
+  { value: 'claude-3-opus-20240229', label: 'Claude 3 Opus (Best Quality)' },
+  { value: 'claude-3-sonnet-20240229', label: 'Claude 3 Sonnet' },
+  { value: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku (Fast & Cheap)' },
+];
+
+const DEEPSEEK_MODELS = [
+  { value: 'deepseek-chat', label: 'DeepSeek Chat' },
+  { value: 'deepseek-coder', label: 'DeepSeek Coder' },
+];
+
+const GEMINI_MODELS = [
+  { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash (Fast)' },
+  { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (Best Quality)' },
+];
+
 export default function Profile() {
   const router = useRouter();
   const { data: session } = useSession();
@@ -70,6 +102,13 @@ export default function Profile() {
   const [fontSize, setFontSize] = useState('17');
   const [fontWeight, setFontWeight] = useState('400');
   const [isMobile, setIsMobile] = useState(false);
+  
+  // LLM settings state
+  const [llmProvider, setLlmProvider] = useState('openai');
+  const [llmModel, setLlmModel] = useState('gpt-4o-mini');
+  const [llmApiKey, setLlmApiKey] = useState('');
+  const [llmEndpoint, setLlmEndpoint] = useState('');
+  const [llmCustomModel, setLlmCustomModel] = useState('');
 
   useEffect(() => {
     const checkMobile = () => {
@@ -92,6 +131,15 @@ export default function Profile() {
     setFontFamily(profile.fontFamily || 'Georgia');
     setFontSize(profile.fontSize || '17');
     setFontWeight(profile.fontWeight || '400');
+    
+    // Load LLM settings
+    const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+    setLlmProvider(llm.provider || 'openai');
+    setLlmModel(llm.model || 'gpt-4o-mini');
+    setLlmApiKey(llm.key || '');
+    setLlmEndpoint(llm.endpoint || '');
+    setLlmCustomModel(llm.customModel || '');
+    
     loadTranslations();
   }, []);
 
@@ -162,6 +210,19 @@ export default function Profile() {
     const currentProfile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
     const newProfile = { ...currentProfile, ...updates };
     localStorage.setItem('explainer:profile', JSON.stringify(newProfile));
+    setShowSaved(true);
+    setTimeout(() => setShowSaved(false), 2000);
+  };
+
+  const saveLlmSettings = () => {
+    const llmSettings = {
+      provider: llmProvider,
+      model: llmModel,
+      key: llmApiKey,
+      endpoint: llmEndpoint,
+      customModel: llmCustomModel
+    };
+    localStorage.setItem('explainer:llm', JSON.stringify(llmSettings));
     setShowSaved(true);
     setTimeout(() => setShowSaved(false), 2000);
   };
@@ -606,6 +667,222 @@ export default function Profile() {
               Preview: "To be or not to be, that is the question"
             </div>
           </div>
+        </section>
+
+        {/* LLM Settings Section */}
+        <section style={{ 
+          marginBottom: 32,
+          padding: 24,
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: 12
+        }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>AI Model Settings</h2>
+          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>
+            Choose which AI model to use for explanations. You can use our default models or bring your own API key for better rates.
+          </p>
+          
+          {/* Provider and Model Selection - Two Columns */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+            gap: 16, 
+            marginBottom: 24 
+          }}>
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              AI Provider
+              <select
+                value={llmProvider}
+                onChange={e => {
+                  setLlmProvider(e.target.value);
+                  // Reset model to first available for new provider
+                  if (e.target.value === 'openai') setLlmModel('gpt-4o-mini');
+                  else if (e.target.value === 'anthropic') setLlmModel('claude-3-5-sonnet-20241022');
+                  else if (e.target.value === 'deepseek') setLlmModel('deepseek-chat');
+                  else if (e.target.value === 'gemini') setLlmModel('gemini-1.5-flash');
+                  else if (e.target.value === 'custom') setLlmModel('');
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                {LLM_PROVIDERS.map(p => (
+                  <option key={p.value} value={p.value}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              Model
+              <select
+                value={llmModel}
+                onChange={e => setLlmModel(e.target.value)}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                {llmProvider === 'openai' && OPENAI_MODELS.map(m => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+                {llmProvider === 'anthropic' && ANTHROPIC_MODELS.map(m => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+                {llmProvider === 'deepseek' && DEEPSEEK_MODELS.map(m => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+                {llmProvider === 'gemini' && GEMINI_MODELS.map(m => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+                {llmProvider === 'custom' && (
+                  <option value="">Select custom model</option>
+                )}
+              </select>
+            </label>
+          </div>
+
+          {/* Custom Settings (only show for custom provider) */}
+          {llmProvider === 'custom' && (
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+              gap: 16, 
+              marginBottom: 24 
+            }}>
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                API Endpoint
+                <input
+                  type="text"
+                  value={llmEndpoint}
+                  onChange={e => setLlmEndpoint(e.target.value)}
+                  placeholder="https://api.example.com/v1/chat/completions"
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                />
+              </label>
+              
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Model Name
+                <input
+                  type="text"
+                  value={llmCustomModel}
+                  onChange={e => setLlmCustomModel(e.target.value)}
+                  placeholder="your-model-name"
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                />
+              </label>
+            </div>
+          )}
+
+          {/* API Key (only show for custom provider) */}
+          {llmProvider === 'custom' && (
+            <div style={{ marginBottom: 24 }}>
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                API Key
+                <input
+                  type="password"
+                  value={llmApiKey}
+                  onChange={e => setLlmApiKey(e.target.value)}
+                  placeholder="sk-..."
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                />
+              </label>
+            </div>
+          )}
+
+          {/* Save Button */}
+          <button
+            onClick={saveLlmSettings}
+            style={{
+              background: '#3b82f6',
+              color: '#fff',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: 8,
+              fontSize: 16,
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={e => e.target.style.background = '#2563eb'}
+            onMouseLeave={e => e.target.style.background = '#3b82f6'}
+          >
+            Save AI Settings
+          </button>
+
+          {/* Info about BYOLLM */}
+          {llmProvider === 'custom' && (
+            <div style={{ 
+              marginTop: 16, 
+              padding: 12, 
+              backgroundColor: '#dbeafe', 
+              borderRadius: 8,
+              border: '1px solid #93c5fd'
+            }}>
+              <div style={{ fontSize: 14, color: '#1e40af' }}>
+                <strong>BYOLLM Benefit:</strong> Using your own API key gives you 5x efficiency (0.2 credits per explanation instead of 1.0).
+              </div>
+            </div>
+          )}
         </section>
 
         {/* History Section */}

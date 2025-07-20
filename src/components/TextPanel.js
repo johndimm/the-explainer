@@ -183,7 +183,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     // Title and author styling (first few lines)
     if (lineIndex === 1) {
       // Main title
-      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, fontSize: '24px', margin: '20px 0 8px 0', color: '#1e293b' }}>{trimmed}</span>;
+      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, fontSize: '24px', margin: '20px 0 16px 0', color: '#1e293b' }}>{trimmed}</span>;
     }
     if (lineIndex === 2) {
       // Author line
