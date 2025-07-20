@@ -326,7 +326,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       const titleLines = [
         '',
         currentTitle,
-        `by ${currentTitle.includes(' by ') ? currentTitle.split(' by ').pop() : 'William Shakespeare'}`,
+        // Only add author line if title doesn't already contain "by"
+        currentTitle.includes(' by ') ? '' : `by ${currentTitle.includes(' by ') ? currentTitle.split(' by ').pop() : 'William Shakespeare'}`,
         ''
       ];
       setTextLines([...titleLines, ...lines]);
@@ -345,7 +346,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           const titleLines = [
             '',
             currentTitle,
-            `by ${currentTitle.includes(' by ') ? currentTitle.split(' by ').pop() : 'William Shakespeare'}`,
+            // Only add author line if title doesn't already contain "by"
+            currentTitle.includes(' by ') ? '' : `by ${currentTitle.includes(' by ') ? currentTitle.split(' by ').pop() : 'William Shakespeare'}`,
             ''
           ];
           setTextLines([...titleLines, ...lines]);
