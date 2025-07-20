@@ -6,6 +6,7 @@ import DraggableSeparator from '@/components/DraggableSeparator';
 import PaywallModal from '@/components/PaywallModal';
 import ExplanationConfirmDialog from '@/components/ExplanationConfirmDialog';
 import InstallPrompt from '@/components/InstallPrompt';
+import LandscapeSuggestion from '@/components/LandscapeSuggestion';
 import styles from '@/styles/Home.module.css';
 import { useSession, signIn } from 'next-auth/react';
 
@@ -505,6 +506,8 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=0.8" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      
+      <LandscapeSuggestion />
       <div className={styles.page}>
         <div className={styles.container} ref={containerRef}>
           {layoutMode.mode === 'mobile-portrait' ? (

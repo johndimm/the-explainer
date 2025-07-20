@@ -104,6 +104,7 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
           <div className={styles.emptyState}>
             <MessageSquare size={48} />
             <p>{t('selectTextPrompt', lang)}</p>
+
           </div>
         ) : (
           <div className={styles.messages}>

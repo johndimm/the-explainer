@@ -11,6 +11,7 @@ const COUNTRIES = [
   'United States', 'France', 'Germany', 'Spain', 'Italy', 'China', 'Japan', 'Russia', 'Brazil', 'India', 'United Kingdom', 'Canada', 'Other'
 ];
 const EDUCATIONAL_LEVELS = [
+  'Elementary School',
   'High School Dropout',
   'High School Graduate',
   'Some College',

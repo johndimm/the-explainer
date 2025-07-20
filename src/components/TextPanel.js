@@ -48,6 +48,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const mouseStartPos = useRef({ x: 0, y: 0 });
   const mouseMoved = useRef(false);
   const currentScrollIndexRef = useRef(0);
+  const autoDeselectTimerRef = useRef(null);
 
   // Check if storage is available
   const isStorageAvailable = useCallback(() => {
@@ -183,11 +184,11 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     // Title and author styling (first few lines)
     if (lineIndex === 1) {
       // Main title
-      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, fontSize: '24px', margin: '20px 0 16px 0', color: '#1e293b' }}>{trimmed}</span>;
+      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, fontSize: '24px', margin: '8px 0 16px 0', color: '#1e293b', lineHeight: '1.4', padding: '8px 0' }}>{trimmed}</span>;
     }
     if (lineIndex === 2) {
       // Author line
-      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 500, fontSize: '18px', margin: '0 0 20px 0', color: '#64748b' }}>{trimmed}</span>;
+      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 500, fontSize: '18px', margin: '0 0 16px 0', color: '#64748b', lineHeight: '1.4', padding: '6px 0' }}>{trimmed}</span>;
     }
     
     if (!isShakespearePlay(title)) return line;
@@ -674,6 +675,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     };
   }, [saveBookmark, getCurrentScrollPosition]);
 
+  // Effect 8.5: Cleanup auto-deselect timer on unmount and text changes
+  useEffect(() => {
+    return () => {
+      if (autoDeselectTimerRef.current) {
+        clearTimeout(autoDeselectTimerRef.current);
+        autoDeselectTimerRef.current = null;
+      }
+    };
+  }, [textLines]); // Clear timer when text changes
+
   // Effect 7.5: Save bookmark on page termination - TEMPORARILY DISABLED
   // useEffect(() => {
   //   // Only add event listeners if we're in a browser environment
@@ -896,9 +907,28 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       // First tap: highlight and store index, do NOT submit
       setFirstClickIndex(index);
       setSelectedLines(new Set([index]));
+      
+      // Clear any existing timer
+      if (autoDeselectTimerRef.current) {
+        clearTimeout(autoDeselectTimerRef.current);
+      }
+      
+      // Set auto-deselect timer for 3 seconds
+      autoDeselectTimerRef.current = setTimeout(() => {
+        setSelectedLines(new Set());
+        setFirstClickIndex(null);
+        autoDeselectTimerRef.current = null;
+      }, 3000);
+      
       // No submission yet
     } else {
       // Second tap: submit single line or range
+      // Clear the auto-deselect timer since user made second tap
+      if (autoDeselectTimerRef.current) {
+        clearTimeout(autoDeselectTimerRef.current);
+        autoDeselectTimerRef.current = null;
+      }
+      
       if (firstClickIndex === index) {
         // Second tap on same line - submit after highlight
         const selectedText = textLines[index];
@@ -978,8 +1008,26 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       // First tap - select this line
       setFirstClickIndex(index);
       setSelectedLines(new Set([index]));
+      
+      // Clear any existing timer
+      if (autoDeselectTimerRef.current) {
+        clearTimeout(autoDeselectTimerRef.current);
+      }
+      
+      // Set auto-deselect timer for 3 seconds
+      autoDeselectTimerRef.current = setTimeout(() => {
+        setSelectedLines(new Set());
+        setFirstClickIndex(null);
+        autoDeselectTimerRef.current = null;
+      }, 3000);
     } else if (firstClickIndex === index) {
       // Second tap on same line - submit after highlight
+      // Clear the auto-deselect timer since user made second tap
+      if (autoDeselectTimerRef.current) {
+        clearTimeout(autoDeselectTimerRef.current);
+        autoDeselectTimerRef.current = null;
+      }
+      
       const selectedText = textLines[index];
       const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
       onTextSelection({ text: selectedText, speaker });
@@ -990,6 +1038,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       }, 300);
     } else {
       // Tap on different line - submit range after highlight
+      // Clear the auto-deselect timer since user made second tap
+      if (autoDeselectTimerRef.current) {
+        clearTimeout(autoDeselectTimerRef.current);
+        autoDeselectTimerRef.current = null;
+      }
+      
       const start = Math.min(firstClickIndex, index);
       const end = Math.max(firstClickIndex, index);
       const rangeSelection = new Set();
@@ -1104,7 +1158,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           width: '100%', 
           height: rowHeight,
           display: 'flex',
-          alignItems: 'center',
+          alignItems: index <= 2 ? 'flex-start' : 'center',
           boxSizing: 'border-box'
         }}
         data-index={index}
@@ -1294,6 +1348,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
             </div>
           )}
         </div>
+
       </div>
       <div className={styles.textContainer}>
         <List

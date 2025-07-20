@@ -17,15 +17,6 @@ function isPortrait() {
   const aspectRatioPortrait = window.innerHeight > window.innerWidth;
   const result = mediaQueryPortrait || aspectRatioPortrait;
   
-  // Debug logging for orientation detection
-  console.log('isPortrait() called:', {
-    mediaQueryPortrait,
-    aspectRatioPortrait,
-    windowWidth: window.innerWidth,
-    windowHeight: window.innerHeight,
-    result
-  });
-  
   return result;
 }
 
@@ -39,6 +30,11 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
   const dragActionRef = useRef(null); // 'resize' or 'scroll'
   const dragStartRef = useRef({ x: 0, y: 0 });
   const thumbRef = useRef(null);
+
+  // Ensure client-side only rendering to prevent hydration mismatches
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleMouseDown = useCallback((e) => {
     // Reduced logging to avoid spam
@@ -479,10 +475,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
     }
   }, [progress, thumbPosition]);
 
-  // Set client flag after hydration
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+
 
   // Initialize thumb position on mount
   useEffect(() => {
@@ -517,6 +510,26 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       // Rendering thumb
   
       
+  // Don't render until client-side to prevent hydration mismatches
+  if (!isClient) {
+    return (
+      <div 
+        className={styles.separator}
+        style={{ 
+          userSelect: 'none', 
+          zIndex: 1000,
+          width: '100%',
+          height: '100%',
+          position: 'relative'
+        }}
+      >
+        <div className={styles.handle}>
+          <GripVertical size={20} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
       className={`${styles.separator} ${isDragging ? styles.dragging : ''}`}
@@ -540,19 +553,19 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
         className={styles.fingerIndicator} 
         style={{ 
           position: 'absolute',
-          width: isClient && isPortrait() ? (isMobile ? '80px' : '50px') : (isClient && isMobile ? '24px' : '16px'),
-          height: isClient && isPortrait() ? (isMobile ? '20px' : '12px') : (isClient && isMobile ? '40px' : '30px'),
-          top: isClient && isPortrait() ? '4px' : `calc(${isClient && isMobile ? '20px' : '15px'} + (${thumbPosition} * (100% - ${isClient && isMobile ? '40px' : '30px'})))`,
-          left: isClient && isPortrait() ? `calc(${isClient && isMobile ? '40px' : '25px'} + (${thumbPosition} * (100% - ${isClient && isMobile ? '80px' : '50px'})))` : '4px',
+          width: isPortrait() ? (isMobile ? '80px' : '50px') : (isMobile ? '24px' : '16px'),
+          height: isPortrait() ? (isMobile ? '20px' : '12px') : (isMobile ? '40px' : '30px'),
+          top: isPortrait() ? '4px' : `calc(${isMobile ? '20px' : '15px'} + (${thumbPosition} * (100% - ${isMobile ? '40px' : '30px'})))`,
+          left: isPortrait() ? `calc(${isMobile ? '40px' : '25px'} + (${thumbPosition} * (100% - ${isMobile ? '80px' : '50px'})))` : '4px',
           zIndex: 2000,
           cursor: 'grab',
           touchAction: 'none',
           transform: 'none', // Ensure no rotation
           // Force correct dimensions for portrait mode
-          minWidth: isClient && isPortrait() ? (isMobile ? '80px' : '50px') : 'auto',
-          minHeight: isClient && isPortrait() ? (isMobile ? '20px' : '12px') : 'auto',
-          maxWidth: isClient && isPortrait() ? (isMobile ? '80px' : '50px') : 'auto',
-          maxHeight: isClient && isPortrait() ? (isMobile ? '20px' : '12px') : 'auto'
+          minWidth: isPortrait() ? (isMobile ? '80px' : '50px') : 'auto',
+          minHeight: isPortrait() ? (isMobile ? '20px' : '12px') : 'auto',
+          maxWidth: isPortrait() ? (isMobile ? '80px' : '50px') : 'auto',
+          maxHeight: isPortrait() ? (isMobile ? '20px' : '12px') : 'auto'
         }}
         onMouseDown={handleThumbMouseDown}
         onTouchStart={handleThumbTouchStart}

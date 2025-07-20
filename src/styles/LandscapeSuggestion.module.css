@@ -1,0 +1,98 @@
+.landscapeSuggestion {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  pointer-events: none;
+  animation: slideDown 0.5s ease-out;
+}
+
+.suggestionContent {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  padding: 12px 20px;
+  margin: 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.rotateIcon {
+  animation: rotate 2s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+.suggestionText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes rotate {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-15deg);
+  }
+}
+
+/* Fade out after 8 seconds */
+.landscapeSuggestion {
+  animation: slideDown 0.5s ease-out, fadeOut 0.5s ease-in 7.5s forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .suggestionContent {
+    padding: 6px 12px;
+    font-size: 13px;
+    margin: 6px;
+  }
+  
+  .rotateIcon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Ensure it doesn't interfere with touch events */
+.landscapeSuggestion {
+  pointer-events: none;
+}
+
+.suggestionContent {
+  pointer-events: none;
+} 

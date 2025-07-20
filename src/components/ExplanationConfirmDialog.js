@@ -40,6 +40,14 @@ export default function ExplanationConfirmDialog({
           return acc;
         }, {});
         const anonCount = parseInt(cookies.anon_explanations || '0', 10);
+        
+        console.log('Frontend anonymous user check:', {
+          documentCookie: document.cookie,
+          parsedCookies: cookies,
+          anonCount,
+          remainingExplanations: 3 - anonCount
+        });
+        
         setAnonUsage(anonCount);
       }
     } catch (error) {

@@ -40,6 +40,14 @@ export default async function handler(req, res) {
       // Level 1: Anonymous user limit: 3 free explanations
       const cookies = cookie.parse(req.headers.cookie || '');
       const anonCount = parseInt(cookies.anon_explanations || '0', 10);
+      
+      console.log('Anonymous user check:', {
+        cookies: req.headers.cookie,
+        parsedCookies: cookies,
+        anonCount,
+        remainingExplanations: 3 - anonCount
+      });
+      
       if (anonCount >= 3) {
         return res.status(403).json({ 
           error: 'Sign in required after 3 free explanations. Please sign in to continue.',
@@ -339,6 +347,12 @@ ${educationalLevelInstruction}`;
         // Increment anon_explanations cookie for anonymous users
         const cookies = cookie.parse(req.headers.cookie || '');
         const anonCount = parseInt(cookies.anon_explanations || '0', 10) + 1;
+        
+        console.log('Setting anonymous cookie:', {
+          previousCount: parseInt(cookies.anon_explanations || '0', 10),
+          newCount: anonCount
+        });
+        
         res.setHeader('Set-Cookie', cookie.serialize('anon_explanations', String(anonCount), {
           httpOnly: false,
           maxAge: 60 * 60 * 24 * 30, // 30 days
