@@ -232,11 +232,19 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         processedLines.push('');
         continue;
       }
+      
+      // For Shakespeare plays, preserve character names (all caps, no periods)
+      if (isShakespearePlay(title) && /^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32 && !trimmed.includes('.')) {
+        processedLines.push(trimmed);
+        continue;
+      }
+      
       // If line is already reasonably short (under 80 chars), keep it as is
       if (trimmed.length <= 80) {
         processedLines.push(trimmed);
         continue;
       }
+      
       // For longer lines, break them intelligently
       const words = trimmed.split(/\s+/);
       let currentLine = '';
@@ -255,7 +263,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       }
     }
     return processedLines;
-  }, []);
+  }, [title]);
 
 
 
