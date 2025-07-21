@@ -41,6 +41,8 @@ export default function Home() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingSelection, setPendingSelection] = useState(null);
   const [textPanelKey, setTextPanelKey] = useState(0); // Key to force re-mounting
+  const [responseLength, setResponseLength] = useState('medium');
+  const [isClient, setIsClient] = useState(false);
   const textPanelRef = useRef();
   const containerRef = useRef();
   const { data: session } = useSession();
@@ -82,8 +84,15 @@ export default function Home() {
     }
   }, []);
 
+  // Set client flag on mount
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Responsive: update layout mode on resize/orientation
   useEffect(() => {
+    if (!isClient) return;
+    
     function updateLayout() {
       const newLayoutMode = getLayoutMode();
       setLayoutMode(newLayoutMode);
@@ -104,13 +113,25 @@ export default function Home() {
       window.removeEventListener('resize', updateLayout);
       window.removeEventListener('orientationchange', updateLayout);
     };
-  }, [loadDividerPosition]);
+  }, [loadDividerPosition, isClient]);
 
   // Load book title from localStorage
   useEffect(() => {
     const savedTitle = localStorage.getItem('explainer:bookTitle');
     if (savedTitle) {
       setBookTitle(savedTitle);
+    }
+  }, []);
+
+  // Load default response length from profile settings
+  useEffect(() => {
+    try {
+      const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+      if (profile.defaultResponseLength) {
+        setResponseLength(profile.defaultResponseLength);
+      }
+    } catch (error) {
+      console.warn('Failed to load default response length:', error);
     }
   }, []);
 
@@ -130,6 +151,17 @@ export default function Home() {
       // Force re-mounting when switching between PDF and text modes
       if (e.key === 'explainer:bookText' || e.key === 'explainer:pdfData' || e.key === 'explainer:pdfSource') {
         setTextPanelKey(prev => prev + 1);
+      }
+      // Update response length when profile settings change
+      if (e.key === 'explainer:profile' && e.newValue) {
+        try {
+          const profile = JSON.parse(e.newValue);
+          if (profile.defaultResponseLength) {
+            setResponseLength(profile.defaultResponseLength);
+          }
+        } catch (error) {
+          console.warn('Failed to parse profile settings:', error);
+        }
       }
     };
 
@@ -259,7 +291,8 @@ export default function Home() {
           endpoint: llm.endpoint,
           customModel: llm.customModel,
           userEmail: session?.user?.email || null,
-          speaker: speaker || null
+          speaker: speaker || null,
+          responseLength: responseLength
         }),
       });
 
@@ -498,6 +531,25 @@ export default function Home() {
     }
   }, [session?.user?.email, signIn]);
 
+  // Show loading screen until client-side is ready
+  if (!isClient) {
+    return (
+      <>
+        <Head>
+          <title>The Explainer - Understand Difficult Texts</title>
+          <meta name="description" content="A progressive app to help you understand difficult texts line by line" />
+          <meta name="viewport" content="width=device-width, initial-scale=0.8" />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <div className={styles.page}>
+          <div className={styles.container} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+            <div>Loading content...</div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <Head>
@@ -578,25 +630,31 @@ export default function Home() {
         </div>
       </div>
       
-      <PaywallModal 
-        isOpen={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        paywallData={paywallData}
-        session={session}
-      />
+      {isClient && (
+        <PaywallModal 
+          isOpen={showPaywall}
+          onClose={() => setShowPaywall(false)}
+          paywallData={paywallData}
+          session={session}
+        />
+      )}
       
-      <ExplanationConfirmDialog
-        isOpen={showConfirmDialog}
-        onClose={() => {
-          setShowConfirmDialog(false);
-          setPendingSelection(null);
-        }}
-        onConfirm={handleConfirmExplanation}
-        selectedText={pendingSelection?.text || ''}
-        isLoading={isLoading}
-      />
+      {isClient && (
+        <ExplanationConfirmDialog
+          isOpen={showConfirmDialog}
+          onClose={() => {
+            setShowConfirmDialog(false);
+            setPendingSelection(null);
+          }}
+          onConfirm={handleConfirmExplanation}
+          selectedText={pendingSelection?.text || ''}
+          isLoading={isLoading}
+          responseLength={responseLength}
+          onResponseLengthChange={setResponseLength}
+        />
+      )}
       
-      <InstallPrompt />
+      {isClient && <InstallPrompt />}
     </>
   );
 }

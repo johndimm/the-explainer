@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   try {
     const {
       text, bookTitle, bookAuthor, userLanguage, userAge, userNationality, userEducationalLevel,
-      provider, model, apiKey, endpoint, customModel, isFollowUp, speaker, userEmail
+      provider, model, apiKey, endpoint, customModel, isFollowUp, speaker, userEmail, responseLength = 'medium'
     } = req.body;
 
     // Paywall logic - 4 tiers of access
@@ -169,6 +169,15 @@ export default async function handler(req, res) {
           educationalLevelInstruction = '';
       }
     }
+    // Response length instructions
+    const responseLengthInstruction = responseLength === 'short' ? 
+      'Keep your response concise and focused on the most essential points. Aim for 2-3 sentences.' :
+      responseLength === 'medium' ? 
+      'Provide a balanced explanation that covers the key points without being too lengthy. Aim for 4-6 sentences.' :
+      responseLength === 'long' ? 
+      'Give a comprehensive explanation that thoroughly covers all aspects. Aim for 8-12 sentences.' :
+      'Provide a very detailed and thorough explanation that explores all nuances, historical context, and deeper meanings. Aim for 15+ sentences.';
+
     const systemPrompt = `You are a helpful assistant that explains difficult texts in an engaging and educational way. The user is reading "${title}" by ${author}. When explaining text, you write about interesting information that answers these suggested questions. Do not repeat the questions in your response.
 
 1. Explain difficult or archaic words and what they mean
@@ -181,6 +190,8 @@ export default async function handler(req, res) {
 IMPORTANT: Match the tone of the text you're explaining. If the text is tragic, serious, or dramatic, be more solemn and respectful in your explanation. If the text is humorous, lighthearted, or playful, feel free to be more casual and make jokes. If the text is formal or academic, maintain a scholarly tone. Let the emotional weight and style of the original text guide your response.
 
 Make your explanations compelling and not boring. Feel free to make occasional jokes when appropriate, but always respect the tone of the source material. Be conversational and helpful while being informative.
+
+RESPONSE LENGTH: ${responseLengthInstruction}
 
 ${languageInstruction}
 ${ageInstruction}
@@ -202,6 +213,11 @@ ${educationalLevelInstruction}`;
       return apiKey || process.env[envVar];
     }
 
+    // Determine max tokens based on response length
+    const maxTokens = responseLength === 'short' ? 300 :
+                     responseLength === 'medium' ? 600 :
+                     responseLength === 'long' ? 1200 : 2000;
+
     // Provider routing
     let apiUrl, reqBody, reqHeaders;
     if (provider === 'openai') {
@@ -216,7 +232,7 @@ ${educationalLevelInstruction}`;
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        max_tokens: 1000,
+        max_tokens: maxTokens,
         temperature: 0.7
       };
     } else if (provider === 'anthropic') {
@@ -228,7 +244,7 @@ ${educationalLevelInstruction}`;
       };
       reqBody = {
         model: model,
-        max_tokens: 1000,
+        max_tokens: maxTokens,
         temperature: 0.7,
         system: systemPrompt,
         messages: [
@@ -247,7 +263,7 @@ ${educationalLevelInstruction}`;
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        max_tokens: 1000,
+        max_tokens: maxTokens,
         temperature: 0.7
       };
     } else if (provider === 'gemini') {
@@ -260,7 +276,7 @@ ${educationalLevelInstruction}`;
           { role: 'user', parts: [ { text: `${systemPrompt}\n\n${userPrompt}` } ] }
         ],
         generationConfig: {
-          maxOutputTokens: 1000,
+          maxOutputTokens: maxTokens,
           temperature: 0.7
         }
       };
@@ -278,7 +294,7 @@ ${educationalLevelInstruction}`;
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        max_tokens: 1000,
+        max_tokens: maxTokens,
         temperature: 0.7
       };
     } else {
