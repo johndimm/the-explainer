@@ -199,7 +199,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     }
     // Character names (all caps, centered, not too long)
     if (/^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32 && !trimmed.includes('.')) {
-      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{trimmed}</span>;
+      return <span className={styles.characterName} style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{trimmed}</span>;
     }
     
     // Character names followed by dialogue (e.g., "CAPULET Go to, go to.")
@@ -209,7 +209,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       const dialogue = characterMatch[2];
       return (
         <span>
-          <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{characterName}</span>
+          <span className={styles.characterName} style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{characterName}</span>
           <span style={{ marginLeft: 32, display: 'block' }}>{dialogue}</span>
         </span>
       );

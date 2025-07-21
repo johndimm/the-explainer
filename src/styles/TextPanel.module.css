@@ -310,6 +310,18 @@
     white-space: normal;
     max-width: 100%;
   }
+  
+  /* Prevent character names from breaking on mobile */
+  .characterName {
+    word-break: keep-all !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Global character name protection */
+.characterName {
+  word-break: keep-all !important;
+  white-space: nowrap !important;
 }
 
 @media (max-width: 480px) {
