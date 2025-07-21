@@ -197,14 +197,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     if (/^(act|scene)\b/i.test(trimmed)) {
       return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', margin: '16px 0 8px 0' }}>{trimmed}</span>;
     }
-    // Character names (all caps, centered, not too long)
-    if (/^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32 && !trimmed.includes('.')) {
+    // Character names (all caps, centered, can end with period)
+    if (/^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32) {
       return <span className={styles.characterName} style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{trimmed}</span>;
     }
     
     // Character names followed by dialogue (e.g., "CAPULET Go to, go to.")
     const characterMatch = trimmed.match(/^([A-Z][A-Z\s\-\.']{1,30})\s+(.+)$/);
-    if (characterMatch && characterMatch[1].length < 32 && !characterMatch[1].includes('.')) {
+    if (characterMatch && characterMatch[1].length < 32) {
       const characterName = characterMatch[1];
       const dialogue = characterMatch[2];
       return (
@@ -226,6 +226,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const splitLongLines = useCallback((text) => {
     const lines = text.split('\n');
     const processedLines = [];
+    
+    // First pass: Process lines normally
     for (const line of lines) {
       const trimmed = line.trim();
       if (!trimmed) {
@@ -233,8 +235,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         continue;
       }
       
-      // For Shakespeare plays, preserve character names (all caps, no periods)
-      if (isShakespearePlay(title) && /^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32 && !trimmed.includes('.')) {
+      // For Shakespeare plays, preserve character names (all caps, can end with period)
+      if (isShakespearePlay(title) && /^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32) {
+        console.log('TextPanel: Preserving character name:', `"${trimmed}"`);
         processedLines.push(trimmed);
         continue;
       }
@@ -262,6 +265,33 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         processedLines.push(currentLine);
       }
     }
+    
+    // Second pass: Fix broken character names for Shakespeare plays
+    if (isShakespearePlay(title)) {
+      const fixedLines = [];
+      for (let i = 0; i < processedLines.length; i++) {
+        const currentLine = processedLines[i];
+        const nextLine = processedLines[i + 1];
+        
+        // Check if current line looks like part of a character name
+        if (/^[A-Z][A-Z\s]*$/.test(currentLine) && currentLine.length < 20) {
+          // Check if next line is also part of a character name
+          if (nextLine && /^[A-Z][A-Z\s]*$/.test(nextLine) && nextLine.length < 20) {
+            // Combine them
+            const combined = (currentLine + ' ' + nextLine).trim();
+            if (combined.length < 32) {
+              console.log('TextPanel: Fixed broken character name:', `"${currentLine}" + "${nextLine}" = "${combined}"`);
+              fixedLines.push(combined);
+              i++; // Skip next line since we combined it
+              continue;
+            }
+          }
+        }
+        fixedLines.push(currentLine);
+      }
+      return fixedLines;
+    }
+    
     return processedLines;
   }, [title]);
 
@@ -343,7 +373,17 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     });
     
     if (savedText) {
+      console.log('TextPanel: Processing saved text, length:', savedText.length);
       const lines = splitLongLines(savedText);
+      console.log('TextPanel: Split into lines:', lines.length);
+      
+      // Debug: Check for character names that might be broken
+      lines.forEach((line, index) => {
+        if (line.includes('FOURTH') || line.includes('CITIZEN')) {
+          console.log(`TextPanel: Line ${index}: "${line}"`);
+        }
+      });
+      
       // Prepend title and author to the text
       const titleLines = [
         '',
