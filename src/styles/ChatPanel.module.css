@@ -398,6 +398,45 @@
   }
 }
 
+/* Container queries for more intelligent responsive behavior */
+@container (min-width: 400px) {
+  .buttonText {
+    display: inline !important;
+  }
+  
+  .saveButtonText {
+    display: inline !important;
+  }
+  
+  .headerButton {
+    padding: 6px 12px !important;
+    min-width: unset;
+    width: auto;
+  }
+  
+  .headerButtonIcon {
+    padding: 6px 12px !important;
+    min-width: unset;
+    width: auto;
+  }
+  
+  .saveButton {
+    padding: 8px 12px !important;
+    min-width: unset;
+    width: auto;
+  }
+}
+
+@container (min-width: 500px) {
+  .topRightButtons {
+    gap: 8px;
+  }
+  
+  .headerButton, .headerButtonIcon {
+    padding: 6px 12px !important;
+  }
+}
+
 /* Mobile phones - extra protection */
 @media (max-width: 768px) {
   .topRightButtons {
