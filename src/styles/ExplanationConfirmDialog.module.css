@@ -97,6 +97,44 @@
   line-height: 1.4;
 }
 
+.responseLengthSection {
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.responseLengthLabel {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.responseLengthSelect {
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  cursor: pointer;
+  min-width: 200px;
+  flex-shrink: 0;
+}
+
+.responseLengthSelect:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.responseLengthSelect:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
 .actions {
   display: flex;
   gap: 12px;

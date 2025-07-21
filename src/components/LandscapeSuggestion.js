@@ -6,21 +6,27 @@ const LandscapeSuggestion = () => {
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [hasShown, setHasShown] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  // Set client flag on mount
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Check if we've already shown it in this session - do this first
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isClient) {
       const alreadyShown = sessionStorage.getItem('explainer:landscape-suggestion-shown');
       if (alreadyShown) {
         setHasShown(true);
       }
     }
-  }, []);
+  }, [isClient]);
 
   useEffect(() => {
+    if (!isClient) return;
+    
     const checkOrientation = () => {
-      if (typeof window === 'undefined') return;
-      
       // Check if it's a mobile device
       const isMobileDevice = window.innerWidth <= 1024 || 
                            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -52,21 +58,19 @@ const LandscapeSuggestion = () => {
       window.removeEventListener('resize', checkOrientation);
       window.removeEventListener('orientationchange', checkOrientation);
     };
-  }, [hasShown]);
+  }, [hasShown, isClient]);
 
   // Mark as shown when the suggestion appears
   useEffect(() => {
-    if (showSuggestion) {
+    if (showSuggestion && isClient) {
       setHasShown(true);
       // Store in sessionStorage so it doesn't show again in this session
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('explainer:landscape-suggestion-shown', 'true');
-      }
+      sessionStorage.setItem('explainer:landscape-suggestion-shown', 'true');
     }
-  }, [showSuggestion]);
+  }, [showSuggestion, isClient]);
 
-  // Don't show if not mobile or not in portrait
-  if (!showSuggestion || !isMobile) {
+  // Don't render anything on server-side or if not showing
+  if (!isClient || !showSuggestion || !isMobile) {
     return null;
   }
 

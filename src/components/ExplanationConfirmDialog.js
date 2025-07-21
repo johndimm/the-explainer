@@ -8,7 +8,9 @@ export default function ExplanationConfirmDialog({
   onClose, 
   onConfirm, 
   selectedText, 
-  isLoading 
+  isLoading,
+  responseLength,
+  onResponseLengthChange
 }) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -160,6 +162,24 @@ export default function ExplanationConfirmDialog({
             <div className={styles.statusMessage}>
               {getStatusMessage()}
             </div>
+          </div>
+
+          <div className={styles.responseLengthSection}>
+            <label htmlFor="responseLength" className={styles.responseLengthLabel}>
+              Response Length:
+            </label>
+            <select
+              id="responseLength"
+              value={responseLength || 'medium'}
+              onChange={(e) => onResponseLengthChange && onResponseLengthChange(e.target.value)}
+              className={styles.responseLengthSelect}
+              disabled={isLoading}
+            >
+              <option value="short">Short (2-3 sentences)</option>
+              <option value="medium">Medium (4-6 sentences)</option>
+              <option value="long">Long (8-12 sentences)</option>
+              <option value="detailed">Detailed (15+ sentences)</option>
+            </select>
           </div>
 
           <div className={styles.actions}>

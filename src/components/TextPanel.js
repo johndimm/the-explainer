@@ -198,8 +198,21 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', margin: '16px 0 8px 0' }}>{trimmed}</span>;
     }
     // Character names (all caps, centered, not too long)
-    if (/^[A-Z][A-Z\s\-\.']{2,30}$/.test(trimmed) && trimmed.length < 32) {
+    if (/^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32 && !trimmed.includes('.')) {
       return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{trimmed}</span>;
+    }
+    
+    // Character names followed by dialogue (e.g., "CAPULET Go to, go to.")
+    const characterMatch = trimmed.match(/^([A-Z][A-Z\s\-\.']{1,30})\s+(.+)$/);
+    if (characterMatch && characterMatch[1].length < 32 && !characterMatch[1].includes('.')) {
+      const characterName = characterMatch[1];
+      const dialogue = characterMatch[2];
+      return (
+        <span>
+          <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{characterName}</span>
+          <span style={{ marginLeft: 32, display: 'block' }}>{dialogue}</span>
+        </span>
+      );
     }
     // Stage directions (in brackets or parentheses)
     if (/^\s*\[.*\]\s*$/.test(line) || /^\s*\(.*\)\s*$/.test(line)) {
@@ -1158,7 +1171,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           width: '100%', 
           height: rowHeight,
           display: 'flex',
-          alignItems: index <= 2 ? 'flex-start' : 'center',
+          alignItems: 'flex-start',
           boxSizing: 'border-box'
         }}
         data-index={index}

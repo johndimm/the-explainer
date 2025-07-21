@@ -56,6 +56,13 @@ const FONT_WEIGHTS = [
   { value: '700', label: 'Bold' },
 ];
 
+const RESPONSE_LENGTHS = [
+  { value: 'short', label: 'Short (2-3 sentences)' },
+  { value: 'medium', label: 'Medium (4-6 sentences)' },
+  { value: 'long', label: 'Long (8-12 sentences)' },
+  { value: 'detailed', label: 'Detailed (15+ sentences)' },
+];
+
 const LLM_PROVIDERS = [
   { value: 'openai', label: 'OpenAI (GPT-4, GPT-3.5)' },
   { value: 'anthropic', label: 'Anthropic (Claude)' },
@@ -91,10 +98,12 @@ const GEMINI_MODELS = [
 export default function Profile() {
   const router = useRouter();
   const { data: session } = useSession();
+  const [isClient, setIsClient] = useState(false);
   const [language, setLanguage] = useState('');
   const [age, setAge] = useState('');
   const [nationality, setNationality] = useState('');
   const [educationalLevel, setEducationalLevel] = useState('');
+  const [defaultResponseLength, setDefaultResponseLength] = useState('medium');
   const [lang, setLang] = useState('en');
   const [showSaved, setShowSaved] = useState(false);
   const [translations, setTranslations] = useState({});
@@ -112,54 +121,65 @@ export default function Profile() {
   const [llmCustomModel, setLlmCustomModel] = useState('');
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    setIsClient(true);
   }, []);
 
   useEffect(() => {
-    setLang(getUserLanguage());
-    const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
-    setLanguage(profile.language || '');
-    setAge(profile.age || '');
-    setNationality(profile.nationality || '');
-    setEducationalLevel(profile.educationalLevel || '');
-    setFontFamily(profile.fontFamily || 'Georgia');
-    setFontSize(profile.fontSize || '17');
-    setFontWeight(profile.fontWeight || '400');
-    
-    // Load LLM settings
-    const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
-    setLlmProvider(llm.provider || 'openai');
-    setLlmModel(llm.model || 'gpt-4o-mini');
-    setLlmApiKey(llm.key || '');
-    setLlmEndpoint(llm.endpoint || '');
-    setLlmCustomModel(llm.customModel || '');
-    
-    loadTranslations();
-  }, []);
+    if (isClient) {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth <= 768);
+      };
+      
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      
+      return () => window.removeEventListener('resize', checkMobile);
+    }
+  }, [isClient]);
 
   useEffect(() => {
-    async function fetchStats() {
-      if (session?.user?.email) {
-        try {
-          const res = await fetch(`/api/user-stats?email=${encodeURIComponent(session.user.email)}`);
-          if (res.ok) {
-            const stats = await res.json();
-            setUserStats(stats);
+    if (isClient) {
+      setLang(getUserLanguage());
+      const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+      setLanguage(profile.language || '');
+      setAge(profile.age || '');
+      setNationality(profile.nationality || '');
+      setEducationalLevel(profile.educationalLevel || '');
+      setDefaultResponseLength(profile.defaultResponseLength || 'medium');
+      setFontFamily(profile.fontFamily || 'Georgia');
+      setFontSize(profile.fontSize || '17');
+      setFontWeight(profile.fontWeight || '400');
+      
+      // Load LLM settings
+      const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+      setLlmProvider(llm.provider || 'openai');
+      setLlmModel(llm.model || 'gpt-4o-mini');
+      setLlmApiKey(llm.key || '');
+      setLlmEndpoint(llm.endpoint || '');
+      setLlmCustomModel(llm.customModel || '');
+      
+      loadTranslations();
+    }
+  }, [isClient]);
+
+  useEffect(() => {
+    if (isClient) {
+      async function fetchStats() {
+        if (session?.user?.email) {
+          try {
+            const res = await fetch(`/api/user-stats?email=${encodeURIComponent(session.user.email)}`);
+            if (res.ok) {
+              const stats = await res.json();
+              setUserStats(stats);
+            }
+          } catch (e) {
+            // ignore
           }
-        } catch (e) {
-          // ignore
         }
       }
+      fetchStats();
     }
-    fetchStats();
-  }, [session?.user?.email]);
+  }, [isClient, session?.user?.email]);
 
   const loadTranslations = async () => {
     const currentLang = getUserLanguage();
@@ -241,10 +261,20 @@ export default function Profile() {
     }
   };
 
+  // Show loading screen until client is ready and translations are loaded
+  if (!isClient) {
+    return (
+      <div style={{ padding: 32, textAlign: 'center' }}>
+        <span>Loading content...</span>
+      </div>
+    );
+  }
+
+  // Show loading screen while translations are loading
   if (!translations.profileSettings) {
     return (
       <div style={{ padding: 32, textAlign: 'center' }}>
-        <span>Loading translations...</span>
+        <span>Loading content...</span>
       </div>
     );
   }
@@ -514,7 +544,7 @@ export default function Profile() {
               </select>
             </label>
             
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                        <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
               {translations.educationalLevel || 'Educational Level'}
               <select
                 value={educationalLevel}
@@ -538,66 +568,15 @@ export default function Profile() {
                 <option value="">{translations.selectEducationalLevel || 'Select educational level'}</option>
                 {EDUCATIONAL_LEVELS.map(level => <option key={level} value={level}>{level}</option>)}
               </select>
-                        </label>
-          </div>
-        </section>
-
-
-        {/* Font Settings Section */}
-        <section style={{ 
-          marginBottom: 32,
-          padding: 24,
-          background: '#f8fafc',
-          border: '1px solid #e2e8f0',
-          borderRadius: 12
-        }}>
-          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Font Settings</h2>
-          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>
-            Customize the appearance of the text panel to improve readability.
-          </p>
-          
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-            gap: 16 
-          }}>
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              Font Family
-              <select
-                value={fontFamily}
-                onChange={e => {
-                  setFontFamily(e.target.value);
-                  autoSave({ fontFamily: e.target.value });
-                }}
-                style={{
-                  width: '100%',
-                  marginTop: 8,
-                  padding: isMobile ? 12 : 10,
-                  borderRadius: 8,
-                  border: '1px solid #cbd5e1',
-                  fontSize: isMobile ? 18 : 16,
-                  background: '#fff',
-                  transition: 'border-color 0.2s',
-                  fontFamily: fontFamily
-                }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-              >
-                {FONT_FAMILIES.map(f => (
-                  <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>
-                    {f.label}
-                  </option>
-                ))}
-              </select>
             </label>
             
             <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              Font Size
+              Default Response Length
               <select
-                value={fontSize}
+                value={defaultResponseLength}
                 onChange={e => {
-                  setFontSize(e.target.value);
-                  autoSave({ fontSize: e.target.value });
+                  setDefaultResponseLength(e.target.value);
+                  autoSave({ defaultResponseLength: e.target.value });
                 }}
                 style={{
                   width: '100%',
@@ -612,63 +591,12 @@ export default function Profile() {
                 onFocus={e => e.target.style.borderColor = '#3b82f6'}
                 onBlur={e => e.target.style.borderColor = '#cbd5e1'}
               >
-                {FONT_SIZES.map(s => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
+                {RESPONSE_LENGTHS.map(length => <option key={length.value} value={length.value}>{length.label}</option>)}
               </select>
             </label>
-            
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              Font Weight
-              <select
-                value={fontWeight}
-                onChange={e => {
-                  setFontWeight(e.target.value);
-                  autoSave({ fontWeight: e.target.value });
-                }}
-                style={{
-                  width: '100%',
-                  marginTop: 8,
-                  padding: isMobile ? 12 : 10,
-                  borderRadius: 8,
-                  border: '1px solid #cbd5e1',
-                  fontSize: isMobile ? 18 : 16,
-                  background: '#fff',
-                  transition: 'border-color 0.2s'
-                }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-              >
-                {FONT_WEIGHTS.map(w => (
-                  <option key={w.value} value={w.value}>
-                    {w.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          
-          {/* Font Preview */}
-          <div style={{ 
-            marginTop: 16, 
-            padding: 12, 
-            backgroundColor: '#f8fafc', 
-            borderRadius: 8,
-            border: '1px solid #e2e8f0'
-          }}>
-            <div style={{ 
-              fontFamily: fontFamily, 
-              fontSize: fontSize + 'px',
-              fontWeight: fontWeight,
-              lineHeight: '1.5',
-              color: '#18181b'
-            }}>
-              Preview: "To be or not to be, that is the question"
-            </div>
           </div>
         </section>
+
 
         {/* LLM Settings Section */}
         <section style={{ 
@@ -884,6 +812,133 @@ export default function Profile() {
               </div>
             </div>
           )}
+        </section>
+
+        {/* Font Settings Section */}
+        <section style={{ 
+          marginBottom: 32,
+          padding: 24,
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: 12
+        }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Font Settings</h2>
+          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>
+            Customize the appearance of the text panel to improve readability.
+          </p>
+          
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+            gap: 16 
+          }}>
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              Font Family
+              <select
+                value={fontFamily}
+                onChange={e => {
+                  setFontFamily(e.target.value);
+                  autoSave({ fontFamily: e.target.value });
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s',
+                  fontFamily: fontFamily
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                {FONT_FAMILIES.map(f => (
+                  <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              Font Size
+              <select
+                value={fontSize}
+                onChange={e => {
+                  setFontSize(e.target.value);
+                  autoSave({ fontSize: e.target.value });
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                {FONT_SIZES.map(s => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              Font Weight
+              <select
+                value={fontWeight}
+                onChange={e => {
+                  setFontWeight(e.target.value);
+                  autoSave({ fontWeight: e.target.value });
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                {FONT_WEIGHTS.map(w => (
+                  <option key={w.value} value={w.value}>
+                    {w.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          
+          {/* Font Preview */}
+          <div style={{ 
+            marginTop: 16, 
+            padding: 12, 
+            backgroundColor: '#f8fafc', 
+            borderRadius: 8,
+            border: '1px solid #e2e8f0'
+          }}>
+            <div style={{ 
+              fontFamily: fontFamily, 
+              fontSize: fontSize + 'px',
+              fontWeight: fontWeight,
+              lineHeight: '1.5',
+              color: '#18181b'
+            }}>
+              Preview: "To be or not to be, that is the question"
+            </div>
+          </div>
         </section>
 
         {/* History Section */}
