@@ -65,6 +65,10 @@
 
 .saveButtonText {
   display: inline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60px;
 }
 
 
@@ -399,7 +403,7 @@
 }
 
 /* Container queries for more intelligent responsive behavior */
-@container (min-width: 400px) {
+@container (min-width: 300px) {
   .buttonText {
     display: inline !important;
   }
@@ -409,21 +413,44 @@
   }
   
   .headerButton {
-    padding: 6px 12px !important;
+    padding: 6px 8px !important;
     min-width: unset;
     width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
   .headerButtonIcon {
-    padding: 6px 12px !important;
+    padding: 6px 8px !important;
     min-width: unset;
     width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .saveButton {
+    padding: 8px 10px !important;
+    min-width: unset;
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@container (min-width: 400px) {
+  .topRightButtons {
+    gap: 6px;
+  }
+  
+  .headerButton, .headerButtonIcon {
+    padding: 6px 10px !important;
   }
   
   .saveButton {
     padding: 8px 12px !important;
-    min-width: unset;
-    width: auto;
   }
 }
 
@@ -572,6 +599,9 @@
 .buttonText {
   display: inline;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
 }
 
 /* Removed media query that was causing header to wrap */
