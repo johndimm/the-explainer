@@ -1410,28 +1410,35 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   }, []);
 
   // Early return after all hooks
-  if (textLines.length === 0 && !isPDFMode) {
-    // Loading state
-    console.log('TextPanel: Showing loading screen - textLines.length:', textLines.length, 'isPDFMode:', isPDFMode);
-    
-    // On mobile, always show some content instead of loading screen
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobileDevice) {
-      console.log('TextPanel: Mobile device detected, showing fallback content instead of loading screen');
-      return (
-        <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
-          <div className={styles.textContainer}>
-            <div style={{ padding: '20px', textAlign: 'center' }}>
-              <h3>Romeo and Juliet</h3>
-              <p>by William Shakespeare</p>
-              <p>Loading text...</p>
-              <p>If this doesn't load, please refresh the page.</p>
-            </div>
+  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  console.log('TextPanel: Device type - Mobile:', isMobileDevice, 'textLines.length:', textLines.length, 'isPDFMode:', isPDFMode);
+  
+  // Only bypass loading screen for mobile devices
+  if (isMobileDevice && textLines.length === 0 && !isPDFMode) {
+    console.log('TextPanel: Mobile device - showing content instead of loading screen');
+    return (
+      <div 
+        key={`text-${title}-${textLines.length}`}
+        className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
+        style={{ '--panel-width': `${width}%` }}
+        ref={containerRef}
+      >
+        <div className={styles.textContainer}>
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h3>Romeo and Juliet</h3>
+            <p>by William Shakespeare</p>
+            <p>Loading text...</p>
+            <p>If this doesn't load, please refresh the page.</p>
           </div>
         </div>
-      );
-    }
-    
+      </div>
+    );
+  }
+  
+  // Normal loading screen for desktop/tablet
+  if (textLines.length === 0 && !isPDFMode) {
+    console.log('TextPanel: Desktop/tablet - showing loading screen');
     return (
       <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
         <div className={styles.loading}>Loading content...</div>
