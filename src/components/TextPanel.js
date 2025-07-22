@@ -216,7 +216,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       return (
         <span>
           <span className={styles.characterName} style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{characterName}</span>
-          <span style={{ marginLeft: 32, display: 'block' }}>{dialogue}</span>
+          <span className={styles.dialogue}>{dialogue}</span>
         </span>
       );
     }
@@ -225,7 +225,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       return <span style={{ fontStyle: 'italic', marginLeft: 48, color: '#64748b' }}>{trimmed}</span>;
     }
     // Dialogue (default)
-    return <span style={{ marginLeft: 32, display: 'block' }}>{line}</span>;
+    return <span className={styles.dialogue}>{line}</span>;
   }, [title]);
 
   // Function to split text into lines with intelligent line breaking
@@ -1323,15 +1323,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         <span 
           className={styles.lineContent} 
           title={line.length > 100 ? line : undefined}
-          style={{
-            fontFamily: fontSettings.fontFamily,
-            fontSize: fontSettings.fontSize + 'px',
-            fontWeight: fontSettings.fontWeight,
-            lineHeight: '1.5',
-            padding: '2px 0',
-            display: 'block',
-            width: '100%'
-          }}
         >
           {searchResult && searchQuery ? (
             <span>

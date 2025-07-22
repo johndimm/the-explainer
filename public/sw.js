@@ -55,6 +55,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip CSS files - always fetch fresh to ensure styling updates
+  if (event.request.url.includes('.css')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
