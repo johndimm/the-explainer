@@ -16,7 +16,13 @@ const getRowHeight = (fontSize) => {
 
 const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", onScrollProgress }, ref) => {
   // All state hooks - must be called in same order every time
-  const [textLines, setTextLines] = useState([]);
+  const [textLines, setTextLines] = useState([
+    '',
+    'Romeo and Juliet',
+    'by William Shakespeare',
+    '',
+    'Loading...'
+  ]);
   const [selectedLines, setSelectedLines] = useState(new Set());
   const [firstClickIndex, setFirstClickIndex] = useState(null);
   const [currentScrollIndex, setCurrentScrollIndex] = useState(0);
@@ -392,7 +398,8 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       sessionStorageText: !!savedText,
       foundText: !!savedText,
       textLength: savedText ? savedText.length : 0,
-      currentTitle
+      currentTitle,
+      userAgent: navigator.userAgent
     });
     
     if (savedText) {
@@ -415,13 +422,32 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       
       // Add timeout to prevent infinite loading
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const timeoutId = setTimeout(() => {
+        console.log('TextPanel: Fetch timeout reached, using fallback text');
+        controller.abort();
+        const fallbackLines = [
+          '',
+          currentTitle,
+          'by William Shakespeare',
+          '',
+          'The text could not be loaded. Please check your internet connection and try again.',
+          '',
+          'If the problem persists, try refreshing the page.'
+        ];
+        setTextLines(fallbackLines);
+      }, 15000); // 15 second timeout for mobile
       
       fetch('/public-domain-texts/shakespeare-romeo-and-juliet.txt', {
-        signal: controller.signal
+        signal: controller.signal,
+        // Add mobile-specific headers
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       })
         .then(response => {
           clearTimeout(timeoutId);
+          console.log('TextPanel: Fetch response status:', response.status);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -520,6 +546,27 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   // Effect 1: Load text or PDF on mount
   useEffect(() => {
     console.log('TextPanel: Starting PDF detection...');
+    
+    // Detect if we're on mobile
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    console.log('TextPanel: Mobile device detected:', isMobileDevice);
+    
+    // On mobile, immediately load text content to avoid loading screen
+    if (isMobileDevice) {
+      console.log('TextPanel: Mobile device - immediately loading text content');
+      setTimeout(() => {
+        loadTextContent();
+      }, 100); // Small delay to ensure component is mounted
+    }
+    
+    // Add a timeout to force text loading if nothing happens
+    const forceLoadTimeout = setTimeout(() => {
+      if (textLines.length <= 5 && !isPDFMode) { // Check for just the fallback text
+        console.log('TextPanel: Force loading text due to timeout');
+        loadTextContent();
+      }
+    }, isMobileDevice ? 2000 : 3000); // Shorter timeout for mobile
+    
     // Check for PDF data first
     const pdfSource = sessionStorage.getItem('explainer:pdfSource');
     const storedPdfData = sessionStorage.getItem('explainer:pdfData');
@@ -564,6 +611,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     // No PDF data, load text content
     console.log('TextPanel: No PDF data found, loading text content');
     loadTextContent();
+    
+    // Cleanup timeout
+    return () => clearTimeout(forceLoadTimeout);
   }, [title]); // Removed loadTextContent dependency to prevent cycles
 
   // Effect 2: Listen for storage changes to handle file uploads
@@ -1362,6 +1412,26 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   // Early return after all hooks
   if (textLines.length === 0 && !isPDFMode) {
     // Loading state
+    console.log('TextPanel: Showing loading screen - textLines.length:', textLines.length, 'isPDFMode:', isPDFMode);
+    
+    // On mobile, always show some content instead of loading screen
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobileDevice) {
+      console.log('TextPanel: Mobile device detected, showing fallback content instead of loading screen');
+      return (
+        <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
+          <div className={styles.textContainer}>
+            <div style={{ padding: '20px', textAlign: 'center' }}>
+              <h3>Romeo and Juliet</h3>
+              <p>by William Shakespeare</p>
+              <p>Loading text...</p>
+              <p>If this doesn't load, please refresh the page.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
     return (
       <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
         <div className={styles.loading}>Loading content...</div>
