@@ -1,6 +1,6 @@
 const CACHE_NAME = 'explainer-v2';
 const urlsToCache = [
-  '/',
+  // Removed '/' from cache to fix root path issue
   '/library',
   '/guide',
   '/credits',
@@ -45,6 +45,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip root path - always fetch fresh
+  if (event.request.url.endsWith('/') || event.request.url.endsWith('/index.html')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -56,7 +61,7 @@ self.addEventListener('fetch', (event) => {
           console.warn('Fetch failed:', event.request.url, err);
           // Return a basic offline page for navigation requests
           if (event.request.destination === 'document') {
-            return caches.match('/');
+            return caches.match('/home'); // Use /home instead of /
           }
           return new Response('', { status: 404 });
         });
@@ -65,7 +70,7 @@ self.addEventListener('fetch', (event) => {
         console.error('Cache match failed:', err);
         return fetch(event.request).catch(() => {
           if (event.request.destination === 'document') {
-            return caches.match('/');
+            return caches.match('/home'); // Use /home instead of /
           }
           return new Response('', { status: 404 });
         });
