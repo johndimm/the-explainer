@@ -15,10 +15,10 @@
   border-bottom: 1px solid #e5e7eb;
   background: #f8fafc;
   min-height: 56px;
-  container-type: inline-size;
   gap: 12px;
   flex-direction: row;
   flex-wrap: nowrap;
+  overflow: visible;
 }
 
 .header h2 {
@@ -29,10 +29,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 70%;
-  min-width: 200px;
   flex-shrink: 1;
-  flex-grow: 1;
+  flex-grow: 0;
+  min-width: 0;
+  max-width: calc(100% - 140px); /* Leave space for button container minimum */
 }
 
 .lineCount {
@@ -69,35 +69,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 60px;
-}
-
-
-/* Responsive: hide button text and shrink buttons on very narrow widths */
-@media (max-width: 500px) {
-  .saveButtonText {
-    display: none;
-  }
-  .saveButton,
-  .header a {
-    padding: 8px !important;
-    min-width: 32px;
-    font-size: 0;
-  }
-  .header a {
-    width: 32px;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 600px) {
-  .saveButtonText {
-    display: none;
-  }
-  .saveButton {
-    padding: 8px !important;
-    min-width: 32px;
-    font-size: 0;
-  }
 }
 
 .saveButton:hover:not(:disabled) {
@@ -155,8 +126,6 @@
   margin: 16px 0 0 0;
   font-size: 16px;
 }
-
-
 
 .messages {
   display: flex;
@@ -309,250 +278,18 @@
   cursor: not-allowed;
 }
 
-/* Mobile responsive - portrait mode */
-@media (max-width: 768px) and (orientation: portrait) {
-  .panel {
-    min-height: unset;
-    width: 100% !important;
-    flex: none;
-  }
-  
-  .header {
-    padding: 12px 16px;
-  }
-  
-  .header h2 {
-    font-size: 16px;
-  }
-  
-  .messagesContainer {
-    padding: 16px 4px;
-  }
-  
-  .message {
-    max-width: 100%;
-    padding: 12px 6px;
-  }
-  
-  .inputForm {
-    padding: 16px;
-  }
-  
-  .input {
-    padding: 10px 14px;
-    font-size: 13px;
-    color: #1e293b;
-  }
-  
-  .sendButton {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-/* Mobile responsive - landscape mode */
-@media (max-width: 768px) and (orientation: landscape) {
-  .panel {
-    height: 100vh;
-    flex: none;
-  }
-}
-
-@media (min-width: 769px) {
-  .panel {
-    height: 100vh;
-    flex: none;
-  }
-} 
-
-@media (max-width: 700px) {
-  .saveButtonText {
-    display: none;
-  }
-  .saveButton {
-    padding: 8px !important;
-    min-width: 36px;
-    width: 36px;
-    justify-content: center;
-    gap: 0;
-  }
-}
-
-/* Handle narrow viewports - ensure all buttons fit */
-@media (max-width: 1024px) {
-  .topRightButtons {
-    gap: 4px;
-  }
-  
-  .buttonText {
-    display: none !important;
-  }
-  
-  .headerButton, .headerButtonIcon {
-    min-width: 32px;
-    padding: 6px !important;
-    height: 32px !important;
-    width: 32px !important;
-    font-size: 0;
-  }
-  
-  .lineCount {
-    font-size: 12px;
-    padding: 2px 4px;
-  }
-}
-
-/* Container queries for more intelligent responsive behavior */
-@container (min-width: 300px) {
-  .buttonText {
-    display: inline !important;
-  }
-  
-  .saveButtonText {
-    display: inline !important;
-  }
-  
-  .headerButton {
-    padding: 6px 8px !important;
-    min-width: unset;
-    width: auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .headerButtonIcon {
-    padding: 6px 8px !important;
-    min-width: unset;
-    width: auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .saveButton {
-    padding: 8px 10px !important;
-    min-width: unset;
-    width: auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-@container (min-width: 400px) {
-  .topRightButtons {
-    gap: 6px;
-  }
-  
-  .headerButton, .headerButtonIcon {
-    padding: 6px 10px !important;
-  }
-  
-  .saveButton {
-    padding: 8px 12px !important;
-  }
-}
-
-@container (min-width: 500px) {
-  .topRightButtons {
-    gap: 8px;
-  }
-  
-  .headerButton, .headerButtonIcon {
-    padding: 6px 12px !important;
-  }
-}
-
-/* Mobile phones - extra protection */
-@media (max-width: 768px) {
-  .topRightButtons {
-    gap: 2px;
-  }
-  
-  .buttonText {
-    display: none !important;
-  }
-  
-  .headerButton, .headerButtonIcon {
-    min-width: 28px;
-    padding: 4px !important;
-    height: 28px !important;
-    width: 28px !important;
-    font-size: 0 !important;
-    overflow: hidden;
-  }
-  
-  .lineCount {
-    font-size: 10px;
-    padding: 1px 3px;
-  }
-}
-
-/* Small phones - aggressive button hiding */
-@media (max-width: 480px) {
-  .topRightButtons {
-    gap: 1px;
-  }
-  
-  .buttonText {
-    display: none !important;
-    visibility: hidden !important;
-  }
-  
-  .headerButton, .headerButtonIcon {
-    min-width: 24px;
-    padding: 2px !important;
-    height: 24px !important;
-    width: 24px !important;
-    font-size: 0 !important;
-    overflow: hidden;
-  }
-  
-  .headerButton span, .headerButtonIcon span {
-    display: none !important;
-    visibility: hidden !important;
-  }
-  
-  .lineCount {
-    font-size: 8px;
-    padding: 1px 2px;
-  }
-} 
-
-.quoteLink {
-  color: #6b7280;
-  cursor: pointer;
-  font-weight: 400;
-  font-size: 14px;
-  opacity: 0.95;
-  transition: color 0.15s;
-}
-
-.quoteLink:hover {
-  color: #374151;
-}
-
-.message.user .quoteLink {
-  color: #e0e7ef;
-  cursor: pointer;
-  font-weight: 400;
-  font-size: 14px;
-  opacity: 0.95;
-}
-.message.user .quoteLink:hover {
-  color: #fff;
-} 
-
 .topRightButtons {
   display: flex;
   gap: 8px;
   align-items: center;
   justify-content: flex-end;
   flex-wrap: nowrap;
+  overflow: visible;
+  min-width: 120px; /* Minimum width for icon-only buttons */
+  flex-shrink: 0;
+  flex-grow: 1;
+  container-type: inline-size;
 }
-
-
 
 .headerButton {
   display: inline-flex;
@@ -569,6 +306,10 @@
   transition: all 0.2s;
   height: 32px;
   position: relative;
+  max-width: 120px;
+  min-width: 32px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .headerButton:hover {
@@ -602,150 +343,64 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 80px;
+  transition: opacity 0.2s ease, max-width 0.2s ease;
 }
 
-/* Removed media query that was causing header to wrap */
-
-/* Removed media query that was causing header to wrap */ 
-
-@container (max-width: 400px) {
-  .header {
-    gap: 4px;
-    padding: 0 6px;
-  }
-  
-  .header h2 {
-    max-width: 55%;
-    min-width: 100px;
-    font-size: 13px;
-  }
-  
-  .topRightButtons {
-    gap: 2px;
-  }
-  
-  .saveButtonText, .buttonText {
-    display: none;
-  }
-  
-  .headerButton, .headerButtonIcon {
-    min-width: 22px;
-    padding: 2px !important;
-    height: 22px !important;
-    width: 22px !important;
-    font-size: 0;
-  }
-  
-  .lineCount {
-    font-size: 9px;
-    padding: 1px 2px;
-  }
-}
-
-/* Handle narrow chat panels - keep single line but make more compact */
-@container (max-width: 600px) {
-  .header {
-    gap: 6px;
-    padding: 0 8px;
-  }
-  
-  .header h2 {
-    max-width: 60%;
-    min-width: 140px;
-    font-size: 15px;
-  }
-  
-  .topRightButtons {
-    gap: 3px;
-  }
-  
-  .saveButtonText, .buttonText {
-    display: none;
-  }
-  
-  .headerButton, .headerButtonIcon {
-    min-width: 26px;
-    padding: 3px !important;
-    height: 26px !important;
-    width: 26px !important;
-    font-size: 0;
-  }
-  
-  .lineCount {
-    font-size: 10px;
-    padding: 1px 3px;
-  }
-}
-
-/* Additional fallback for very narrow containers */
-@container (max-width: 300px) {
-  .header {
-    gap: 2px;
-    padding: 0 4px;
-  }
-  
-  .header h2 {
-    max-width: 50%;
-    min-width: 60px;
-    font-size: 11px;
-  }
-  
-  .topRightButtons {
-    gap: 1px;
-  }
-  
-  .saveButtonText, .buttonText {
-    display: none;
-  }
-  
-  .headerButton, .headerButtonIcon {
-    min-width: 18px;
-    padding: 1px !important;
-    height: 18px !important;
-    width: 18px !important;
-    font-size: 0;
-  }
-  
-  .lineCount {
-    font-size: 8px;
-    padding: 1px 2px;
-  }
-}
-
-/* Emergency fallback for extremely narrow chat panels */
+/* When button container is too narrow for text, hide it */
 @container (max-width: 200px) {
-  .header {
-    gap: 1px;
-    padding: 0 2px;
+  .buttonText {
+    display: none;
   }
   
-  .header h2 {
-    max-width: 45%;
-    min-width: 40px;
-    font-size: 10px;
+  .headerButton {
+    padding: 6px;
+    width: 32px;
+    min-width: 32px;
+    max-width: 32px;
+    gap: 0;
   }
-  
-  .topRightButtons {
-    gap: 1px;
+}
+
+/* When button container is very narrow, make buttons even smaller */
+@container (max-width: 120px) {
+  .headerButton {
+    padding: 4px;
+    width: 28px;
+    min-width: 28px;
+    max-width: 28px;
   }
-  
-  .headerButton, .headerButtonIcon {
-    min-width: 16px;
-    padding: 1px !important;
-    height: 16px !important;
-    width: 16px !important;
-  }
-  
-  .lineCount {
-    font-size: 7px;
-    padding: 1px 1px;
-  }
-} 
+}
+
+.quoteLink {
+  color: #6b7280;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 14px;
+  opacity: 0.95;
+  transition: color 0.15s;
+}
+
+.quoteLink:hover {
+  color: #374151;
+}
+
+.message.user .quoteLink {
+  color: #e0e7ef;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.message.user .quoteLink:hover {
+  color: #fff;
+}
 
 .signButtonText {
   display: inline;
   white-space: nowrap;
 }
+
 .iconSignButton {
   display: inline-flex;
   align-items: center;
@@ -768,24 +423,42 @@
   margin-right: 8px;
   overflow: hidden;
 }
+
 .iconSignButton img, .iconSignButton svg {
   display: block;
   margin: 0;
 }
-@media (max-width: 600px) {
-  .iconSignButton {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
-    max-width: 40px;
-    max-height: 40px;
-    padding: 0;
-    border-radius: 8px;
-    justify-content: center;
-    gap: 0;
+
+/* Show text labels on larger screens */
+@media (min-width: 768px) {
+  .saveButtonText {
+    display: inline !important;
   }
-  .signButtonText {
-    display: none;
+  
+  .saveButton {
+    padding: 8px 12px !important;
+    min-width: unset;
+    width: auto;
   }
-} 
+  
+  .topRightButtons {
+    gap: 8px;
+  }
+}
+
+/* Medium screens - compact but with text */
+@media (min-width: 600px) and (max-width: 767px) {
+  .saveButtonText {
+    display: inline !important;
+  }
+  
+  .saveButton {
+    padding: 8px 10px !important;
+    min-width: unset;
+    width: auto;
+  }
+  
+  .topRightButtons {
+    gap: 4px;
+  }
+}

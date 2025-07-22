@@ -538,11 +538,12 @@ export default function Home() {
         <Head>
           <title>The Explainer - Understand Difficult Texts</title>
           <meta name="description" content="A progressive app to help you understand difficult texts line by line" />
-          <meta name="viewport" content="width=device-width, initial-scale=0.8" />
+          <meta name="viewport" content="width=device-width, initial-scale=0.7" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <div className={styles.page}>
           <div className={styles.container} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+            
             <div>Loading content...</div>
           </div>
         </div>
@@ -555,7 +556,7 @@ export default function Home() {
       <Head>
         <title>The Explainer - Understand Difficult Texts</title>
         <meta name="description" content="A progressive app to help you understand difficult texts line by line" />
-        <meta name="viewport" content="width=device-width, initial-scale=0.8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
