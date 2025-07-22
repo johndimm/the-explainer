@@ -24,17 +24,13 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
   const [isDragging, setIsDragging] = useState(false);
   const [debug, setDebug] = useState({ orientation: '', value: 0 });
   const [thumbPosition, setThumbPosition] = useState(0);
-  const [isClient, setIsClient] = useState(false);
   const isDraggingRef = useRef(false);
   const dragModeRef = useRef('landscape'); // 'portrait' or 'landscape'
   const dragActionRef = useRef(null); // 'resize' or 'scroll'
   const dragStartRef = useRef({ x: 0, y: 0 });
   const thumbRef = useRef(null);
 
-  // Ensure client-side only rendering to prevent hydration mismatches
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+
 
   const handleMouseDown = useCallback((e) => {
     // Reduced logging to avoid spam
@@ -510,25 +506,7 @@ const DraggableSeparator = ({ onResize, leftWidth, onScrollDivider, progress = 0
       // Rendering thumb
   
       
-  // Don't render until client-side to prevent hydration mismatches
-  if (!isClient) {
-    return (
-      <div 
-        className={styles.separator}
-        style={{ 
-          userSelect: 'none', 
-          zIndex: 1000,
-          width: '100%',
-          height: '100%',
-          position: 'relative'
-        }}
-      >
-        <div className={styles.handle}>
-          <GripVertical size={20} />
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div 

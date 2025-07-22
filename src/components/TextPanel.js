@@ -346,27 +346,50 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const loadTextContent = useCallback(() => {
     console.log('TextPanel: Loading text content, clearing PDF mode');
     
+    // Set immediate fallback text to prevent loading screen
+    const immediateFallback = [
+      '',
+      'Romeo and Juliet',
+      'by William Shakespeare',
+      '',
+      'Loading...'
+    ];
+    setTextLines(immediateFallback);
+    
     // Clear PDF mode and data
     setIsPDFMode(false);
     setPdfData(null);
     setPdfFileName('');
     
     // Clear any PDF-related storage
-    sessionStorage.removeItem('explainer:pdfData');
-    sessionStorage.removeItem('explainer:pdfSource');
+    try {
+      sessionStorage.removeItem('explainer:pdfData');
+      sessionStorage.removeItem('explainer:pdfSource');
+    } catch (error) {
+      console.warn('TextPanel: Could not clear PDF storage:', error);
+    }
     
     // Get current title from localStorage or use prop as fallback
-    const currentTitle = localStorage.getItem('explainer:bookTitle') || title || 'Romeo and Juliet';
+    let currentTitle = 'Romeo and Juliet';
+    try {
+      currentTitle = localStorage.getItem('explainer:bookTitle') || title || 'Romeo and Juliet';
+    } catch (error) {
+      console.warn('TextPanel: Could not access localStorage for title:', error);
+    }
     
     // Check both sessionStorage and localStorage for text content
-    let savedText = sessionStorage.getItem('explainer:bookText');
-    if (!savedText) {
-      savedText = localStorage.getItem('explainer:bookText');
+    let savedText = null;
+    try {
+      savedText = sessionStorage.getItem('explainer:bookText');
+      if (!savedText) {
+        savedText = localStorage.getItem('explainer:bookText');
+      }
+    } catch (error) {
+      console.warn('TextPanel: Could not access storage for saved text:', error);
     }
     
     console.log('TextPanel: Text content check:', {
-      sessionStorageText: !!sessionStorage.getItem('explainer:bookText'),
-      localStorageText: !!localStorage.getItem('explainer:bookText'),
+      sessionStorageText: !!savedText,
       foundText: !!savedText,
       textLength: savedText ? savedText.length : 0,
       currentTitle
@@ -376,13 +399,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       console.log('TextPanel: Processing saved text, length:', savedText.length);
       const lines = splitLongLines(savedText);
       console.log('TextPanel: Split into lines:', lines.length);
-      
-      // Debug: Check for character names that might be broken
-      lines.forEach((line, index) => {
-        if (line.includes('FOURTH') || line.includes('CITIZEN')) {
-          console.log(`TextPanel: Line ${index}: "${line}"`);
-        }
-      });
       
       // Prepend title and author to the text
       const titleLines = [
@@ -395,14 +411,24 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       setTextLines([...titleLines, ...lines]);
     } else {
       // Fallback to Romeo and Juliet
-      fetch('/public-domain-texts/shakespeare-romeo-and-juliet.txt')
+      console.log('TextPanel: No saved text found, fetching Romeo and Juliet');
+      
+      // Add timeout to prevent infinite loading
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      fetch('/public-domain-texts/shakespeare-romeo-and-juliet.txt', {
+        signal: controller.signal
+      })
         .then(response => {
+          clearTimeout(timeoutId);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           return response.text();
         })
         .then(text => {
+          console.log('TextPanel: Successfully fetched text, length:', text.length);
           const lines = splitLongLines(text);
           // Prepend title and author to the text
           const titleLines = [
@@ -415,11 +441,22 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           setTextLines([...titleLines, ...lines]);
         })
         .catch(error => {
-          console.error('Error loading text:', error);
-          setTextLines(['Error loading text. Please try again.']);
+          clearTimeout(timeoutId);
+          console.error('TextPanel: Error loading text:', error);
+          // Set a fallback text instead of error message
+          const fallbackLines = [
+            '',
+            currentTitle,
+            'by William Shakespeare',
+            '',
+            'The text could not be loaded. Please check your internet connection and try again.',
+            '',
+            'If the problem persists, try refreshing the page.'
+          ];
+          setTextLines(fallbackLines);
         });
     }
-  }, []); // Removed title dependency to prevent recreation
+  }, [title]); // Added title dependency back
 
   // Search functionality
   const performSearch = useCallback((query) => {

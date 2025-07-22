@@ -6,26 +6,16 @@ const LandscapeSuggestion = () => {
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [hasShown, setHasShown] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-
-  // Set client flag on mount
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   // Check if we've already shown it in this session - do this first
   useEffect(() => {
-    if (isClient) {
-      const alreadyShown = sessionStorage.getItem('explainer:landscape-suggestion-shown');
-      if (alreadyShown) {
-        setHasShown(true);
-      }
+    const alreadyShown = sessionStorage.getItem('explainer:landscape-suggestion-shown');
+    if (alreadyShown) {
+      setHasShown(true);
     }
-  }, [isClient]);
+  }, []);
 
   useEffect(() => {
-    if (!isClient) return;
-    
     const checkOrientation = () => {
       // Check if it's a mobile device
       const isMobileDevice = window.innerWidth <= 1024 || 
@@ -58,19 +48,19 @@ const LandscapeSuggestion = () => {
       window.removeEventListener('resize', checkOrientation);
       window.removeEventListener('orientationchange', checkOrientation);
     };
-  }, [hasShown, isClient]);
+  }, [hasShown]);
 
   // Mark as shown when the suggestion appears
   useEffect(() => {
-    if (showSuggestion && isClient) {
+    if (showSuggestion) {
       setHasShown(true);
       // Store in sessionStorage so it doesn't show again in this session
       sessionStorage.setItem('explainer:landscape-suggestion-shown', 'true');
     }
-  }, [showSuggestion, isClient]);
+  }, [showSuggestion]);
 
-  // Don't render anything on server-side or if not showing
-  if (!isClient || !showSuggestion || !isMobile) {
+  // Don't render anything if not showing
+  if (!showSuggestion || !isMobile) {
     return null;
   }
 
