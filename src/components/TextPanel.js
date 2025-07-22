@@ -1416,10 +1416,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
                        (navigator.userAgent.includes('Safari') && navigator.userAgent.includes('Mobile') && !navigator.userAgent.includes('iPad')) ||
                        (typeof window !== 'undefined' && window.innerWidth <= 768 && window.innerHeight > window.innerWidth);
   
-  console.log('TextPanel: Device type - Mobile Phone:', isMobilePhone, 'textLines.length:', textLines.length, 'isPDFMode:', isPDFMode, 'userAgent:', navigator.userAgent);
+  // Desktop mode override - can be triggered by adding ?desktop=1 to URL
+  const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const forceDesktopMode = urlParams ? urlParams.get('desktop') === '1' : false;
   
-  // Only bypass loading screen for mobile phones (not tablets)
-  if (isMobilePhone && textLines.length === 0 && !isPDFMode) {
+  const shouldUseMobileBypass = isMobilePhone && !forceDesktopMode;
+  
+  console.log('TextPanel: Device type - Mobile Phone:', isMobilePhone, 'Force Desktop:', forceDesktopMode, 'Use Mobile Bypass:', shouldUseMobileBypass, 'textLines.length:', textLines.length, 'isPDFMode:', isPDFMode, 'userAgent:', navigator.userAgent);
+  
+  // Only bypass loading screen for mobile phones (not tablets) unless desktop mode is forced
+  if (shouldUseMobileBypass && textLines.length === 0 && !isPDFMode) {
     console.log('TextPanel: Mobile phone - showing content instead of loading screen');
     return (
       <div 
@@ -1434,15 +1440,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
             <p>by William Shakespeare</p>
             <p>Loading text...</p>
             <p>If this doesn't load, please refresh the page.</p>
+            <p><small>Mobile mode active. Add ?desktop=1 to URL to force desktop mode.</small></p>
           </div>
         </div>
       </div>
     );
   }
   
-  // Normal loading screen for desktop/tablet
+  // Normal loading screen for desktop/tablet (or mobile in desktop mode)
   if (textLines.length === 0 && !isPDFMode) {
-    console.log('TextPanel: Desktop/tablet - showing loading screen');
+    console.log('TextPanel: Desktop/tablet (or mobile in desktop mode) - showing loading screen');
     return (
       <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
         <div className={styles.loading}>Loading content...</div>
