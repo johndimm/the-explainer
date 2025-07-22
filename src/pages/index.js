@@ -551,6 +551,20 @@ export default function Home() {
         DEBUG: Page loaded at {new Date().toLocaleTimeString()}
       </div>
       
+      {/* CLIENT-SIDE DEBUG */}
+      <div style={{ 
+        position: 'fixed', 
+        top: '20px', 
+        left: '10px', 
+        background: 'orange', 
+        color: 'black', 
+        padding: '5px', 
+        fontSize: '10px', 
+        zIndex: 10000
+      }}>
+        Client: {typeof window !== 'undefined' ? 'YES' : 'NO'}
+      </div>
+      
       <LandscapeSuggestion />
       <div className={styles.page}>
         <div className={styles.container} ref={containerRef}>
