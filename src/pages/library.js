@@ -782,10 +782,15 @@ export default function Library() {
     }
   };
 
+  // Simple mobile-friendly click handler
+  const handleClick = (collectionKey, item, handler) => {
+    console.log('Library: Click detected');
+    handleItemClick(collectionKey, item, handler);
+  };
+
   // Mobile-friendly click handler with touch support
   const handleMobileClick = (collectionKey, item, handler) => {
     console.log('Library: Mobile click detected');
-    alert('Mobile click detected!'); // Test if clicks work
     handleItemClick(collectionKey, item, handler);
   };
 
@@ -1042,6 +1047,26 @@ export default function Library() {
         <div style={{ color: '#6b7280', fontSize: 12, marginBottom: 16 }}>
           💡 <strong>Tip:</strong> Upload text files (.txt) to analyze them with The Explainer.
         </div>
+        
+        {/* Test button for mobile debugging */}
+        <button
+          onClick={() => {
+            console.log('Test button clicked');
+            alert('Test button works!');
+          }}
+          style={{
+            background: '#dc2626',
+            color: 'white',
+            border: 'none',
+            borderRadius: 8,
+            padding: '10px 20px',
+            marginBottom: 16,
+            fontSize: 16,
+            cursor: 'pointer'
+          }}
+        >
+          🧪 Test Mobile Click
+        </button>
         
         {/* File upload UI */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 24, alignItems: 'center' }}>
