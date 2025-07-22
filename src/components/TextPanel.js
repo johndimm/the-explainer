@@ -1457,31 +1457,27 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     );
   }
   
-  // Normal loading screen for desktop/tablet (or mobile in desktop mode)
-  if (textLines.length === 0 && !isPDFMode) {
-    console.log('TextPanel: Desktop/tablet (or mobile in desktop mode) - showing loading screen');
-    console.log('TextPanel: Loading screen details:', {
-      textLinesLength: textLines.length,
-      isPDFMode,
-      userAgent: navigator.userAgent,
-      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
-      windowHeight: typeof window !== 'undefined' ? window.innerHeight : 'undefined'
-    });
-    
-    return (
-      <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
-        <div className={styles.loading}>
-          Loading content...
-          <br />
-          <small style={{ fontSize: '12px', color: '#666' }}>
-            Debug: textLines={textLines.length}, isPDFMode={isPDFMode ? 'true' : 'false'}
-            <br />
-            UserAgent: {navigator.userAgent.substring(0, 50)}...
-          </small>
-        </div>
-      </div>
-    );
-  }
+  // ALWAYS show debug info regardless of conditions
+  console.log('TextPanel: NOT showing loading screen - textLines.length:', textLines.length, 'isPDFMode:', isPDFMode);
+  
+  // Add visible debug info to the main content area
+  const debugInfo = (
+    <div style={{ 
+      position: 'fixed', 
+      top: '10px', 
+      right: '10px', 
+      background: 'red', 
+      color: 'white', 
+      padding: '10px', 
+      fontSize: '12px', 
+      zIndex: 9999,
+      maxWidth: '200px'
+    }}>
+      Debug: textLines={textLines.length}, isPDFMode={isPDFMode ? 'true' : 'false'}
+      <br />
+      UserAgent: {navigator.userAgent.substring(0, 30)}...
+    </div>
+  );
 
   // Render PDF viewer if in PDF mode
   if (isPDFMode && pdfData) {
@@ -1506,12 +1502,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
 
   // Render text content
   return (
-    <div 
-      key={`text-${title}-${textLines.length}`}
-      className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
-      style={{ '--panel-width': `${width}%` }}
-      ref={containerRef}
-    >
+    <>
+      {debugInfo}
+      <div 
+        key={`text-${title}-${textLines.length}`}
+        className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
+        style={{ '--panel-width': `${width}%` }}
+        ref={containerRef}
+      >
       {/* Search Interface */}
       <div className={styles.searchContainer}>
         <div className={styles.searchBar}>
@@ -1593,6 +1591,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         </div>
       )}
     </div>
+    </>
   );
 });
 
