@@ -536,6 +536,22 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
+      {/* IMMEDIATE DEBUG MESSAGE */}
+      <div style={{ 
+        position: 'fixed', 
+        top: '10px', 
+        left: '10px', 
+        background: 'green', 
+        color: 'white', 
+        padding: '10px', 
+        fontSize: '12px', 
+        zIndex: 10000,
+        maxWidth: '200px'
+      }}>
+        Main page loaded!<br />
+        UserAgent: {typeof window !== 'undefined' ? navigator.userAgent.substring(0, 30) : 'server'}...
+      </div>
+      
       <LandscapeSuggestion />
       <div className={styles.page}>
         <div className={styles.container} ref={containerRef}>
