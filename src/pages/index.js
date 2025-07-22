@@ -536,20 +536,19 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
-      {/* IMMEDIATE DEBUG MESSAGE */}
+      {/* BASIC DEBUG MESSAGE */}
       <div style={{ 
         position: 'fixed', 
-        top: '10px', 
-        left: '10px', 
-        background: 'green', 
-        color: 'white', 
-        padding: '10px', 
-        fontSize: '12px', 
+        top: '0px', 
+        left: '0px', 
+        background: 'yellow', 
+        color: 'black', 
+        padding: '5px', 
+        fontSize: '10px', 
         zIndex: 10000,
-        maxWidth: '200px'
+        width: '100%'
       }}>
-        Main page loaded!<br />
-        UserAgent: {typeof window !== 'undefined' ? navigator.userAgent.substring(0, 30) : 'server'}...
+        DEBUG: Page loaded at {new Date().toLocaleTimeString()}
       </div>
       
       <LandscapeSuggestion />
