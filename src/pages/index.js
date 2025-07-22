@@ -47,6 +47,18 @@ export default function Home() {
   const containerRef = useRef();
   const { data: session } = useSession();
 
+  // Set client flag on mount with fallback timeout
+  useEffect(() => {
+    setIsClient(true);
+    
+    // Fallback: force client mode after 2 seconds if still loading
+    const timeout = setTimeout(() => {
+      setIsClient(true);
+    }, 2000);
+    
+    return () => clearTimeout(timeout);
+  }, []);
+
   // Load divider positions from localStorage
   const loadDividerPosition = useCallback((orientation) => {
     try {
@@ -82,11 +94,6 @@ export default function Home() {
     } catch (error) {
       console.warn('Failed to save divider position:', error);
     }
-  }, []);
-
-  // Set client flag on mount
-  useEffect(() => {
-    setIsClient(true);
   }, []);
 
   // Responsive: update layout mode on resize/orientation
