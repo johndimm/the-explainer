@@ -463,7 +463,6 @@ export default function Library() {
   const handleReadGutenberg = async (book) => {
     try {
       console.log('Library: Loading Gutenberg book:', book);
-      alert('Starting to load book...'); // Simple test
       setLoadingId(book.id);
       const gutenbergUrl = `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`;
       const apiUrl = `/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl)}`;

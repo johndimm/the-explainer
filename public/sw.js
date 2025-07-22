@@ -35,21 +35,23 @@ self.addEventListener('install', (event) => {
 
 // Fetch event - serve from cache when offline with error handling
 self.addEventListener('fetch', (event) => {
-  // TEMPORARILY DISABLED FOR TESTING
-  return;
-  
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
     return;
   }
 
-  // Skip API requests
+  // Skip API requests - these should always go to network
   if (event.request.url.includes('/api/')) {
     return;
   }
 
   // Skip root path - always fetch fresh
   if (event.request.url.endsWith('/') || event.request.url.endsWith('/index.html')) {
+    return;
+  }
+
+  // Skip library page on mobile - always fetch fresh to avoid caching issues
+  if (event.request.url.includes('/library')) {
     return;
   }
 
