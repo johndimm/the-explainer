@@ -1,12 +1,25 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import Head from "next/head";
+import { useRouter } from 'next/router';
 import styles from '@/styles/Home.module.css';
 
 export default function Home() {
   const [debugTime, setDebugTime] = useState('loading...');
+  const router = useRouter();
 
   useEffect(() => {
     setDebugTime(new Date().toLocaleTimeString());
+    
+    // Force bypass service worker cache
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      // Unregister service worker temporarily
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        registrations.forEach(registration => {
+          registration.unregister();
+          console.log('Service worker unregistered for main page');
+        });
+      });
+    }
   }, []);
 
   return (
@@ -40,6 +53,7 @@ export default function Home() {
         <div className={styles.container}>
           <h1>Main App</h1>
           <p>If you see this, the main page is working!</p>
+          <p>Service worker has been disabled for this page.</p>
         </div>
       </div>
     </>
