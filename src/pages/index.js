@@ -42,22 +42,11 @@ export default function Home() {
   const [pendingSelection, setPendingSelection] = useState(null);
   const [textPanelKey, setTextPanelKey] = useState(0); // Key to force re-mounting
   const [responseLength, setResponseLength] = useState('medium');
-  const [isClient, setIsClient] = useState(false);
   const textPanelRef = useRef();
   const containerRef = useRef();
   const { data: session } = useSession();
 
-  // Set client flag on mount with fallback timeout
-  useEffect(() => {
-    setIsClient(true);
-    
-    // Fallback: force client mode after 2 seconds if still loading
-    const timeout = setTimeout(() => {
-      setIsClient(true);
-    }, 2000);
-    
-    return () => clearTimeout(timeout);
-  }, []);
+
 
   // Load divider positions from localStorage
   const loadDividerPosition = useCallback((orientation) => {
@@ -98,8 +87,6 @@ export default function Home() {
 
   // Responsive: update layout mode on resize/orientation
   useEffect(() => {
-    if (!isClient) return;
-    
     function updateLayout() {
       const newLayoutMode = getLayoutMode();
       setLayoutMode(newLayoutMode);
@@ -120,7 +107,7 @@ export default function Home() {
       window.removeEventListener('resize', updateLayout);
       window.removeEventListener('orientationchange', updateLayout);
     };
-  }, [loadDividerPosition, isClient]);
+  }, [loadDividerPosition]);
 
   // Load book title from localStorage
   useEffect(() => {
@@ -538,24 +525,7 @@ export default function Home() {
     }
   }, [session?.user?.email, signIn]);
 
-  // Show loading screen until client-side is ready
-  if (!isClient) {
-    return (
-      <>
-        <Head>
-          <title>The Explainer - Understand Difficult Texts</title>
-          <meta name="description" content="A progressive app to help you understand difficult texts line by line" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <div className={styles.page}>
-          <div className={styles.container} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-            
-            <div>Loading content...</div>
-          </div>
-        </div>
-      </>
-    );
-  }
+
 
   return (
     <>
