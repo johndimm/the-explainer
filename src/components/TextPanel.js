@@ -554,20 +554,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
                          (typeof window !== 'undefined' && window.innerWidth <= 768 && window.innerHeight > window.innerWidth);
     console.log('TextPanel: Mobile phone detected:', isMobilePhone);
     
-    // IMMEDIATE text loading for all devices to prevent loading screen
-    console.log('TextPanel: Immediately loading text content for all devices');
-    setTimeout(() => {
-      loadTextContent();
-    }, 100); // Small delay to ensure component is mounted
-    
-    // On mobile, immediately load text content to avoid loading screen
-    if (isMobilePhone) {
-      console.log('TextPanel: Mobile phone - immediately loading text content');
-      setTimeout(() => {
-        loadTextContent();
-      }, 100); // Small delay to ensure component is mounted
-    }
-    
     // Add a timeout to force text loading if nothing happens
     const forceLoadTimeout = setTimeout(() => {
       if (textLines.length <= 5 && !isPDFMode) { // Check for just the fallback text
@@ -1481,12 +1467,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
       windowHeight: typeof window !== 'undefined' ? window.innerHeight : 'undefined'
     });
-    
-    // Force text loading after a delay to see if it helps
-    setTimeout(() => {
-      console.log('TextPanel: Loading screen - forcing text load after delay');
-      loadTextContent();
-    }, 2000);
     
     return (
       <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
