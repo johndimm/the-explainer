@@ -11,11 +11,11 @@
   overflow: hidden;
   transition: width 0.2s ease;
   flex-shrink: 0;
-  font-family: Georgia, serif;
-  font-weight: 300;
-  color: #18181b;
-  font-size: 15px;
-  line-height: 1.4;
+  font-family: Georgia, serif !important;
+  font-weight: 300 !important;
+  color: #18181b !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
 }
 
 /* Search Interface */
@@ -278,6 +278,8 @@
     flex: none;
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
+    font-family: Georgia, serif !important;
+    font-size: 15px !important;
   }
 
   .textContainer {
@@ -303,9 +305,10 @@
   }
 
   .lineContent {
-    font-size: 15px;
-    line-height: 1.2;
-    font-weight: 700;
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    font-family: Georgia, serif !important;
     word-break: break-word;
     white-space: normal;
     max-width: 100%;
@@ -326,7 +329,8 @@
 
 @media (max-width: 480px) {
   .lineContent {
-    font-size: 13px;
+    font-size: 13px !important;
+    font-family: Georgia, serif !important;
   }
   
   .lineNumber {
