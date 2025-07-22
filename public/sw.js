@@ -35,6 +35,9 @@ self.addEventListener('install', (event) => {
 
 // Fetch event - serve from cache when offline with error handling
 self.addEventListener('fetch', (event) => {
+  // TEMPORARILY DISABLED FOR TESTING
+  return;
+  
   // Skip non-GET requests
   if (event.request.method !== 'GET') {
     return;
