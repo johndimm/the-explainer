@@ -457,16 +457,13 @@ export default function Library() {
     }
   }, []);
 
-  // Detect mobile device
-  useEffect(() => {
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    console.log('Library: Mobile device detected:', isMobile);
-  }, []);
+
 
   // Handlers for each collection
   const handleReadGutenberg = async (book) => {
     try {
       console.log('Library: Loading Gutenberg book:', book);
+      alert('Starting to load book...'); // Simple test
       setLoadingId(book.id);
       const gutenbergUrl = `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`;
       const apiUrl = `/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl)}`;
@@ -782,17 +779,7 @@ export default function Library() {
     }
   };
 
-  // Simple mobile-friendly click handler
-  const handleClick = (collectionKey, item, handler) => {
-    console.log('Library: Click detected');
-    handleItemClick(collectionKey, item, handler);
-  };
 
-  // Mobile-friendly click handler with touch support
-  const handleMobileClick = (collectionKey, item, handler) => {
-    console.log('Library: Mobile click detected');
-    handleItemClick(collectionKey, item, handler);
-  };
 
   // Reusable style object for clickable items
   const getClickableItemStyle = (isSelected, isLoading) => ({
@@ -812,11 +799,7 @@ export default function Library() {
     WebkitUserSelect: 'none',
     MozUserSelect: 'none',
     msUserSelect: 'none',
-    // Mobile-friendly touch target
-    minHeight: '44px',
-    padding: '8px 0',
-    WebkitTapHighlightColor: 'transparent',
-    touchAction: 'manipulation',
+
   });
 
   // Reusable style object for item containers
@@ -1048,25 +1031,7 @@ export default function Library() {
           💡 <strong>Tip:</strong> Upload text files (.txt) to analyze them with The Explainer.
         </div>
         
-        {/* Test button for mobile debugging */}
-        <button
-          onClick={() => {
-            console.log('Test button clicked');
-            alert('Test button works!');
-          }}
-          style={{
-            background: '#dc2626',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            padding: '10px 20px',
-            marginBottom: 16,
-            fontSize: 16,
-            cursor: 'pointer'
-          }}
-        >
-          🧪 Test Mobile Click
-        </button>
+
         
         {/* File upload UI */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 24, alignItems: 'center' }}>
