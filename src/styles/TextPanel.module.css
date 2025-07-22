@@ -14,8 +14,8 @@
   font-family: Georgia, serif;
   font-weight: 300;
   color: #18181b;
-  font-size: 17px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.4;
 }
 
 /* Search Interface */
@@ -303,8 +303,8 @@
   }
 
   .lineContent {
-    font-size: 17px;
-    line-height: 1.1;
+    font-size: 15px;
+    line-height: 1.2;
     font-weight: 700;
     word-break: break-word;
     white-space: normal;
@@ -326,7 +326,7 @@
 
 @media (max-width: 480px) {
   .lineContent {
-    font-size: 14px;
+    font-size: 13px;
   }
   
   .lineNumber {

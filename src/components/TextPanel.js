@@ -1457,27 +1457,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     );
   }
   
-  // ALWAYS show debug info regardless of conditions
-  console.log('TextPanel: NOT showing loading screen - textLines.length:', textLines.length, 'isPDFMode:', isPDFMode);
-  
-  // Add visible debug info to the main content area
-  const debugInfo = (
-    <div style={{ 
-      position: 'fixed', 
-      top: '10px', 
-      right: '10px', 
-      background: 'red', 
-      color: 'white', 
-      padding: '10px', 
-      fontSize: '12px', 
-      zIndex: 9999,
-      maxWidth: '200px'
-    }}>
-      Debug: textLines={textLines.length}, isPDFMode={isPDFMode ? 'true' : 'false'}
-      <br />
-      UserAgent: {navigator.userAgent.substring(0, 30)}...
-    </div>
-  );
+
 
   // Render PDF viewer if in PDF mode
   if (isPDFMode && pdfData) {
@@ -1503,7 +1483,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   // Render text content
   return (
     <>
-      {debugInfo}
       <div 
         key={`text-${title}-${textLines.length}`}
         className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
