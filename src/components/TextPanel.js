@@ -350,7 +350,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
 
   // Helper function to load text content
   const loadTextContent = useCallback(() => {
-    console.log('TextPanel: Loading text content, clearing PDF mode');
+    console.log('TextPanel: loadTextContent called - starting text loading process');
     
     // Set immediate fallback text to prevent loading screen
     const immediateFallback = [
@@ -360,6 +360,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       '',
       'Loading...'
     ];
+    console.log('TextPanel: Setting immediate fallback text');
     setTextLines(immediateFallback);
     
     // Clear PDF mode and data
@@ -1425,8 +1426,24 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   console.log('TextPanel: Device type - Mobile Phone:', isMobilePhone, 'Force Desktop:', forceDesktopMode, 'Use Mobile Bypass:', shouldUseMobileBypass, 'textLines.length:', textLines.length, 'isPDFMode:', isPDFMode, 'userAgent:', navigator.userAgent);
   
   // Only bypass loading screen for mobile phones (not tablets) unless desktop mode is forced
-  if (shouldUseMobileBypass && textLines.length === 0 && !isPDFMode) {
+  // TEMPORARILY DISABLED: if (shouldUseMobileBypass && textLines.length === 0 && !isPDFMode) {
+  if (false && shouldUseMobileBypass && textLines.length === 0 && !isPDFMode) {
     console.log('TextPanel: Mobile phone - showing content instead of loading screen');
+    console.log('TextPanel: Mobile bypass details:', {
+      shouldUseMobileBypass,
+      textLinesLength: textLines.length,
+      isPDFMode,
+      userAgent: navigator.userAgent,
+      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
+      windowHeight: typeof window !== 'undefined' ? window.innerHeight : 'undefined'
+    });
+    
+    // Force text loading immediately in mobile bypass
+    setTimeout(() => {
+      console.log('TextPanel: Mobile bypass - forcing text load');
+      loadTextContent();
+    }, 500);
+    
     return (
       <div 
         key={`text-${title}-${textLines.length}`}
@@ -1441,6 +1458,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
             <p>Loading text...</p>
             <p>If this doesn't load, please refresh the page.</p>
             <p><small>Mobile mode active. Add ?desktop=1 to URL to force desktop mode.</small></p>
+            <p><small>Debug: textLines.length = {textLines.length}</small></p>
           </div>
         </div>
       </div>
