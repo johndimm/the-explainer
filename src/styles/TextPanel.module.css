@@ -14,8 +14,8 @@
   font-family: Georgia, serif !important;
   font-weight: 300 !important;
   color: #18181b !important;
-  font-size: 15px !important;
-  line-height: 1.4 !important;
+  font-size: 12px !important;
+  line-height: 1.3 !important;
 }
 
 /* Search Interface */
@@ -279,7 +279,7 @@
     border-right: none;
     border-bottom: 1px solid #e2e8f0;
     font-family: Georgia, serif !important;
-    font-size: 15px !important;
+    font-size: 12px !important;
   }
 
   .textContainer {
@@ -290,8 +290,8 @@
   }
 
   .line {
-    padding: 4px 16px;
-    min-height: 36px;
+    padding: 2px 12px;
+    min-height: 28px;
     width: 100%;
     word-break: break-word;
     align-items: flex-start;
@@ -305,13 +305,14 @@
   }
 
   .lineContent {
-    font-size: 15px !important;
+    font-size: 12px !important;
     line-height: 1.2 !important;
-    font-weight: 700 !important;
+    font-weight: 400 !important;
     font-family: Georgia, serif !important;
     word-break: break-word;
     white-space: normal;
     max-width: 100%;
+    overflow-wrap: break-word;
   }
   
   /* Prevent character names from breaking on mobile */
@@ -329,8 +330,9 @@
 
 @media (max-width: 480px) {
   .lineContent {
-    font-size: 13px !important;
+    font-size: 11px !important;
     font-family: Georgia, serif !important;
+    line-height: 1.1 !important;
   }
   
   .lineNumber {
