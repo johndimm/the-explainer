@@ -1470,7 +1470,15 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     
     return (
       <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
-        <div className={styles.loading}>Loading content...</div>
+        <div className={styles.loading}>
+          Loading content...
+          <br />
+          <small style={{ fontSize: '12px', color: '#666' }}>
+            Debug: textLines={textLines.length}, isPDFMode={isPDFMode ? 'true' : 'false'}
+            <br />
+            UserAgent: {navigator.userAgent.substring(0, 50)}...
+          </small>
+        </div>
       </div>
     );
   }
