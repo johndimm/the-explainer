@@ -20,7 +20,7 @@ export default function Guide() {
       
       <div className={styles.container}>
         <div className={styles.header}>
-          <a href="/" className={styles.backLink}>
+          <a href="/home" className={styles.backLink}>
             <ArrowLeft size={20} />
             {t('backToApp', lang)}
           </a>

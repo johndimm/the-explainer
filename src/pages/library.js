@@ -967,7 +967,7 @@ export default function Library() {
           </div>
         )}
         <div style={{ marginBottom: 16 }}>
-          <a href="/" style={{ 
+          <a href="/home" style={{ 
             display: 'inline-flex', 
             alignItems: 'center', 
             gap: 8,
