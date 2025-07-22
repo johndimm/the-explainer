@@ -536,30 +536,22 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
-      {/* TEMPORARY SIMPLE TEST */}
+      {/* DEBUG MESSAGE */}
       <div style={{ 
         position: 'fixed', 
         top: '0px', 
         left: '0px', 
         right: '0px', 
-        bottom: '0px', 
-        background: 'red', 
+        background: 'blue', 
         color: 'white', 
-        padding: '20px', 
-        fontSize: '20px', 
+        padding: '10px', 
+        fontSize: '14px', 
         zIndex: 10000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         textAlign: 'center'
       }}>
-        MAIN PAGE LOADED!<br />
-        Time: {new Date().toLocaleTimeString()}<br />
-        UserAgent: {typeof window !== 'undefined' ? navigator.userAgent.substring(0, 50) : 'server'}...
+        MAIN PAGE LOADING - {new Date().toLocaleTimeString()}
       </div>
       
-      {/* ORIGINAL CONTENT COMMENTED OUT */}
-      {/*
       <LandscapeSuggestion />
       <div className={styles.page}>
         <div className={styles.container} ref={containerRef}>
@@ -585,18 +577,6 @@ export default function Home() {
                 />
               </div>
               <div style={{ height: `var(--panel-height, 50vh)`, width: '100%', flex: 'none', marginTop: 6 }}>
-                <div style={{ 
-                  position: 'fixed', 
-                  top: '50px', 
-                  left: '10px', 
-                  background: 'blue', 
-                  color: 'white', 
-                  padding: '5px', 
-                  fontSize: '10px', 
-                  zIndex: 9999 
-                }}>
-                  Layout: {layoutMode.mode}
-                </div>
                 <TextPanel 
                   key={textPanelKey}
                   ref={textPanelRef}
@@ -664,7 +644,6 @@ export default function Home() {
       />
       
       <InstallPrompt />
-      */}
     </>
   );
 }
