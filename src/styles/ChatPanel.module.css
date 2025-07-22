@@ -467,12 +467,14 @@
 @media (max-width: 768px) {
   .header h2 {
     font-size: 15px;
+    line-height: 1.2;
   }
   
   .headerButton {
     font-size: 11px;
     height: 28px;
     padding: 4px 8px;
+    line-height: 1.2;
   }
   
   .buttonText {
@@ -482,16 +484,19 @@
   .lineCount {
     font-size: 11px;
     padding: 2px 6px;
+    line-height: 1.1;
   }
   
   .message {
     padding: 12px;
     font-size: 13px;
+    line-height: 1.3;
   }
   
   .input {
     padding: 8px 12px;
     font-size: 12px;
+    line-height: 1.2;
   }
   
   .sendButton {
@@ -509,12 +514,14 @@
 @media (max-width: 480px) {
   .header h2 {
     font-size: 13px;
+    line-height: 1.1;
   }
   
   .headerButton {
     font-size: 10px;
     height: 24px;
     padding: 3px 6px;
+    line-height: 1.1;
   }
   
   .buttonText {
@@ -524,15 +531,18 @@
   .lineCount {
     font-size: 10px;
     padding: 1px 4px;
+    line-height: 1.0;
   }
   
   .message {
     padding: 8px;
     font-size: 12px;
+    line-height: 1.2;
   }
   
   .input {
     padding: 6px 10px;
     font-size: 11px;
+    line-height: 1.1;
   }
 }
