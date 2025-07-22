@@ -302,6 +302,10 @@
     font-size: 12px !important;
     width: 25px !important;
     margin-right: 4px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    flex-shrink: 0 !important;
   }
 
   .lineContent {
@@ -343,8 +347,12 @@
   
   .lineNumber {
     font-size: 10px;
-    width: 22px;
-    margin-right: 4px;
+    width: 20px;
+    margin-right: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
   }
   
   .line {
@@ -364,8 +372,12 @@
   
   .lineNumber {
     font-size: 9px;
-    width: 20px;
-    margin-right: 3px;
+    width: 18px;
+    margin-right: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
   }
   
   .line {
