@@ -554,6 +554,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
                          (typeof window !== 'undefined' && window.innerWidth <= 768 && window.innerHeight > window.innerWidth);
     console.log('TextPanel: Mobile phone detected:', isMobilePhone);
     
+    // IMMEDIATE text loading for all devices to prevent loading screen
+    console.log('TextPanel: Immediately loading text content for all devices');
+    setTimeout(() => {
+      loadTextContent();
+    }, 100); // Small delay to ensure component is mounted
+    
     // On mobile, immediately load text content to avoid loading screen
     if (isMobilePhone) {
       console.log('TextPanel: Mobile phone - immediately loading text content');
@@ -1468,6 +1474,20 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   // Normal loading screen for desktop/tablet (or mobile in desktop mode)
   if (textLines.length === 0 && !isPDFMode) {
     console.log('TextPanel: Desktop/tablet (or mobile in desktop mode) - showing loading screen');
+    console.log('TextPanel: Loading screen details:', {
+      textLinesLength: textLines.length,
+      isPDFMode,
+      userAgent: navigator.userAgent,
+      windowWidth: typeof window !== 'undefined' ? window.innerWidth : 'undefined',
+      windowHeight: typeof window !== 'undefined' ? window.innerHeight : 'undefined'
+    });
+    
+    // Force text loading after a delay to see if it helps
+    setTimeout(() => {
+      console.log('TextPanel: Loading screen - forcing text load after delay');
+      loadTextContent();
+    }, 2000);
+    
     return (
       <div className={`${styles.panel} ${isShakespearePlay(title) ? styles.shakespeare : ''}`} style={{ '--panel-width': `${width}%` }}>
         <div className={styles.loading}>Loading content...</div>
