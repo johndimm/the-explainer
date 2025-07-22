@@ -469,7 +469,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', book.title);
       saveRecentBook(book);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load book text.');
     } finally {
@@ -496,7 +496,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title} by William Shakespeare`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -522,7 +522,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title} by ${work.author}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -548,7 +548,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -574,7 +574,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -600,7 +600,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -632,7 +632,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -664,7 +664,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -696,7 +696,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -714,7 +714,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this document.');
     } finally {
@@ -745,7 +745,7 @@ export default function Library() {
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', `${work.title}${work.author ? ' by ' + work.author : ''}`);
       saveRecentBook(work);
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       alert('Could not load this work.');
     } finally {
@@ -860,7 +860,7 @@ export default function Library() {
       if (!text || text.length < 100) throw new Error('The file appears to be empty or too short.');
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', customUrl.trim());
-      router.push('/');
+      router.push('/home');
     } catch (err) {
       setCustomError(err.message || 'Failed to load the text.');
     } finally {
@@ -889,8 +889,8 @@ export default function Library() {
         sessionStorage.setItem('explainer:bookText', text);
         sessionStorage.setItem('explainer:bookTitle', file.name);
         sessionStorage.removeItem('explainer:pdfData'); // Clear any previous PDF data
-        console.log('Library: Text file stored in sessionStorage, navigating to /');
-        router.push('/');
+        console.log('Library: Text file stored in sessionStorage, navigating to /home');
+        router.push('/home');
       } else {
         // Only text files are supported
         throw new Error('Only .txt files are supported. Please select a text file.');

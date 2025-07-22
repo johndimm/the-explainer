@@ -108,7 +108,7 @@ export default function PDFViewerPage() {
         coordinates: pendingSelection.metadata?.coordinates
       }));
       
-      router.push('/');
+      router.push('/home');
     } catch (error) {
       console.error('Error handling text selection:', error);
       setIsLoading(false);

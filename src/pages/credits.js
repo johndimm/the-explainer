@@ -13,7 +13,7 @@ export default function Credits() {
   };
 
   const handleBackToApp = () => {
-    router.push('/');
+    router.push('/home');
   };
 
   if (!session?.user?.email) {

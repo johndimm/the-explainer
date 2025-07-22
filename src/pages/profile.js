@@ -255,7 +255,7 @@ export default function Profile() {
   const handleBookClick = async (book) => {
     try {
       localStorage.setItem('explainer:current-text', book.title);
-      router.push('/');
+      router.push('/home');
     } catch (error) {
       console.error('Error loading book:', error);
     }
