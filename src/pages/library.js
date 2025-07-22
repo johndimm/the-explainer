@@ -459,19 +459,24 @@ export default function Library() {
 
   // Handlers for each collection
   const handleReadGutenberg = async (book) => {
-    setLoadingId(book.id);
-    const gutenbergUrl = `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`;
-    const apiUrl = `/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl)}`;
     try {
+      console.log('Library: Loading Gutenberg book:', book);
+      setLoadingId(book.id);
+      const gutenbergUrl = `https://www.gutenberg.org/cache/epub/${book.id}/pg${book.id}.txt`;
+      const apiUrl = `/api/fetch-gutenberg?url=${encodeURIComponent(gutenbergUrl)}`;
+      console.log('Library: Fetching from:', apiUrl);
       const res = await fetch(apiUrl);
-      if (!res.ok) throw new Error('Failed to fetch book text');
+      if (!res.ok) throw new Error(`Failed to fetch book text: ${res.status} ${res.statusText}`);
       const text = await res.text();
+      console.log('Library: Book text loaded, length:', text.length);
       localStorage.setItem('explainer:bookText', text);
       localStorage.setItem('explainer:bookTitle', book.title);
       saveRecentBook(book);
+      console.log('Library: Navigating to /home');
       router.push('/home');
     } catch (err) {
-      alert('Could not load book text.');
+      console.error('Library: Error loading Gutenberg book:', err);
+      alert(`Could not load book text: ${err.message}`);
     } finally {
       setLoadingId(null);
     }
@@ -755,14 +760,20 @@ export default function Library() {
 
   // Helper function to handle item selection and loading
   const handleItemClick = (collectionKey, item, handler) => {
-    // Prevent text selection
-    if (window.getSelection) {
-      window.getSelection().removeAllRanges();
+    try {
+      console.log('Library: Item clicked:', { collectionKey, item, handler: handler.name });
+      // Prevent text selection
+      if (window.getSelection) {
+        window.getSelection().removeAllRanges();
+      }
+      // Set the selected item
+      setSelectedItem({ collectionKey, itemId: item.id });
+      // Call the original handler
+      handler(item);
+    } catch (error) {
+      console.error('Library: Error in handleItemClick:', error);
+      alert('Error loading book. Please try again.');
     }
-    // Set the selected item
-    setSelectedItem({ collectionKey, itemId: item.id });
-    // Call the original handler
-    handler(item);
   };
 
   // Reusable style object for clickable items
