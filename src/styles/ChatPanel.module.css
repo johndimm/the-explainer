@@ -462,3 +462,77 @@
     gap: 4px;
   }
 }
+
+/* Mobile font size adjustments for better content density */
+@media (max-width: 768px) {
+  .header h2 {
+    font-size: 15px;
+  }
+  
+  .headerButton {
+    font-size: 11px;
+    height: 28px;
+    padding: 4px 8px;
+  }
+  
+  .buttonText {
+    max-width: 60px;
+  }
+  
+  .lineCount {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+  
+  .message {
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .input {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .sendButton {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .saveButtonBottom {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Extra small mobile adjustments */
+@media (max-width: 480px) {
+  .header h2 {
+    font-size: 13px;
+  }
+  
+  .headerButton {
+    font-size: 10px;
+    height: 24px;
+    padding: 3px 6px;
+  }
+  
+  .buttonText {
+    max-width: 50px;
+  }
+  
+  .lineCount {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+  
+  .message {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .input {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}
