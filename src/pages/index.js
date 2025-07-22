@@ -561,6 +561,18 @@ export default function Home() {
                 />
               </div>
               <div style={{ height: `var(--panel-height, 50vh)`, width: '100%', flex: 'none', marginTop: 6 }}>
+                <div style={{ 
+                  position: 'fixed', 
+                  top: '50px', 
+                  left: '10px', 
+                  background: 'blue', 
+                  color: 'white', 
+                  padding: '5px', 
+                  fontSize: '10px', 
+                  zIndex: 9999 
+                }}>
+                  Layout: {layoutMode.mode}
+                </div>
                 <TextPanel 
                   key={textPanelKey}
                   ref={textPanelRef}
