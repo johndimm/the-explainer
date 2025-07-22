@@ -457,6 +457,12 @@ export default function Library() {
     }
   }, []);
 
+  // Detect mobile device
+  useEffect(() => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    console.log('Library: Mobile device detected:', isMobile);
+  }, []);
+
   // Handlers for each collection
   const handleReadGutenberg = async (book) => {
     try {
@@ -776,6 +782,13 @@ export default function Library() {
     }
   };
 
+  // Mobile-friendly click handler with touch support
+  const handleMobileClick = (collectionKey, item, handler) => {
+    console.log('Library: Mobile click detected');
+    alert('Mobile click detected!'); // Test if clicks work
+    handleItemClick(collectionKey, item, handler);
+  };
+
   // Reusable style object for clickable items
   const getClickableItemStyle = (isSelected, isLoading) => ({
     color: isSelected ? '#1d4ed8' : 'black',
@@ -794,6 +807,11 @@ export default function Library() {
     WebkitUserSelect: 'none',
     MozUserSelect: 'none',
     msUserSelect: 'none',
+    // Mobile-friendly touch target
+    minHeight: '44px',
+    padding: '8px 0',
+    WebkitTapHighlightColor: 'transparent',
+    touchAction: 'manipulation',
   });
 
   // Reusable style object for item containers
