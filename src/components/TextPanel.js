@@ -548,12 +548,14 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     console.log('TextPanel: Starting PDF detection...');
     
     // Detect if we're on mobile
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    console.log('TextPanel: Mobile device detected:', isMobileDevice);
+    const isMobilePhone = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS|FxiOS/i.test(navigator.userAgent) || 
+                         (navigator.userAgent.includes('Safari') && navigator.userAgent.includes('Mobile') && !navigator.userAgent.includes('iPad')) ||
+                         (typeof window !== 'undefined' && window.innerWidth <= 768 && window.innerHeight > window.innerWidth);
+    console.log('TextPanel: Mobile phone detected:', isMobilePhone);
     
     // On mobile, immediately load text content to avoid loading screen
-    if (isMobileDevice) {
-      console.log('TextPanel: Mobile device - immediately loading text content');
+    if (isMobilePhone) {
+      console.log('TextPanel: Mobile phone - immediately loading text content');
       setTimeout(() => {
         loadTextContent();
       }, 100); // Small delay to ensure component is mounted
@@ -565,7 +567,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         console.log('TextPanel: Force loading text due to timeout');
         loadTextContent();
       }
-    }, isMobileDevice ? 2000 : 3000); // Shorter timeout for mobile
+    }, isMobilePhone ? 2000 : 3000); // Shorter timeout for mobile
     
     // Check for PDF data first
     const pdfSource = sessionStorage.getItem('explainer:pdfSource');
@@ -1410,13 +1412,15 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   }, []);
 
   // Early return after all hooks
-  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isMobilePhone = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS|FxiOS/i.test(navigator.userAgent) || 
+                       (navigator.userAgent.includes('Safari') && navigator.userAgent.includes('Mobile') && !navigator.userAgent.includes('iPad')) ||
+                       (typeof window !== 'undefined' && window.innerWidth <= 768 && window.innerHeight > window.innerWidth);
   
-  console.log('TextPanel: Device type - Mobile:', isMobileDevice, 'textLines.length:', textLines.length, 'isPDFMode:', isPDFMode);
+  console.log('TextPanel: Device type - Mobile Phone:', isMobilePhone, 'textLines.length:', textLines.length, 'isPDFMode:', isPDFMode, 'userAgent:', navigator.userAgent);
   
-  // Only bypass loading screen for mobile devices
-  if (isMobileDevice && textLines.length === 0 && !isPDFMode) {
-    console.log('TextPanel: Mobile device - showing content instead of loading screen');
+  // Only bypass loading screen for mobile phones (not tablets)
+  if (isMobilePhone && textLines.length === 0 && !isPDFMode) {
+    console.log('TextPanel: Mobile phone - showing content instead of loading screen');
     return (
       <div 
         key={`text-${title}-${textLines.length}`}
