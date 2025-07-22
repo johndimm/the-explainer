@@ -607,31 +607,27 @@ export default function Home() {
         </div>
       </div>
       
-      {isClient && (
-        <PaywallModal 
-          isOpen={showPaywall}
-          onClose={() => setShowPaywall(false)}
-          paywallData={paywallData}
-          session={session}
-        />
-      )}
+      <PaywallModal 
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        paywallData={paywallData}
+        session={session}
+      />
       
-      {isClient && (
-        <ExplanationConfirmDialog
-          isOpen={showConfirmDialog}
-          onClose={() => {
-            setShowConfirmDialog(false);
-            setPendingSelection(null);
-          }}
-          onConfirm={handleConfirmExplanation}
-          selectedText={pendingSelection?.text || ''}
-          isLoading={isLoading}
-          responseLength={responseLength}
-          onResponseLengthChange={setResponseLength}
-        />
-      )}
+      <ExplanationConfirmDialog
+        isOpen={showConfirmDialog}
+        onClose={() => {
+          setShowConfirmDialog(false);
+          setPendingSelection(null);
+        }}
+        onConfirm={handleConfirmExplanation}
+        selectedText={pendingSelection?.text || ''}
+        isLoading={isLoading}
+        responseLength={responseLength}
+        onResponseLengthChange={setResponseLength}
+      />
       
-      {isClient && <InstallPrompt />}
+      <InstallPrompt />
     </>
   );
 }
