@@ -536,35 +536,30 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
-      {/* BASIC DEBUG MESSAGE */}
+      {/* TEMPORARY SIMPLE TEST */}
       <div style={{ 
         position: 'fixed', 
         top: '0px', 
         left: '0px', 
-        background: 'yellow', 
-        color: 'black', 
-        padding: '5px', 
-        fontSize: '10px', 
+        right: '0px', 
+        bottom: '0px', 
+        background: 'red', 
+        color: 'white', 
+        padding: '20px', 
+        fontSize: '20px', 
         zIndex: 10000,
-        width: '100%'
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center'
       }}>
-        DEBUG: Page loaded at {new Date().toLocaleTimeString()}
+        MAIN PAGE LOADED!<br />
+        Time: {new Date().toLocaleTimeString()}<br />
+        UserAgent: {typeof window !== 'undefined' ? navigator.userAgent.substring(0, 50) : 'server'}...
       </div>
       
-      {/* CLIENT-SIDE DEBUG */}
-      <div style={{ 
-        position: 'fixed', 
-        top: '20px', 
-        left: '10px', 
-        background: 'orange', 
-        color: 'black', 
-        padding: '5px', 
-        fontSize: '10px', 
-        zIndex: 10000
-      }}>
-        Client: {typeof window !== 'undefined' ? 'YES' : 'NO'}
-      </div>
-      
+      {/* ORIGINAL CONTENT COMMENTED OUT */}
+      {/*
       <LandscapeSuggestion />
       <div className={styles.page}>
         <div className={styles.container} ref={containerRef}>
@@ -669,6 +664,7 @@ export default function Home() {
       />
       
       <InstallPrompt />
+      */}
     </>
   );
 }
