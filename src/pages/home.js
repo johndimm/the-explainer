@@ -198,20 +198,23 @@ export default function Home() {
   }, []);
 
   const handleTextSelection = useCallback((selection) => {
-    // Accepts { text, speaker }
+    // Accepts { text, speaker, act, scene, charactersOnStage }
     const selectedText = typeof selection === 'string' ? selection : selection.text;
     const speaker = typeof selection === 'object' && selection.speaker ? selection.speaker : null;
+    const act = typeof selection === 'object' && selection.act ? selection.act : null;
+    const scene = typeof selection === 'object' && selection.scene ? selection.scene : null;
+    const charactersOnStage = typeof selection === 'object' && selection.charactersOnStage ? selection.charactersOnStage : null;
     if (!selectedText.trim()) return;
 
     // Store the selection and show confirmation dialog
-    setPendingSelection({ text: selectedText, speaker });
+    setPendingSelection({ text: selectedText, speaker, act, scene, charactersOnStage });
     setShowConfirmDialog(true);
   }, []);
 
   const handleConfirmExplanation = useCallback(async () => {
     if (!pendingSelection) return;
     
-    const { text: selectedText, speaker } = pendingSelection;
+    const { text: selectedText, speaker, act, scene, charactersOnStage } = pendingSelection;
     
     // Close the confirmation dialog
     setShowConfirmDialog(false);
@@ -284,6 +287,9 @@ export default function Home() {
           customModel: llm.customModel,
           userEmail: session?.user?.email || null,
           speaker: speaker || null,
+          act: act || null,
+          scene: scene || null,
+          charactersOnStage: charactersOnStage || null,
           responseLength: responseLength
         }),
       });

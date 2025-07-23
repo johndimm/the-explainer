@@ -300,7 +300,7 @@
 
   .lineNumber {
     font-size: 12px !important;
-    width: 25px !important;
+    width: 30px !important;
     margin-right: 4px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -347,7 +347,7 @@
   
   .lineNumber {
     font-size: 10px;
-    width: 20px;
+    width: 25px;
     margin-right: 3px;
     white-space: nowrap;
     overflow: hidden;
@@ -372,7 +372,7 @@
   
   .lineNumber {
     font-size: 9px;
-    width: 18px;
+    width: 22px;
     margin-right: 2px;
     white-space: nowrap;
     overflow: hidden;

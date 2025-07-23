@@ -168,19 +168,138 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   function isShakespearePlay(title) {
     if (!title) return false;
     if (title.toLowerCase().includes('shakespeare')) return true;
-    return SHAKESPEARE_PLAYS.some(play => title.toLowerCase().includes(play.toLowerCase()));
+    
+    // Extract the main title part (before "by" if present)
+    const mainTitle = title.split(' by ')[0].trim();
+    const isPlay = SHAKESPEARE_PLAYS.some(play => mainTitle.toLowerCase().includes(play.toLowerCase()));
+    console.log('TextPanel: isShakespearePlay check:', { title, mainTitle, isPlay });
+    return isPlay;
   }
 
   // Helper: Detect speaker for plays/scripts
   function detectSpeaker(textLines, startIndex) {
+    // First, check if the current line or very recent lines have a character name followed by dialogue
+    for (let i = startIndex; i >= Math.max(0, startIndex - 3); i--) {
+      const line = textLines[i].trim();
+      
+      // Match character names followed by dialogue (e.g., "OCTAVIUS Caesar, I will.")
+      const characterMatch = line.match(/^([A-Z][A-Z\s\-\.']{1,30})\s+(.+)$/);
+      if (characterMatch && characterMatch[1].length < 32) {
+        console.log('TextPanel: found speaker:', characterMatch[1].trim());
+        return characterMatch[1].trim();
+      }
+    }
+    
+    // If no character with dialogue found, look for standalone character names
     for (let i = startIndex; i >= 0; i--) {
       const line = textLines[i].trim();
       // Match lines like FRIAR LAWRENCE. or JULIET:
       if (/^[A-Z][A-Z\s\-\.']{2,30}[\.:]$/.test(line) && line.length < 40) {
-        return line.replace(/[\.:]$/, '').trim();
+        const speaker = line.replace(/[\.:]$/, '').trim();
+        console.log('TextPanel: found speaker:', speaker);
+        return speaker;
       }
     }
+    console.log('TextPanel: no speaker found');
     return null;
+  }
+
+  function detectActScene(textLines, startIndex) {
+    let act = null;
+    let scene = null;
+    
+    // Look backwards from the current line to find act/scene
+    for (let i = startIndex; i >= 0; i--) {
+      const line = textLines[i].trim();
+      
+      // Match ACT patterns like "ACT I", "ACT II", "ACT 1", "ACT 2"
+      if (/^ACT\s+(I{1,3}|IV|V|VI|VII|VIII|IX|X|\d+)/i.test(line)) {
+        act = line.toUpperCase();
+        break;
+      }
+      
+      // Match SCENE patterns like "SCENE I", "SCENE II", "SCENE 1", "SCENE 2"
+      if (/^SCENE\s+(I{1,3}|IV|V|VI|VII|VIII|IX|X|\d+)/i.test(line)) {
+        scene = line.toUpperCase();
+        break;
+      }
+    }
+    
+    return { act, scene };
+  }
+
+  function detectCharactersOnStage(textLines, startIndex, speaker) {
+    const characters = new Set();
+    const exitedCharacters = new Set();
+    
+    // Look backwards from the current line to find recent character entries and exits
+    for (let i = startIndex; i >= Math.max(0, startIndex - 50); i--) {
+      const line = textLines[i].trim();
+      
+      // Skip scene headers and act headers
+      if (/^(ACT|SCENE)\s+/i.test(line)) {
+        break;
+      }
+      
+      // Check for character exits in stage directions (e.g., "[_Exit Lepidus._]", "Exit Lepidus", "Lepidus exits", "Exit")
+      const stageExitMatch = line.match(/\[.*?(?:Exit|Exeunt)\s+([A-Z][A-Z\s\-\.']{1,30}).*?\]/i);
+      if (stageExitMatch) {
+        const exitedCharacter = stageExitMatch[1].trim().replace(/\.$/, ''); // Remove trailing period
+        console.log('TextPanel: Character exited (stage direction):', exitedCharacter, 'from line:', line);
+        exitedCharacters.add(exitedCharacter);
+        continue; // Skip adding this character to the on-stage list
+      }
+      
+      // Also check for the specific format [_Exit Lepidus._]
+      const specificExitMatch = line.match(/\[_Exit\s+([A-Z][A-Z\s\-\.']{1,30})\._\]/i);
+      if (specificExitMatch) {
+        const exitedCharacter = specificExitMatch[1].trim();
+        console.log('TextPanel: Character exited (specific format):', exitedCharacter, 'from line:', line);
+        exitedCharacters.add(exitedCharacter);
+        continue; // Skip adding this character to the on-stage list
+      }
+      
+      // Check for character exits (e.g., "Exit Lepidus", "Lepidus exits", "Exit")
+      const exitMatch = line.match(/^(Exit|Exeunt)\s+([A-Z][A-Z\s\-\.']{1,30})/i);
+      if (exitMatch) {
+        const exitedCharacter = exitMatch[2].trim();
+        console.log('TextPanel: Character exited:', exitedCharacter);
+        exitedCharacters.add(exitedCharacter);
+        continue; // Skip adding this character to the on-stage list
+      }
+      
+      // Also check for "Character exits" pattern
+      const exitsMatch = line.match(/^([A-Z][A-Z\s\-\.']{1,30})\s+exits?/i);
+      if (exitsMatch) {
+        const exitedCharacter = exitsMatch[1].trim();
+        console.log('TextPanel: Character exited:', exitedCharacter);
+        exitedCharacters.add(exitedCharacter);
+        continue; // Skip adding this character to the on-stage list
+      }
+      
+      // Match character names (all caps, can end with period) - but not scene headers
+      if (/^[A-Z][A-Z\s\-\.']{1,30}[\.:]?$/.test(line) && line.length < 40 && !line.includes('SCENE') && !line.includes('ACT')) {
+        const character = line.replace(/[\.:]$/, '').trim();
+        if (character && character !== speaker && character !== 'SCENE' && character !== 'ACT' && 
+            !Array.from(exitedCharacters).some(exited => exited.toUpperCase() === character.toUpperCase())) {
+          characters.add(character);
+        }
+      }
+      
+      // Match character names followed by dialogue
+      const characterMatch = line.match(/^([A-Z][A-Z\s\-\.']{1,30})\s+(.+)$/);
+      if (characterMatch && characterMatch[1].length < 32) {
+        const character = characterMatch[1].trim();
+        if (character && character !== speaker && character !== 'SCENE' && character !== 'ACT' && 
+            !Array.from(exitedCharacters).some(exited => exited.toUpperCase() === character.toUpperCase())) {
+          characters.add(character);
+        }
+      }
+    }
+    
+    const result = Array.from(characters).slice(0, 5); // Limit to 5 most recent characters
+    console.log('TextPanel: Characters on stage:', result, 'Exited characters:', Array.from(exitedCharacters));
+    return result;
   }
 
   // Function to render line content
@@ -190,22 +309,68 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     // Title and author styling (first few lines)
     if (lineIndex === 1) {
       // Main title
-      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, fontSize: '24px', margin: '8px 0 16px 0', color: '#1e293b', lineHeight: '1.4', padding: '8px 0' }}>{trimmed}</span>;
+      return <span style={{ 
+        display: 'block', 
+        textAlign: 'center', 
+        fontWeight: 700, 
+        fontSize: '24px', 
+        margin: '8px 0 16px 0', 
+        color: '#1e293b', 
+        lineHeight: '1.4', 
+        padding: '8px 0',
+        fontFamily: fontSettings.fontFamily
+      }}>{trimmed}</span>;
     }
     if (lineIndex === 2) {
       // Author line
-      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 500, fontSize: '18px', margin: '0 0 16px 0', color: '#64748b', lineHeight: '1.4', padding: '6px 0' }}>{trimmed}</span>;
+      return <span style={{ 
+        display: 'block', 
+        textAlign: 'center', 
+        fontWeight: 500, 
+        fontSize: '18px', 
+        margin: '0 0 16px 0', 
+        color: '#64748b', 
+        lineHeight: '1.4', 
+        padding: '6px 0',
+        fontFamily: fontSettings.fontFamily
+      }}>{trimmed}</span>;
     }
     
-    if (!isShakespearePlay(title)) return line;
+    if (!isShakespearePlay(title)) {
+      // For non-Shakespeare text, apply font settings
+      return <span style={{
+        fontFamily: fontSettings.fontFamily,
+        fontSize: `${fontSettings.fontSize}px`,
+        fontWeight: fontSettings.fontWeight,
+        lineHeight: '1.5'
+      }}>{line}</span>;
+    }
     
     // Scene/act headings
     if (/^(act|scene)\b/i.test(trimmed)) {
-      return <span style={{ display: 'block', textAlign: 'center', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', margin: '16px 0 8px 0' }}>{trimmed}</span>;
+      return <span style={{ 
+        display: 'block', 
+        textAlign: 'center', 
+        fontWeight: 700, 
+        letterSpacing: 2, 
+        textTransform: 'uppercase', 
+        margin: '16px 0 8px 0',
+        fontFamily: fontSettings.fontFamily,
+        fontSize: `${fontSettings.fontSize}px`
+      }}>{trimmed}</span>;
     }
     // Character names (all caps, centered, can end with period)
     if (/^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32) {
-      return <span className={styles.characterName} style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{trimmed}</span>;
+      return <span className={styles.characterName} style={{ 
+        display: 'block', 
+        textAlign: 'center', 
+        fontWeight: 700, 
+        textTransform: 'uppercase', 
+        margin: '12px 0 0 0', 
+        letterSpacing: 1,
+        fontFamily: fontSettings.fontFamily,
+        fontSize: `${fontSettings.fontSize}px`
+      }}>{trimmed}</span>;
     }
     
     // Character names followed by dialogue (e.g., "CAPULET Go to, go to.")
@@ -215,18 +380,42 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       const dialogue = characterMatch[2];
       return (
         <span>
-          <span className={styles.characterName} style={{ display: 'block', textAlign: 'center', fontWeight: 700, textTransform: 'uppercase', margin: '12px 0 0 0', letterSpacing: 1 }}>{characterName}</span>
-          <span className={styles.dialogue}>{dialogue}</span>
+          <span className={styles.characterName} style={{ 
+            display: 'block', 
+            textAlign: 'center', 
+            fontWeight: 700, 
+            textTransform: 'uppercase', 
+            margin: '12px 0 0 0', 
+            letterSpacing: 1,
+            fontFamily: fontSettings.fontFamily,
+            fontSize: `${fontSettings.fontSize}px`
+          }}>{characterName}</span>
+          <span className={styles.dialogue} style={{
+            fontFamily: fontSettings.fontFamily,
+            fontSize: `${fontSettings.fontSize}px`,
+            fontWeight: fontSettings.fontWeight
+          }}>{dialogue}</span>
         </span>
       );
     }
     // Stage directions (in brackets or parentheses)
     if (/^\s*\[.*\]\s*$/.test(line) || /^\s*\(.*\)\s*$/.test(line)) {
-      return <span style={{ fontStyle: 'italic', marginLeft: 48, color: '#64748b' }}>{trimmed}</span>;
+      return <span style={{ 
+        fontStyle: 'italic', 
+        marginLeft: 48, 
+        color: '#64748b',
+        fontFamily: fontSettings.fontFamily,
+        fontSize: `${fontSettings.fontSize}px`,
+        fontWeight: fontSettings.fontWeight
+      }}>{trimmed}</span>;
     }
     // Dialogue (default)
-    return <span className={styles.dialogue}>{line}</span>;
-  }, [title]);
+    return <span className={styles.dialogue} style={{
+      fontFamily: fontSettings.fontFamily,
+      fontSize: `${fontSettings.fontSize}px`,
+      fontWeight: fontSettings.fontWeight
+    }}>{line}</span>;
+  }, [title, fontSettings]);
 
   // Function to split text into lines with intelligent line breaking
   const splitLongLines = useCallback((text) => {
@@ -1038,8 +1227,27 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     if (!isMobile) {
       // Desktop: submit immediately on first click
       const selectedText = textLines[index];
-      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
-      onTextSelection({ text: selectedText, speaker });
+      const isShakespeare = isShakespearePlay(title);
+      const speaker = isShakespeare ? detectSpeaker(textLines, index) : null;
+      const { act, scene } = isShakespeare ? detectActScene(textLines, index) : { act: null, scene: null };
+      const charactersOnStage = isShakespeare ? detectCharactersOnStage(textLines, index, speaker) : [];
+      
+      console.log('TextPanel: Desktop selection:', { 
+        title, 
+        isShakespeare, 
+        speaker, 
+        act, 
+        scene, 
+        charactersOnStage,
+        selectedText: selectedText.substring(0, 50) + '...'
+      });
+      onTextSelection({ 
+        text: selectedText, 
+        speaker,
+        act,
+        scene,
+        charactersOnStage
+      });
       setSelectedLines(new Set());
       setSubmitting(false);
       return;
@@ -1076,7 +1284,15 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         // Second tap on same line - submit after highlight
         const selectedText = textLines[index];
         const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
-        onTextSelection({ text: selectedText, speaker });
+        const { act, scene } = isShakespearePlay(title) ? detectActScene(textLines, index) : { act: null, scene: null };
+        const charactersOnStage = isShakespearePlay(title) ? detectCharactersOnStage(textLines, index, speaker) : [];
+        onTextSelection({ 
+          text: selectedText, 
+          speaker,
+          act,
+          scene,
+          charactersOnStage
+        });
         setSelectedLines(new Set());
         setFirstClickIndex(null);
       } else {
@@ -1089,7 +1305,15 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         }
         const selectedText = textLines.slice(start, end + 1).join('\n');
         const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, start) : null;
-        onTextSelection({ text: selectedText, speaker });
+        const { act, scene } = isShakespearePlay(title) ? detectActScene(textLines, start) : { act: null, scene: null };
+        const charactersOnStage = isShakespearePlay(title) ? detectCharactersOnStage(textLines, start, speaker) : [];
+        onTextSelection({ 
+          text: selectedText, 
+          speaker,
+          act,
+          scene,
+          charactersOnStage
+        });
         setSelectedLines(new Set());
         setFirstClickIndex(null);
       }
@@ -1109,8 +1333,28 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       }
       
       const selectedText = textLines[index];
-      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
-      onTextSelection({ text: selectedText, speaker });
+      const isShakespeare = isShakespearePlay(title);
+      const speaker = isShakespeare ? detectSpeaker(textLines, index) : null;
+      const { act, scene } = isShakespeare ? detectActScene(textLines, index) : { act: null, scene: null };
+      const charactersOnStage = isShakespeare ? detectCharactersOnStage(textLines, index, speaker) : [];
+      
+      console.log('TextPanel: Desktop selection:', { 
+        title, 
+        isShakespeare, 
+        speaker, 
+        act, 
+        scene, 
+        charactersOnStage,
+        selectedText: selectedText.substring(0, 50) + '...'
+      });
+      
+      onTextSelection({ 
+        text: selectedText, 
+        speaker,
+        act,
+        scene,
+        charactersOnStage
+      });
       setSelectedLines(new Set([index]));
       setSubmitting(true);
       
@@ -1172,8 +1416,28 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       }
       
       const selectedText = textLines[index];
-      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, index) : null;
-      onTextSelection({ text: selectedText, speaker });
+      const isShakespeare = isShakespearePlay(title);
+      const speaker = isShakespeare ? detectSpeaker(textLines, index) : null;
+      const { act, scene } = isShakespeare ? detectActScene(textLines, index) : { act: null, scene: null };
+      const charactersOnStage = isShakespeare ? detectCharactersOnStage(textLines, index, speaker) : [];
+      
+      console.log('TextPanel: Mobile selection:', { 
+        title, 
+        isShakespeare, 
+        speaker, 
+        act, 
+        scene, 
+        charactersOnStage,
+        selectedText: selectedText.substring(0, 50) + '...'
+      });
+      
+      onTextSelection({ 
+        text: selectedText, 
+        speaker,
+        act,
+        scene,
+        charactersOnStage
+      });
       setSelectedLines(new Set([index]));
       setTimeout(() => {
         setSelectedLines(new Set());
@@ -1194,8 +1458,28 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         rangeSelection.add(i);
       }
       const selectedText = textLines.slice(start, end + 1).join('\n');
-      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, start) : null;
-      onTextSelection({ text: selectedText, speaker });
+      const isShakespeare = isShakespearePlay(title);
+      const speaker = isShakespeare ? detectSpeaker(textLines, start) : null;
+      const { act, scene } = isShakespeare ? detectActScene(textLines, start) : { act: null, scene: null };
+      const charactersOnStage = isShakespeare ? detectCharactersOnStage(textLines, start, speaker) : [];
+      
+      console.log('TextPanel: Mobile range selection:', { 
+        title, 
+        isShakespeare, 
+        speaker, 
+        act, 
+        scene, 
+        charactersOnStage,
+        selectedText: selectedText.substring(0, 50) + '...'
+      });
+      
+      onTextSelection({ 
+        text: selectedText, 
+        speaker,
+        act,
+        scene,
+        charactersOnStage
+      });
       setSelectedLines(rangeSelection);
       setTimeout(() => {
         setSelectedLines(new Set());
@@ -1231,7 +1515,30 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         .join('\n');
       
       setTimeout(() => {
-        onTextSelection({ text: selectedText, speaker: null }); // No speaker for drag selection
+        // For drag selection, try to detect speaker from the first line
+        const firstLineIndex = Math.min(...Array.from(selectedLines));
+        const isShakespeare = isShakespearePlay(title);
+        const speaker = isShakespeare ? detectSpeaker(textLines, firstLineIndex) : null;
+        const { act, scene } = isShakespeare ? detectActScene(textLines, firstLineIndex) : { act: null, scene: null };
+        const charactersOnStage = isShakespeare ? detectCharactersOnStage(textLines, firstLineIndex, speaker) : [];
+        
+        console.log('TextPanel: Drag selection:', { 
+          title, 
+          isShakespeare, 
+          speaker, 
+          act, 
+          scene, 
+          charactersOnStage,
+          selectedText: selectedText.substring(0, 50) + '...'
+        });
+        
+        onTextSelection({ 
+          text: selectedText, 
+          speaker, // Try to detect speaker from first line
+          act,
+          scene,
+          charactersOnStage
+        });
         setSelectedLines(new Set());
         setIsDragging(false);
         setDragStartIndex(null);
@@ -1240,8 +1547,28 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     } else if (!mouseMoved.current && dragStartIndex !== null) {
       // Simple click - no drag detected
       const selectedText = textLines[dragStartIndex];
-      const speaker = isShakespearePlay(title) ? detectSpeaker(textLines, dragStartIndex) : null;
-      onTextSelection({ text: selectedText, speaker });
+      const isShakespeare = isShakespearePlay(title);
+      const speaker = isShakespeare ? detectSpeaker(textLines, dragStartIndex) : null;
+      const { act, scene } = isShakespeare ? detectActScene(textLines, dragStartIndex) : { act: null, scene: null };
+      const charactersOnStage = isShakespeare ? detectCharactersOnStage(textLines, dragStartIndex, speaker) : [];
+      
+      console.log('TextPanel: Desktop mouse selection:', { 
+        title, 
+        isShakespeare, 
+        speaker, 
+        act, 
+        scene, 
+        charactersOnStage,
+        selectedText: selectedText.substring(0, 50) + '...'
+      });
+      
+      onTextSelection({ 
+        text: selectedText, 
+        speaker,
+        act,
+        scene,
+        charactersOnStage
+      });
       setSelectedLines(new Set([dragStartIndex]));
       setSubmitting(true);
       setTimeout(() => {
@@ -1348,9 +1675,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           // PDF text selection processed
       
       if (cleanedText.length > 0 && onTextSelection) {
+        // For PDF text, we can't easily detect context, but we can try
+        const isShakespeare = isShakespearePlay(title);
+        console.log('TextPanel: PDF selection - title:', title, 'isShakespeare:', isShakespeare);
+        
         onTextSelection({
           text: cleanedText,
-          speaker: null,
+          speaker: null, // PDF text doesn't have line-based speaker detection
+          act: null, // PDF text doesn't have line-based act detection
+          scene: null, // PDF text doesn't have line-based scene detection
+          charactersOnStage: null, // PDF text doesn't have line-based character detection
           source: 'pdf',
           metadata
         });
@@ -1431,7 +1765,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       <div 
         key={`text-${title}-${textLines.length}`}
         className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
-        style={{ '--panel-width': `${width}%` }}
+        style={{ 
+          '--panel-width': `${width}%`,
+          fontFamily: fontSettings.fontFamily,
+          fontSize: `${fontSettings.fontSize}px`,
+          fontWeight: fontSettings.fontWeight
+        }}
         ref={containerRef}
       >
         <div className={styles.textContainer}>
@@ -1477,7 +1816,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       <div 
         key={`text-${title}-${textLines.length}`}
         className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
-        style={{ '--panel-width': `${width}%` }}
+        style={{ 
+          '--panel-width': `${width}%`,
+          fontFamily: fontSettings.fontFamily,
+          fontSize: `${fontSettings.fontSize}px`,
+          fontWeight: fontSettings.fontWeight
+        }}
         ref={containerRef}
       >
       {/* Search Interface */}

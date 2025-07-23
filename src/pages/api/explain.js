@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   try {
     const {
       text, bookTitle, bookAuthor, userLanguage, userAge, userNationality, userEducationalLevel,
-      provider, model, apiKey, endpoint, customModel, isFollowUp, speaker, userEmail, responseLength = 'medium'
+      provider, model, apiKey, endpoint, customModel, isFollowUp, speaker, act, scene, charactersOnStage, userEmail, responseLength = 'medium'
     } = req.body;
 
     // Paywall logic - 4 tiers of access
@@ -201,11 +201,28 @@ ${educationalLevelInstruction}`;
     if (isFollowUp) {
       userPrompt = `The user has a follow-up question about the text. Please answer their question clearly and helpfully.\n\nQuestion: ${text}`;
     } else {
-      if (speaker) {
-        userPrompt = `This quote is spoken by ${speaker}.\nPlease explain this text from \"${title}\":\n\n${text}`;
+      // Build contextual information
+      let contextInfo = [];
+      if (act) contextInfo.push(`Act: ${act}`);
+      if (scene) contextInfo.push(`Scene: ${scene}`);
+      if (speaker) contextInfo.push(`Speaker: ${speaker}`);
+      if (charactersOnStage && charactersOnStage.length > 0) {
+        contextInfo.push(`Characters on stage: ${charactersOnStage.join(', ')}`);
+      }
+      
+      // Debug: Log the context being built
+      console.log('API: Context info:', contextInfo);
+      console.log('API: Speaker:', speaker);
+      console.log('API: Characters on stage:', charactersOnStage);
+      
+      if (contextInfo.length > 0) {
+        userPrompt = `Context:\n${contextInfo.join('\n')}\n\nPlease explain this text from \"${title}\":\n\n${text}`;
       } else {
         userPrompt = `Please explain this text from \"${title}\":\n\n${text}`;
       }
+      
+      // Debug: Log the final prompt
+      console.log('API: Final prompt:', userPrompt.substring(0, 200) + '...');
     }
 
     // Helper: get API key (user > env)
