@@ -34,7 +34,7 @@ export default function Home() {
   const [layoutMode, setLayoutMode] = useState({ mode: 'desktop', isPortrait: false });
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [bookTitle, setBookTitle] = useState("Romeo and Juliet");
+  const [bookTitle, setBookTitle] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallData, setPaywallData] = useState(null);
@@ -185,13 +185,6 @@ export default function Home() {
     saveDividerPosition(orientation, newSize);
   }, [layoutMode.mode, saveDividerPosition]);
 
-  // Mobile: scroll callback for divider
-  const handleDividerScroll = useCallback((ratio) => {
-    if (textPanelRef.current && textPanelRef.current.scrollToRatio) {
-      textPanelRef.current.scrollToRatio(ratio);
-    }
-  }, []);
-
   // Update scroll progress when text panel scrolls
   const handleScrollProgress = useCallback((progress) => {
     setScrollProgress(progress);
@@ -232,7 +225,7 @@ export default function Home() {
 
     // Get book info from localStorage
     const savedTitle = localStorage.getItem('explainer:bookTitle');
-    const bookTitle = savedTitle || 'Romeo and Juliet';
+    const bookTitle = savedTitle || '';
     
     // Extract author from title if available (format: "Title by Author")
     let bookAuthor = 'William Shakespeare'; // default
@@ -395,7 +388,7 @@ export default function Home() {
 
     // Get book info from localStorage
     const savedTitle = localStorage.getItem('explainer:bookTitle');
-    const bookTitle = savedTitle || 'Romeo and Juliet';
+    const bookTitle = savedTitle || '';
     
     // Extract author from title if available (format: "Title by Author")
     let bookAuthor = 'William Shakespeare'; // default
@@ -558,8 +551,6 @@ export default function Home() {
                 <DraggableSeparator 
                   onResize={handleResize} 
                   leftWidth={panelSize}
-                  onScrollDivider={handleDividerScroll}
-                  progress={scrollProgress}
                 />
               </div>
               <div style={{ height: `var(--panel-height, 50vh)`, width: '100%', flex: 'none', marginTop: 6 }}>
@@ -588,8 +579,6 @@ export default function Home() {
                 <DraggableSeparator 
                   onResize={handleResize} 
                   leftWidth={panelSize}
-                  onScrollDivider={handleDividerScroll}
-                  progress={scrollProgress}
                 />
               </div>
               <div style={{ width: `calc(100% - var(--panel-width, 50%) - 32px)`, height: '100vh', flex: 'none', minWidth: '200px' }}>

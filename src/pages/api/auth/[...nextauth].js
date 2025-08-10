@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-export default NextAuth({
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
@@ -36,4 +36,7 @@ export default NextAuth({
       }
     },
   },
-}); 
+};
+
+export { authOptions };
+export default NextAuth(authOptions); 
