@@ -98,6 +98,14 @@ const GEMINI_MODELS = [
 export default function Profile() {
   const router = useRouter();
   const { data: session } = useSession();
+  
+  // Debug: log component lifecycle
+  useEffect(() => {
+    return () => {
+      // Cleanup on unmount
+    };
+  }, []);
+
   const [isClient, setIsClient] = useState(false);
   const [language, setLanguage] = useState('');
   const [age, setAge] = useState('');
@@ -112,6 +120,21 @@ export default function Profile() {
   const [fontSize, setFontSize] = useState('17');
   const [fontWeight, setFontWeight] = useState('400');
   const [isMobile, setIsMobile] = useState(false);
+  // Initialize layoutMode from localStorage during initialization to prevent hydration mismatch
+  const [layoutMode, setLayoutMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+        if (profile.layoutMode && ['auto', 'two-panel', 'single-panel'].includes(profile.layoutMode)) {
+          console.log('Profile: Initializing layoutMode from localStorage:', profile.layoutMode);
+          return profile.layoutMode;
+        }
+      } catch (error) {
+        console.warn('Profile: Error reading initial layoutMode from localStorage:', error);
+      }
+    }
+    return 'auto';
+  });
   
   // LLM settings state
   const [llmProvider, setLlmProvider] = useState('openai');
@@ -122,6 +145,7 @@ export default function Profile() {
 
   useEffect(() => {
     setIsClient(true);
+    // Layout mode is now loaded during initialization, so no need to load it here
   }, []);
 
   useEffect(() => {
@@ -137,30 +161,59 @@ export default function Profile() {
     }
   }, [isClient]);
 
+  // Load profile settings only once on mount
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  
   useEffect(() => {
-    if (isClient) {
-    setLang(getUserLanguage());
-    const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
-    setLanguage(profile.language || '');
-    setAge(profile.age || '');
-    setNationality(profile.nationality || '');
-      setEducationalLevel(profile.educationalLevel || '');
-      setDefaultResponseLength(profile.defaultResponseLength || 'medium');
-    setFontFamily(profile.fontFamily || 'Georgia');
-    setFontSize(profile.fontSize || '17');
-    setFontWeight(profile.fontWeight || '400');
+    if (isClient && !profileLoaded) {
+      setLang(getUserLanguage());
+      const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+      
+      // Only set values if they're not already set or if they're different from current values
+      if (profile.language && profile.language !== language) {
+        setLanguage(profile.language);
+      }
+      if (profile.age && profile.age !== age) {
+        setAge(profile.age);
+      }
+      if (profile.nationality && profile.nationality !== nationality) {
+        setNationality(profile.nationality);
+      }
+      if (profile.educationalLevel && profile.educationalLevel !== educationalLevel) {
+        setEducationalLevel(profile.educationalLevel);
+      }
+      if (profile.defaultResponseLength && profile.defaultResponseLength !== defaultResponseLength) {
+        setDefaultResponseLength(profile.defaultResponseLength);
+      }
+      if (profile.fontFamily && profile.fontFamily !== fontFamily) {
+        setFontFamily(profile.fontFamily);
+      }
+      if (profile.fontSize && profile.fontSize !== fontSize) {
+        setFontSize(profile.fontSize);
+      }
+      if (profile.fontWeight && profile.fontWeight !== fontWeight) {
+        setFontWeight(profile.fontWeight);
+      }
+      
+      // SIMPLE: Don't load layout mode here - it's already handled by the simple effect above
       
       // Load LLM settings
-    const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+      const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
       setLlmProvider(llm.provider || 'openai');
       setLlmModel(llm.model || 'gpt-4o-mini');
       setLlmApiKey(llm.key || '');
-    setLlmEndpoint(llm.endpoint || '');
-    setLlmCustomModel(llm.customModel || '');
+      setLlmEndpoint(llm.endpoint || '');
+      setLlmCustomModel(llm.customModel || '');
 
       loadTranslations();
+      setProfileLoaded(true);
     }
-  }, [isClient]);
+  }, [isClient, profileLoaded]); // CRITICAL FIX: Remove state dependencies to prevent reloading profile when state changes
+
+  // Track layoutMode changes
+  useEffect(() => {
+    // Layout mode changed
+  }, [layoutMode]);
 
   useEffect(() => {
     if (isClient) {
@@ -196,11 +249,12 @@ export default function Profile() {
         selectNationality: 'Choisir la nationalité',
         selectEducationalLevel: 'Sélectionner le niveau d\'éducation',
         yourAge: 'Votre âge',
-        profileSaved: 'Paramètres enregistrés automatiquement'
+        profileSaved: 'Paramètres enregistrés automatiquement',
+        layoutMode: 'Mode de disposition'
       });
     } else {
       try {
-        const keys = ['profileSettings', 'aboutYourInfo', 'aboutYourInfoDesc', 'language', 'age', 'nationality', 'educationalLevel', 'selectLanguage', 'selectNationality', 'selectEducationalLevel', 'yourAge', 'profileSaved'];
+        const keys = ['profileSettings', 'aboutYourInfo', 'aboutYourInfoDesc', 'language', 'age', 'nationality', 'educationalLevel', 'selectLanguage', 'selectNationality', 'selectEducationalLevel', 'yourAge', 'profileSaved', 'layoutMode'];
         const translationPromises = keys.map(key => t(key, currentLang));
         const results = await Promise.all(translationPromises);
         const newTranslations = {};
@@ -221,7 +275,8 @@ export default function Profile() {
           selectNationality: 'Select nationality',
           selectEducationalLevel: 'Select educational level',
           yourAge: 'Your age',
-          profileSaved: 'Settings saved automatically'
+          profileSaved: 'Settings saved automatically',
+          layoutMode: 'Layout Mode'
         });
       }
     }
@@ -229,7 +284,11 @@ export default function Profile() {
 
   const autoSave = (updates) => {
     const currentProfile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
-    const newProfile = { ...currentProfile, ...updates };
+    const newProfile = { 
+      ...currentProfile, 
+      ...updates,
+      lastUpdated: Date.now() // Add timestamp to distinguish user-initiated changes
+    };
     localStorage.setItem('explainer:profile', JSON.stringify(newProfile));
     setShowSaved(true);
     setTimeout(() => setShowSaved(false), 2000);
@@ -249,7 +308,10 @@ export default function Profile() {
   };
 
   const handleClose = () => {
-    router.back();
+    // Small delay to ensure localStorage updates are processed
+    setTimeout(() => {
+      router.back();
+    }, 50);
   };
 
   const handleBookClick = async (book) => {
@@ -940,6 +1002,76 @@ export default function Profile() {
               </div>
             </div>
           </section>
+
+        {/* Layout Settings Section */}
+        <section style={{ 
+          marginBottom: 32,
+          padding: 24,
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: 12
+        }}>
+          <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Layout Settings</h2>
+          <p style={{ fontSize: 14, color: '#64748b', marginBottom: 20 }}>
+            Choose how the text and chat panels are arranged on your screen.
+          </p>
+          
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+            gap: 16 
+          }}>
+            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+              Layout Mode
+              <select
+                value={layoutMode}
+                onChange={e => {
+                  const newLayoutMode = e.target.value;
+                  setLayoutMode(newLayoutMode);
+                  autoSave({ layoutMode: newLayoutMode });
+                  
+                  // Dispatch custom event for same-tab layout changes
+                  window.dispatchEvent(new CustomEvent('layoutModeChanged', {
+                    detail: { layoutMode: newLayoutMode }
+                  }));
+                }}
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  padding: isMobile ? 12 : 10,
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  fontSize: isMobile ? 18 : 16,
+                  background: '#fff',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+              >
+                <option value="auto">🔄 Auto (Recommended)</option>
+                <option value="two-panel">⊞ Two Panel (Desktop)</option>
+                <option value="single-panel">📱 Single Panel (Mobile)</option>
+              </select>
+            </label>
+            
+
+          </div>
+          
+          <div style={{ 
+            marginTop: 16, 
+            padding: 12, 
+            backgroundColor: '#f0f9ff', 
+            borderRadius: 8,
+            border: '1px solid #bae6fd'
+          }}>
+            <div style={{ fontSize: 14, color: '#0369a1' }}>
+              <strong>Layout Options:</strong><br />
+              • <strong>Auto:</strong> Automatically switches between single-panel (mobile) and two-panel (desktop)<br />
+              • <strong>Two Panel:</strong> Shows text and chat side-by-side (best for desktop)<br />
+              • <strong>Single Panel:</strong> Shows text only, with chat sliding in when needed (best for mobile)
+            </div>
+          </div>
+        </section>
 
         {/* History Section */}
         {userStats && (

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Layout Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        button { padding: 10px 20px; margin: 5px; }
+        .current { background: #e0f2fe; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Layout Mode Test</h1>
+    
+    <div class="test-section">
+        <h3>Current Layout Mode</h3>
+        <div id="currentLayout" class="current">Loading...</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Set Layout Mode</h3>
+        <button onclick="setLayout('auto')">Auto</button>
+        <button onclick="setLayout('two-panel')">Two Panel</button>
+        <button onclick="setLayout('single-panel')">Single Panel</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Raw localStorage</h3>
+        <pre id="rawStorage">Loading...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test Layout Logic</h3>
+        <div id="layoutLogic">Loading...</div>
+    </div>
+
+    <script>
+        function updateDisplay() {
+            // Show current layout mode
+            const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+            const layoutMode = profile.layoutMode || 'auto';
+            document.getElementById('currentLayout').innerHTML = `
+                <strong>Profile Layout Mode:</strong> ${layoutMode}<br>
+                <strong>Raw Value:</strong> ${JSON.stringify(profile.layoutMode)}<br>
+                <strong>Full Profile:</strong> ${JSON.stringify(profile, null, 2)}
+            `;
+            
+            // Show raw localStorage
+            document.getElementById('rawStorage').textContent = JSON.stringify(profile, null, 2);
+            
+            // Test layout logic
+            const isMobile = window.innerWidth <= 1024 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const effectiveLayout = layoutMode === 'auto' 
+                ? (isMobile ? 'single-panel' : 'two-panel')
+                : layoutMode;
+            
+            document.getElementById('layoutLogic').innerHTML = `
+                <strong>Device Detection:</strong> ${isMobile ? 'Mobile' : 'Desktop'}<br>
+                <strong>User Preference:</strong> ${layoutMode}<br>
+                <strong>Effective Layout:</strong> ${effectiveLayout}<br>
+                <strong>Window Width:</strong> ${window.innerWidth}px<br>
+                <strong>User Agent:</strong> ${navigator.userAgent}
+            `;
+        }
+        
+        function setLayout(mode) {
+            const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+            profile.layoutMode = mode;
+            localStorage.setItem('explainer:profile', JSON.stringify(profile));
+            
+            // Dispatch custom event
+            window.dispatchEvent(new CustomEvent('layoutModeChanged', {
+                detail: { layoutMode: mode }
+            }));
+            
+            updateDisplay();
+        }
+        
+        // Listen for storage changes
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'explainer:profile') {
+                updateDisplay();
+            }
+        });
+        
+        // Listen for custom events
+        window.addEventListener('layoutModeChanged', (e) => {
+            updateDisplay();
+        });
+        
+        // Initial display
+        updateDisplay();
+        
+        // Update on resize
+        window.addEventListener('resize', updateDisplay);
+    </script>
+</body>
+</html> 

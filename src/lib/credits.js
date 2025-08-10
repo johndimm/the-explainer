@@ -40,13 +40,7 @@ export class CreditManager {
     const now = new Date(); // Now should be in UTC due to TZ setting
     const hoursPassed = (now - lastCredit) / (1000 * 60 * 60);
     
-    console.log('Debug canGetHourlyCredit:', {
-      userEmail,
-      lastCredit: lastCredit.toISOString(),
-      now: now.toISOString(),
-      hoursPassed,
-      canGet: hoursPassed >= 1
-    });
+    // Debug logging disabled
     
     return hoursPassed >= 1;
   }
@@ -212,13 +206,7 @@ export class CreditManager {
     const nextCredit = new Date(lastCredit.getTime() + 60 * 60 * 1000); // Add 1 hour
     const now = new Date();
     
-    console.log('Debug time calculation:', {
-      lastCredit: lastCredit.toISOString(),
-      nextCredit: nextCredit.toISOString(),
-      now: now.toISOString(),
-      timeDiffMs: nextCredit - now,
-      timeDiffMin: Math.ceil((nextCredit - now) / (1000 * 60))
-    });
+    // Debug logging disabled
     
     return Math.max(0, nextCredit - now);
   }

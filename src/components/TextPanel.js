@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
+import { useRouter } from 'next/router';
+import { BookOpen, Settings, MessageSquare } from 'lucide-react';
 import styles from '@/styles/TextPanel.module.css';
 import dynamic from 'next/dynamic';
+import ChatPanel from './ChatPanel';
 
 // Dynamically import PDFViewerNew to avoid SSR issues
 const PDFViewerNew = dynamic(() => import('./PDFViewerNew'), { ssr: false });
@@ -13,7 +16,7 @@ const getRowHeight = (fontSize) => {
   return Math.max(48, Math.ceil(baseSize * 1.8) + 20);
 };
 
-const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", onScrollProgress }, ref) => {
+const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", onScrollProgress, messages = [], isLoading: chatIsLoading = false, onFollowUpQuestion, scrollToText, scrollProgress }, ref) => {
   // All state hooks - must be called in same order every time
   const [textLines, setTextLines] = useState([]);
   const [selectedLines, setSelectedLines] = useState(new Set());
@@ -37,10 +40,17 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   const [searchResults, setSearchResults] = useState([]);
   const [currentSearchIndex, setCurrentSearchIndex] = useState(0);
   const [showSearch, setShowSearch] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isTextLoading, setIsTextLoading] = useState(true);
   const [isTextReady, setIsTextReady] = useState(false);
+  const [layoutMode, setLayoutMode] = useState('auto'); // 'auto', 'two-panel', 'single-panel'
+  const [showChatPanel, setShowChatPanel] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [currentSelectedText, setCurrentSelectedText] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isSinglePanelMode, setIsSinglePanelMode] = useState(false);
 
-
+  // Router for navigation
+  const router = useRouter();
 
   // All refs - must be called in same order every time
   const containerRef = useRef();
@@ -65,6 +75,64 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       return false;
     }
   }, []);
+
+  // Load layout mode and interaction state from localStorage on mount
+  useEffect(() => {
+    // Load layout mode from profile settings
+    const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+    if (profile.layoutMode && ['auto', 'two-panel', 'single-panel'].includes(profile.layoutMode)) {
+      setLayoutMode(profile.layoutMode);
+    }
+    
+    const savedHasInteracted = localStorage.getItem('explainer:hasInteracted');
+    if (savedHasInteracted === 'true') {
+      setHasInteracted(true);
+    }
+    
+    // Listen for custom layout change events from profile page
+    const handleLayoutModeChange = (e) => {
+      // console.log('TextPanel: Custom layout mode change event:', e.detail.layoutMode); // Removed
+      if (e.detail.layoutMode === 'single-panel') {
+        setIsSinglePanelMode(true);
+      } else {
+        setIsSinglePanelMode(false);
+      }
+    };
+    
+    window.addEventListener('layoutModeChanged', handleLayoutModeChange);
+    
+    return () => {
+      window.removeEventListener('layoutModeChanged', handleLayoutModeChange);
+    };
+  }, []);
+
+  // Save layout mode and interaction state to localStorage when they change
+  useEffect(() => {
+    // Save layout mode to profile settings
+    const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+    profile.layoutMode = layoutMode;
+    localStorage.setItem('explainer:profile', JSON.stringify(profile));
+  }, [layoutMode]);
+
+  useEffect(() => {
+    localStorage.setItem('explainer:hasInteracted', hasInteracted.toString());
+  }, [hasInteracted]);
+
+  // Determine effective layout mode based on user preference and device
+  const effectiveLayoutMode = useCallback(() => {
+    if (layoutMode === 'auto') {
+      return isMobile ? 'single-panel' : 'two-panel';
+    }
+    return layoutMode;
+  }, [layoutMode, isMobile]);
+
+  // Hide chat panel when switching to two-panel mode
+  useEffect(() => {
+    if (effectiveLayoutMode() === 'two-panel') {
+      setShowChatPanel(false);
+      setCurrentSelectedText('');
+    }
+  }, [effectiveLayoutMode]);
 
   // Bookmark management functions
   const getBookmarkKey = useCallback(() => {
@@ -110,45 +178,41 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     }
   }, [textLines.length]);
 
-  const saveBookmark = useCallback((scrollIndex) => {
-    if (!isStorageAvailable()) {
-      console.warn('Cannot save bookmark: storage not available');
-      return;
-    }
+  // Save bookmark to localStorage
+  const saveBookmark = useCallback(async (scrollIndex) => {
+    if (!title || !scrollIndex || scrollIndex < 0) return;
+    
+    const bookmarkKey = `explainer:bookmark:${title}`;
+    const bookmarkData = {
+      key: bookmarkKey,
+      scrollIndex,
+      textLinesLength: textLines.length,
+      timestamp: new Date().toISOString()
+    };
     
     try {
-      const bookmarkKey = getBookmarkKey();
-      if (bookmarkKey && scrollIndex > 0) {
-        console.log('TextPanel: 💾 SAVING bookmark to localStorage:', {
-          key: bookmarkKey,
-          scrollIndex,
-          textLinesLength: textLines.length,
-          timestamp: new Date().toISOString()
-        });
-        localStorage.setItem(bookmarkKey, scrollIndex.toString());
-        // Don't save to database here - only save to localStorage for immediate access
+      localStorage.setItem(bookmarkKey, JSON.stringify(bookmarkData));
+      
+      // Also save to sessionStorage as fallback
+      sessionStorage.setItem(bookmarkKey, scrollIndex.toString());
+      
+      // Save to database via API
+      try {
+        await saveBookProgress(scrollIndex);
+      } catch (error) {
+        console.warn('Failed to save bookmark to database:', error);
       }
     } catch (error) {
-      console.warn('Failed to save bookmark:', error);
-      // Fallback: try to save to sessionStorage if localStorage fails
-      try {
-        const bookmarkKey = getBookmarkKey();
-        if (bookmarkKey && scrollIndex > 0) {
-          sessionStorage.setItem(bookmarkKey, scrollIndex.toString());
-          console.log('TextPanel: 💾 Saved to sessionStorage as fallback:', scrollIndex);
-        }
-      } catch (sessionError) {
-        console.warn('Failed to save bookmark to sessionStorage:', sessionError);
-      }
+      // Fallback to sessionStorage only
+      sessionStorage.setItem(bookmarkKey, scrollIndex.toString());
     }
-  }, [getBookmarkKey, isStorageAvailable, textLines.length]);
+  }, [title, textLines.length]);
 
   // Separate function to save to database - only called when needed
   const saveBookmarkToDatabase = useCallback(async (scrollIndex) => {
     if (!scrollIndex || scrollIndex <= 0) return;
     
     try {
-      console.log('TextPanel: 💾💾 SAVING bookmark to DATABASE:', scrollIndex);
       await saveBookProgress(scrollIndex);
     } catch (error) {
       console.warn('Failed to save bookmark to database:', error);
@@ -223,7 +287,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           if (response.ok) {
             const progress = await response.json();
             const dbBookmark = progress.current_line;
-            console.log(`TextPanel: 📊 Database returned bookmark: ${dbBookmark} (${source})`);
             
             // Check if database bookmark is valid for current text length
             if (dbBookmark !== null && dbBookmark !== undefined && dbBookmark >= 0 && dbBookmark < newTextLines.length) {
@@ -241,22 +304,17 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         if (bookmarkIndex === null || bookmarkIndex === undefined) {
           // Use the same function that saveBookmark uses to ensure consistency
           const bookmarkKey = getBookmarkKey();
-          console.log(`TextPanel: 🔑 Looking for bookmark with key: "${bookmarkKey}" (${source})`);
           
           if (bookmarkKey) {
             const savedIndex = localStorage.getItem(bookmarkKey) || sessionStorage.getItem(bookmarkKey);
-            console.log(`TextPanel: 📍 Raw saved index from storage: "${savedIndex}" (${source})`);
             
             if (savedIndex) {
               const index = parseInt(savedIndex, 10);
               if (!isNaN(index) && index >= 0) {
                 bookmarkIndex = index;
-                console.log(`TextPanel: 📍 Found bookmark in localStorage: ${bookmarkIndex} (${source})`);
               } else {
                 console.warn(`TextPanel: ❌ Invalid bookmark value: "${savedIndex}" -> ${index} (${source})`);
               }
-            } else {
-              console.log(`TextPanel: 📍 No bookmark found in storage for key: "${bookmarkKey}" (${source})`);
             }
           }
         }
@@ -270,7 +328,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     if (bookmarkIndex !== null && bookmarkIndex !== undefined && bookmarkIndex >= 0 && bookmarkIndex < newTextLines.length) {
       setCurrentScrollIndex(bookmarkIndex);
       currentScrollIndexRef.current = bookmarkIndex;
-      console.log(`TextPanel: ✅ Bookmark restored to line ${bookmarkIndex} (${source})`);
     } else if (bookmarkIndex !== null && bookmarkIndex !== undefined && bookmarkIndex >= newTextLines.length) {
       console.warn(`TextPanel: ❌ Bookmark out of bounds: ${bookmarkIndex} >= ${newTextLines.length} (${source}) - resetting to beginning`);
       setCurrentScrollIndex(0);
@@ -281,7 +338,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         if (bookmarkKey) {
           localStorage.removeItem(bookmarkKey);
           sessionStorage.removeItem(bookmarkKey);
-          console.log(`TextPanel: 🗑️ Cleared invalid bookmark from storage: ${bookmarkKey}`);
         }
       } catch (clearError) {
         console.warn('Failed to clear invalid bookmark:', clearError);
@@ -289,7 +345,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     } else {
       setCurrentScrollIndex(0);
       currentScrollIndexRef.current = 0;
-      console.log(`TextPanel: ❌ No valid bookmark found, starting at beginning (${source})`);
     }
   }, [textLines.length, getBookmarkKey]);
 
@@ -661,7 +716,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       
       // For Shakespeare plays, preserve character names (all caps, can end with period)
       if (isShakespearePlay(title) && /^[A-Z][A-Z\s\-\.']{1,30}$/.test(trimmed) && trimmed.length < 32) {
-        console.log('TextPanel: Preserving character name:', `"${trimmed}"`);
         processedLines.push(trimmed);
         continue;
       }
@@ -729,7 +783,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
             // Combine them
             const combined = (currentLine + ' ' + nextLine).trim();
             if (combined.length < 32) {
-              console.log('TextPanel: Fixed broken character name:', `"${currentLine}" + "${nextLine}" = "${combined}"`);
               fixedLines.push(combined);
               i++; // Skip next line since we combined it
               continue;
@@ -802,7 +855,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     console.log('TextPanel: loadTextContent called - starting text loading process');
     
     // Set loading state
-    setIsLoading(true);
+    setIsTextLoading(true);
     
           // Clear PDF mode and data
       setIsPDFMode(false);
@@ -838,13 +891,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       console.warn('TextPanel: Could not access storage for saved text:', error);
     }
     
-    console.log('TextPanel: Text content check:', {
-      sessionStorageText: !!savedText,
-      foundText: !!savedText,
-      textLength: savedText ? savedText.length : 0,
-      currentTitle,
-      userAgent: navigator.userAgent
-    });
+
     
     if (savedText) {
       console.log('TextPanel: Processing saved text, length:', savedText.length);
@@ -869,7 +916,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       
       // Immediately set scroll position to prevent flash
       await loadAndValidateBookmark(newTextLines, 'storage');
-      setIsLoading(false);
+      setIsTextLoading(false);
       // Mark text as ready for scrolling after a short delay to ensure DOM is rendered
       setTimeout(() => {
         setIsTextReady(true);
@@ -931,7 +978,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           
           // Immediately set scroll position to prevent flash
           await loadAndValidateBookmark(newTextLines, 'fetch');
-          setIsLoading(false);
+          setIsTextLoading(false);
           // Mark text as ready for scrolling after a short delay to ensure DOM is rendered
           setTimeout(() => {
             setIsTextReady(true);
@@ -1091,12 +1138,24 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
     return () => clearTimeout(forceLoadTimeout);
   }, [title]); // Removed loadTextContent dependency to prevent cycles
 
-  // Effect 2: Listen for storage changes to handle file uploads
+  // Effect 2: Listen for storage changes to handle file uploads and layout changes
   useEffect(() => {
     const handleStorageChange = (e) => {
       console.log('TextPanel: Storage change detected:', e.key);
+      
+      // Handle layout mode changes from profile settings
+      if (e.key === 'explainer:profile') {
+        try {
+          const profile = JSON.parse(e.newValue || '{}');
+          if (profile.layoutMode && ['auto', 'two-panel', 'single-panel'].includes(profile.layoutMode)) {
+            setLayoutMode(profile.layoutMode);
+          }
+        } catch (error) {
+          console.warn('Failed to parse profile from storage change:', error);
+        }
+      }
+      
       if (e.key === 'explainer:bookText' || e.key === 'explainer:pdfData' || e.key === 'explainer:pdfSource') {
-        console.log('TextPanel: Relevant storage change, reloading content');
         // Force a reload of content when storage changes
         setTimeout(() => {
           const pdfSource = sessionStorage.getItem('explainer:pdfSource');
@@ -1104,14 +1163,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           
           if (pdfSource && storedPdfData) {
             // PDF data was added
-            console.log('TextPanel: PDF data detected in storage change');
             setIsPDFMode(true);
             setPdfData(storedPdfData);
             setPdfFileName(sessionStorage.getItem('explainer:bookTitle') || 'PDF Document');
             setIsTextReady(false); // Reset for PDF mode
           } else if (sessionStorage.getItem('explainer:bookText') || localStorage.getItem('explainer:bookText')) {
             // Text data was added
-            console.log('TextPanel: Text data detected in storage change');
             loadTextContent();
           }
         }, 100); // Small delay to ensure storage is updated
@@ -1245,15 +1302,13 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
           let cumulativeHeight = 0;
           for (let i = 0; i < lineHeights.length; i++) {
             cumulativeHeight += lineHeights[i];
-            if (cumulativeHeight > scrollTop) {
-              const result = Math.max(0, i - 1);
-              console.log('TextPanel: getCurrentScrollPosition - calculated index:', result, 'from scrollTop:', scrollTop, 'line:', i);
-              return result;
-            }
+                      if (cumulativeHeight > scrollTop) {
+            const result = Math.max(0, i - 1);
+            return result;
+          }
           }
           // If we get here, we're at the end
           const result = Math.max(0, lineHeights.length - 1);
-          console.log('TextPanel: getCurrentScrollPosition - at end, returning:', result);
           return result;
         } else {
           // Fall back to using rowHeight
@@ -1277,7 +1332,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         clearTimeout(timeoutId);
       }
       timeoutId = setTimeout(() => {
-        saveBookmark(scrollIndex);
+        saveBookmark(scrollIndex).catch(error => {
+          console.warn('Failed to save bookmark:', error);
+        });
       }, 1000); // Increased debounce time for better mobile performance
     };
   })(), [saveBookmark]);
@@ -1286,44 +1343,21 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
 
   // Effect 6: Scroll to saved position when component renders (only once)
   useEffect(() => {
-    console.log('TextPanel: Scroll restoration effect running:', {
-      textLinesLength: textLines.length,
-      isLoading,
-      isTextReady,
-      currentScrollIndex,
-      lineHeightsLength: lineHeights.length,
-      rowHeight
-    });
-    
     // Don't scroll if bookmark is at or beyond the end of the file
     // Also check that the text is actually rendered in the DOM
-    if (textLines.length > 0 && !isLoading && isTextReady && currentScrollIndex > 0 && currentScrollIndex < textLines.length) {
+    if (textLines.length > 0 && !isTextLoading && isTextReady && currentScrollIndex > 0 && currentScrollIndex < textLines.length) {
       // Early exit: if we're already at the end of the file, don't scroll
       if (currentScrollIndex >= textLines.length - 5) { // Within 5 lines of the end
-        console.log('TextPanel: Already near end of file, skipping scroll restoration', {
-          currentScrollIndex,
-          textLinesLength: textLines.length,
-          reason: 'Too close to end'
-        });
         return;
       }
       // Additional safety check: ensure currentScrollIndex is reasonable
       if (currentScrollIndex >= textLines.length * 0.9) {
-        console.log('TextPanel: currentScrollIndex is at end of file, skipping scroll restoration', {
-          currentScrollIndex,
-          textLinesLength: textLines.length
-        });
         return; // Don't scroll if we're already at the end
       }
       
       // Additional check: if the bookmark is very close to the end, don't scroll
       const distanceFromEnd = textLines.length - currentScrollIndex;
       if (distanceFromEnd <= 10) { // Within 10 lines of the end
-        console.log('TextPanel: Bookmark too close to end of file, skipping scroll restoration', {
-          currentScrollIndex,
-          textLinesLength: textLines.length,
-          distanceFromEnd
-        });
         return;
       }
       // Additional check: ensure the text content is actually rendered
@@ -1333,12 +1367,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
                               textContentRef.current.textContent.includes(textLines[0] || '');
       
       if (!hasRenderedText) {
-        console.log('TextPanel: Text not yet rendered, delaying scroll restoration', {
-          hasRef: !!textContentRef.current,
-          textContentLength: textContentRef.current?.textContent?.length || 0,
-          firstLine: textLines[0] || '',
-          textContentIncludesFirstLine: textContentRef.current?.textContent?.includes(textLines[0] || '') || false
-        });
         return;
       }
       
@@ -1348,11 +1376,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       const expectedFontSize = `${fontSettings.fontSize}px`;
       
       if (currentFontSize !== expectedFontSize) {
-        console.log('TextPanel: Font settings not yet applied, delaying scroll restoration', {
-          currentFontSize,
-          expectedFontSize,
-          fontSettings
-        });
         return;
       }
       
@@ -1363,390 +1386,33 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         const heightDifference = Math.abs(actualRowHeight - expectedRowHeight);
         
         if (heightDifference > 10) {
-          console.log('TextPanel: Line heights may be outdated, delaying scroll restoration', {
-            expectedRowHeight,
-            actualRowHeight,
-            heightDifference,
-            fontSettings
-          });
           return;
         }
       }
-      
-      // Additional check: ensure container is properly sized
-      if (containerRef.current) {
-        const containerHeight = containerRef.current.offsetHeight;
-        if (containerHeight < 100) {
-          console.log('TextPanel: Container not properly sized, delaying scroll restoration', {
-            containerHeight
-          });
-          return;
-        }
-      }
-      
-      // Additional check: ensure text is fully loaded (not just partial content)
-      const expectedTextLength = textLines.join('\n').length;
-      const actualTextLength = textContentRef.current.textContent.length;
-      const textLengthRatio = actualTextLength / expectedTextLength;
-      
-      if (textLengthRatio < 0.8) {
-        console.log('TextPanel: Text may not be fully loaded, delaying scroll restoration', {
-          expectedTextLength,
-          actualTextLength,
-          textLengthRatio
-        });
-        return;
-      }
-      
-      // Additional check: ensure text rendering is complete by checking for line breaks
-      const expectedLineCount = textLines.length;
-      const actualLineCount = (textContentRef.current.textContent.match(/\n/g) || []).length + 1;
-      const lineCountRatio = actualLineCount / expectedLineCount;
-      
-      if (lineCountRatio < 0.8) {
-        console.log('TextPanel: Text line count mismatch, delaying scroll restoration', {
-          expectedLineCount,
-          actualLineCount,
-          lineCountRatio
-        });
-        return;
-      }
-      
-      // Additional check: ensure the text content has the expected structure
-      const textContent = textContentRef.current.textContent;
-      const hasExpectedContent = textLines.slice(0, 3).every(line => 
-        textContent.includes(line.trim())
-      );
-      
-      if (!hasExpectedContent) {
-        console.log('TextPanel: Text content structure mismatch, delaying scroll restoration', {
-          firstThreeLines: textLines.slice(0, 3),
-          textContentStart: textContent.substring(0, 200)
-        });
-        return;
-      }
-      
-      // Check if user is already at the end of the file (don't scroll if they are)
-      const textContainerElement = document.querySelector(`.${styles.textContainer}`);
-      if (textContainerElement) {
-        const scrollableDiv = textContainerElement.querySelector('div[style*="overflow: auto"]');
-        if (scrollableDiv) {
-          const currentScrollTop = scrollableDiv.scrollTop;
-          const maxScrollTop = scrollableDiv.scrollHeight - scrollableDiv.clientHeight;
-          const isAtBottom = Math.abs(currentScrollTop - maxScrollTop) < 50; // Within 50px of bottom
-          
-          if (isAtBottom) {
-            console.log('TextPanel: User already at end of file, skipping scroll restoration', {
-              currentScrollTop,
-              maxScrollTop,
-              isAtBottom
-            });
-            return;
-          }
-        }
-      }
-      
-      // Additional check: ensure document is ready
-      if (document.readyState !== 'complete') {
-        console.log('TextPanel: Document not ready, delaying scroll restoration', {
-          readyState: document.readyState
-        });
-        return;
-      }
-      
-      // Additional check: ensure window has loaded
-      if (!window.performance || !window.performance.timing || window.performance.timing.loadEventEnd === 0) {
-        console.log('TextPanel: Window not fully loaded, delaying scroll restoration');
-        return;
-      }
-      
-      // Additional check: ensure enough time has passed since load for stable rendering
-      const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
-      const timeSinceLoad = Date.now() - window.performance.timing.navigationStart;
-      const minTimeSinceLoad = 1000; // Wait at least 1 second after load
-      
-      if (timeSinceLoad < minTimeSinceLoad) {
-        console.log('TextPanel: Not enough time since load, delaying scroll restoration', {
-          loadTime,
-          timeSinceLoad,
-          minTimeSinceLoad
-        });
-        return;
-      }
-      
-      // Additional check: ensure the page is stable (no recent layout thrashing)
-      if (window.performance && window.performance.memory) {
-        const memoryInfo = window.performance.memory;
-        if (memoryInfo.usedJSHeapSize > memoryInfo.jsHeapSizeLimit * 0.9) {
-          console.log('TextPanel: High memory usage, delaying scroll restoration', {
-            usedJSHeapSize: memoryInfo.usedJSHeapSize,
-            jsHeapSizeLimit: memoryInfo.jsHeapSizeLimit,
-            usageRatio: memoryInfo.usedJSHeapSize / memoryInfo.jsHeapSizeLimit
-          });
-          return;
-        }
-      }
-      
-      // Additional check: ensure no active animations or transitions
-      const activeAnimations = document.getAnimations ? document.getAnimations().length : 0;
-      if (activeAnimations > 0) {
-        console.log('TextPanel: Active animations detected, delaying scroll restoration', {
-          activeAnimations
-        });
-        return;
-      }
-        console.log('TextPanel: Scroll restoration triggered:', {
-          currentScrollIndex,
-          textLinesLength: textLines.length,
-          lineHeightsLength: lineHeights.length,
-          rowHeight,
-          isTextReady,
-          isLoading,
-          // Add debugging for the scroll position calculation
-          expectedScrollPosition: currentScrollIndex * rowHeight,
-          maxPossibleScroll: textLines.length * rowHeight
-        });
-      
-      // Try multiple times with increasing delays to ensure DOM is ready
-      const attemptScroll = (attempt = 1) => {
-        try {
-          // Find the scrollable container more reliably
-          // The scrollable container is the div with overflow: 'auto' inside textContainer
-          let textContainer = null;
-          
-          // First try to find the container by looking for the scrollable div
-          const textContainerElement = document.querySelector(`.${styles.textContainer}`);
-          if (textContainerElement) {
-            // Look for the div with overflow: 'auto' inside textContainer
-            const scrollableDiv = textContainerElement.querySelector('div[style*="overflow: auto"]');
-            if (scrollableDiv) {
-              textContainer = scrollableDiv;
-            } else {
-              // Try using the data attribute as a fallback
-              const dataTestIdDiv = textContainerElement.querySelector('[data-testid="scrollable-text-container"]');
-              if (dataTestIdDiv) {
-                textContainer = dataTestIdDiv;
-              } else {
-                // Fallback: look for any div inside textContainer that might be scrollable
-                const divs = textContainerElement.querySelectorAll('div');
-                for (const div of divs) {
-                  if (div.style.overflow === 'auto' || div.style.overflow === 'scroll') {
-                    textContainer = div;
-                    break;
-                  }
-                }
-              }
-            }
-          }
-          
-          // If we still don't have a container, try to find it by looking for the parent of textContentRef
-          if (!textContainer && textContentRef.current) {
-            const parent = textContentRef.current.parentElement;
-            if (parent && (parent.style.overflow === 'auto' || parent.style.overflow === 'scroll')) {
-              textContainer = parent;
-            }
-          }
-          
-          if (textContainer) {
-            // Use the actual calculated line heights if available, otherwise fall back to rowHeight
-            let targetScrollTop;
-            if (lineHeights.length > currentScrollIndex && lineHeights.every(h => h > 0)) {
-              // Use the actual calculated line heights for more accurate positioning
-              // Calculate scroll position to the TOP of the target line (not the bottom)
-              if (currentScrollIndex === 0) {
-                targetScrollTop = 0; // Top of the first line
-              } else {
-                // Sum up heights of all lines BEFORE the target line to get to its top
-                targetScrollTop = lineHeights.slice(0, currentScrollIndex).reduce((sum, height) => sum + height, 0);
-              }
-              
-            // Safety check: ensure the calculated position is reasonable
-            const maxExpectedHeight = textContainer.scrollHeight * 0.95; // Should not exceed 95% of total scroll height
-            if (targetScrollTop > maxExpectedHeight) {
-              console.warn('TextPanel: Calculated scroll position seems too high, using fallback', {
-                targetScrollTop,
-                maxExpectedHeight,
-                scrollHeight: textContainer.scrollHeight
-              });
-              // Fall back to rowHeight calculation
-              targetScrollTop = currentScrollIndex * rowHeight;
-            }
-            
-            // Additional fallback: if the position is still too high, use percentage-based positioning
-            if (targetScrollTop > maxExpectedHeight) {
-              console.warn('TextPanel: Even fallback position is too high, using percentage-based positioning', {
-                targetScrollTop,
-                maxExpectedHeight
-              });
-              // Use percentage-based positioning as a last resort
-              const percentagePosition = currentScrollIndex / textLines.length;
-              targetScrollTop = textContainer.scrollHeight * percentagePosition * 0.8; // 80% to avoid going too far
-            }
-            
-            // Additional safety check: compare with text content height
-            if (textContentRef.current) {
-              const textContentHeight = textContentRef.current.scrollHeight;
-              const maxTextHeight = textContentHeight * 0.95;
-              if (targetScrollTop > maxTextHeight) {
-                console.warn('TextPanel: Scroll position exceeds text content height, adjusting', {
-                  targetScrollTop,
-                  maxTextHeight,
-                  textContentHeight
-                });
-                targetScrollTop = Math.min(targetScrollTop, maxTextHeight);
-              }
-            }
-              
-              // Debug: show the line heights being used
-              console.log('TextPanel: Line heights for calculation:', {
-                currentScrollIndex,
-                lineHeightsSlice: lineHeights.slice(0, currentScrollIndex),
-                cumulativeHeight: targetScrollTop
-              });
-            } else {
-              // Fall back to using rowHeight
-              targetScrollTop = currentScrollIndex * rowHeight;
-              console.log('TextPanel: Using fallback rowHeight calculation:', {
-                currentScrollIndex,
-                rowHeight,
-                targetScrollTop,
-                lineHeightsLength: lineHeights.length,
-                lineHeightsValid: lineHeights.every(h => h > 0)
-              });
-            }
-            
-            // Scroll to the target position - don't center, just go to the top of the line
-            // This prevents jumping to the bottom due to incorrect centering calculations
-            const maxScrollTop = textContainer.scrollHeight - textContainer.clientHeight;
-            const finalScrollTop = Math.max(0, Math.min(targetScrollTop, maxScrollTop));
-            
-            // Additional safety check: if the target position is beyond the scrollable area,
-            // don't scroll at all to avoid jumping to the bottom
-            if (targetScrollTop > maxScrollTop) {
-              console.warn('TextPanel: Target scroll position beyond scrollable area, skipping scroll', {
-                targetScrollTop,
-                maxScrollTop,
-                reason: 'Would cause jump to bottom'
-              });
-              return false; // Don't scroll
-            }
-            
-            // Additional check: if the final position is too close to the end, don't scroll
-            const distanceFromBottom = maxScrollTop - finalScrollTop;
-            if (distanceFromBottom < 100) { // Within 100px of bottom
-              console.log('TextPanel: Final scroll position too close to bottom, skipping scroll', {
-                finalScrollTop,
-                maxScrollTop,
-                distanceFromBottom
-              });
-              return false; // Don't scroll
-            }
-            
-            console.log('TextPanel: Scrolling to position:', {
-              currentScrollIndex,
-              targetScrollTop,
-              finalScrollTop,
-              lineHeightsAvailable: lineHeights.length,
-              rowHeight,
-              containerFound: !!textContainer,
-              attempt,
-              containerElement: textContainer
-            });
-            
-            // Scroll directly to the target position
-            textContainer.scrollTo({ top: finalScrollTop, behavior: 'auto' });
-            
-            // Verify the scroll worked by checking if we're close to the target position
-            setTimeout(() => {
-              const actualScrollTop = textContainer.scrollTop;
-              const scrollDifference = Math.abs(actualScrollTop - finalScrollTop);
-              if (scrollDifference > 50) {
-                console.warn('TextPanel: Scroll restoration may not have worked correctly', {
-                  targetScrollTop: finalScrollTop,
-                  actualScrollTop,
-                  difference: scrollDifference
-                });
-                // Try one more time with a different approach
-                textContainer.scrollTo({ top: finalScrollTop, behavior: 'auto' });
-              }
-            }, 100);
-            
-            return true; // Success
-          } else {
-            console.warn('TextPanel: Could not find scrollable container for bookmark restoration, attempt:', attempt);
-            return false; // Failed
-          }
-        } catch (error) {
-          console.warn('Failed to scroll to saved position, attempt:', attempt, error);
-          return false; // Failed
-        }
-      };
-      
-      // First attempt after 300ms to give DOM more time to render
-      const firstTimeoutId = setTimeout(() => {
-        // Use requestAnimationFrame to ensure browser has finished rendering
-        requestAnimationFrame(() => {
-          // Additional delay to ensure all browser operations are complete
-          setTimeout(() => {
-            if (!attemptScroll(1)) {
-              // Second attempt after 800ms
-              const secondTimeoutId = setTimeout(() => {
-                requestAnimationFrame(() => {
-                  setTimeout(() => {
-                    if (!attemptScroll(2)) {
-                      // Third attempt after 1500ms
-                      const thirdTimeoutId = setTimeout(() => {
-                        requestAnimationFrame(() => {
-                          setTimeout(() => {
-                            attemptScroll(3);
-                          }, 50);
-                        });
-                      }, 700);
-                      
-                      return () => clearTimeout(thirdTimeoutId);
-                    }
-                  }, 50);
-                });
-              }, 500);
-              
-              return () => clearTimeout(secondTimeoutId);
-            }
-          }, 50);
-        });
-      }, 300);
-      
-      return () => clearTimeout(firstTimeoutId);
     }
-  }, [textLines.length, isLoading, isTextReady, currentScrollIndex, lineHeights, rowHeight]);
+  }, [textLines.length, isTextLoading, isTextReady, currentScrollIndex, lineHeights, rowHeight, fontSettings.fontSize]);
 
   // Debug effect: Log when any of the dependencies change
   useEffect(() => {
-    console.log('TextPanel: Scroll restoration dependencies changed:', {
-      textLinesLength: textLines.length,
-      isLoading,
-      isTextReady,
-      currentScrollIndex,
-      lineHeightsLength: lineHeights.length,
-      rowHeight
-    });
-  }, [textLines.length, isLoading, isTextReady, currentScrollIndex, lineHeights.length, rowHeight]);
+    // Removed verbose logging to reduce console noise
+  }, [textLines.length, isTextLoading, isTextReady, currentScrollIndex, lineHeights.length, rowHeight]);
 
   // Effect 6.5: Fallback to ensure loading state is cleared
   useEffect(() => {
-    if (textLines.length > 0 && isLoading) {
+    if (textLines.length > 0 && isTextLoading) {
       // If we have text but still loading after 2 seconds, force end loading
       const timeoutId = setTimeout(() => {
         console.log('TextPanel: Fallback timeout - forcing loading to false');
-        setIsLoading(false);
+        setIsTextLoading(false);
       }, 2000);
       
       return () => clearTimeout(timeoutId);
     }
-  }, [textLines.length, isLoading]);
+  }, [textLines.length, isTextLoading]);
 
   // Effect 6.6: Fallback scroll restoration for when text is already loaded
   useEffect(() => {
-    if (textLines.length > 0 && !isLoading && !isTextReady && currentScrollIndex > 0) {
+    if (textLines.length > 0 && !isTextLoading && !isTextReady && currentScrollIndex > 0) {
       // If text is loaded but not marked as ready, and we have a bookmark, try to restore it
       console.log('TextPanel: Fallback scroll restoration for already loaded text');
       const timeoutId = setTimeout(() => {
@@ -1755,7 +1421,7 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       
       return () => clearTimeout(timeoutId);
     }
-  }, [textLines.length, isLoading, isTextReady, currentScrollIndex]);
+  }, [textLines.length, isTextLoading, isTextReady, currentScrollIndex]);
 
   // Effect 7: Load font settings from localStorage
   useEffect(() => {
@@ -1782,6 +1448,16 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       const handleStorageChange = (e) => {
         if (e.key === 'explainer:profile') {
           loadFontSettings();
+          
+          // Also handle layout mode changes
+          try {
+            const profile = JSON.parse(e.newValue || '{}');
+            if (profile.layoutMode && ['auto', 'two-panel', 'single-panel'].includes(profile.layoutMode)) {
+              setLayoutMode(profile.layoutMode);
+            }
+          } catch (error) {
+            console.warn('Failed to parse profile from storage change:', error);
+          }
         }
       };
 
@@ -1797,7 +1473,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         const currentPosition = getCurrentScrollPosition();
         if (currentPosition > 0) {
           // Save to localStorage for immediate access
-          saveBookmark(currentPosition);
+          saveBookmark(currentPosition).catch(error => {
+            console.warn('Failed to save bookmark on unmount:', error);
+          });
           // Save to database for persistence
           saveBookmarkToDatabase(currentPosition);
           console.log('TextPanel: 💾💾 Final bookmark save on unmount - line:', currentPosition);
@@ -1928,7 +1606,9 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         const currentPosition = getCurrentScrollPosition();
         if (currentPosition > 0) {
           // Save to localStorage for immediate access
-          saveBookmark(currentPosition);
+          saveBookmark(currentPosition).catch(error => {
+            console.warn('Failed to save periodic bookmark:', error);
+          });
           // Save to database periodically for mobile reliability
           saveBookmarkToDatabase(currentPosition);
         }
@@ -1967,7 +1647,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       }
       
       if (currentIndex > 0 && currentIndex < textLines.length) {
-        console.log('TextPanel: 📍 Scroll listener triggered, saving bookmark for line:', currentIndex);
         saveBookmarkDebounced(currentIndex);
       }
     };
@@ -2495,8 +2174,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
   
   const shouldUseMobileBypass = isMobilePhone && !forceDesktopMode;
   
-  console.log('TextPanel: Device type - Mobile Phone:', isMobilePhone, 'Force Desktop:', forceDesktopMode, 'Use Mobile Bypass:', shouldUseMobileBypass, 'textLines.length:', textLines.length, 'isPDFMode:', isPDFMode, 'userAgent:', navigator.userAgent);
-  
   // Only bypass loading screen for mobile phones (not tablets) unless desktop mode is forced
   // TEMPORARILY DISABLED: if (shouldUseMobileBypass && textLines.length === 0 && !isPDFMode) {
   if (false && shouldUseMobileBypass && textLines.length === 0 && !isPDFMode) {
@@ -2574,65 +2251,116 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
       key={`text-${title}-${textLines.length}`}
       className={`${styles.panel} ${isShakespearePlay(title) ? `${styles.screenplayFormat} ${styles.shakespeare}` : ''}`}
         style={{ 
-          '--panel-width': `${width}%`,
+          '--panel-width': effectiveLayoutMode() === 'single-panel' ? '100%' : `${width}%`,
           fontFamily: fontSettings.fontFamily,
           fontSize: `${fontSettings.fontSize}px`,
           fontWeight: fontSettings.fontWeight
         }}
       ref={containerRef}
     >
-      {/* Search Interface */}
-      <div className={styles.searchContainer}>
-        <div className={styles.searchBar}>
-          <input
-            type="text"
-            placeholder="Search text..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={styles.searchInput}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.shiftKey ? goToPreviousResult() : goToNextResult();
-              } else if (e.key === 'Escape') {
-                clearSearch();
-              }
-            }}
-          />
-          {searchQuery && (
-            <div className={styles.searchControls}>
-              <span className={styles.searchResults}>
-                {searchResults.length > 0 ? `${currentSearchIndex + 1} of ${searchResults.length}` : 'No results'}
-              </span>
-              <button 
-                onClick={goToPreviousResult}
-                disabled={searchResults.length === 0}
-                className={styles.searchButton}
-                title="Previous result (Shift+Enter)"
-              >
-                ↑
-              </button>
-              <button 
-                onClick={goToNextResult}
-                disabled={searchResults.length === 0}
-                className={styles.searchButton}
-                title="Next result (Enter)"
-              >
-                ↓
-              </button>
-              <button 
-                onClick={clearSearch}
-                className={styles.searchButton}
-                title="Clear search (Esc)"
-              >
-                ×
-              </button>
-            </div>
-          )}
+      {/* Title Bar with Navigation and Search */}
+      <div className={styles.titleBar}>
+        <div className={styles.titleBarContent}>
+          <h1 className={styles.title}>{title}</h1>
         </div>
-
+        <div className={styles.titleBarRow}>
+          <div className={styles.searchBar}>
+            <input
+              type="text"
+              placeholder="Search text..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`${styles.searchInput} ${isSearchFocused ? styles.searchInputFocused : ''}`}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.shiftKey ? goToPreviousResult() : goToNextResult();
+                } else if (e.key === 'Escape') {
+                  clearSearch();
+                }
+              }}
+            />
+            {searchQuery && (
+              <div className={styles.searchControls}>
+                <span className={styles.searchResults}>
+                  {searchResults.length > 0 ? `${currentSearchIndex + 1} of ${searchResults.length}` : 'No results'}
+                </span>
+                <button 
+                  onClick={goToPreviousResult}
+                  disabled={searchResults.length === 0}
+                  className={styles.searchButton}
+                  title="Previous result (Shift+Enter)"
+                >
+                  ↑
+                </button>
+                <button 
+                  onClick={goToNextResult}
+                  disabled={searchResults.length === 0}
+                  className={styles.searchButton}
+                  title="Next result (Enter)"
+                >
+                  ↓
+                </button>
+                <button 
+                  onClick={clearSearch}
+                  className={styles.searchButton}
+                  title="Clear search (Esc)"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+          </div>
+          <div className={styles.navigation}>
+            <button
+              onClick={() => router.push('/library')}
+              className={styles.navButton}
+              title="Browse and load books from our library of classic literature"
+            >
+              <BookOpen size={16} />
+              <span className={styles.navButtonText}>Library</span>
+            </button>
+            <button
+              onClick={() => router.push('/profile')}
+              className={styles.navButton}
+              title="Profile and settings"
+            >
+              <Settings size={16} />
+              <span className={styles.navButtonText}>Settings</span>
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Welcome Message for First-Time Users */}
+      {!hasInteracted && effectiveLayoutMode() === 'single-panel' && (
+        <div className={styles.welcomeOverlay}>
+          <div className={styles.welcomeContent}>
+            <div className={styles.welcomeIcon}>📖</div>
+            <h3>Welcome to The Explainer!</h3>
+            <p>To get started:</p>
+                             <ol>
+                   <li><strong>Select some text</strong> by dragging your finger or mouse</li>
+                   <li>The chat interface will slide in from the right</li>
+                   <li>Ask questions about the selected text</li>
+                   <li>Use the green slide handle on the left to return to reading</li>
+                 </ol>
+                             <p><em>Tip: Use the slide handles on the left and right edges to switch between text and chat</em></p>
+            <button 
+              onClick={() => setHasInteracted(true)}
+              className={styles.welcomeDismissButton}
+            >
+              Got it!
+            </button>
+          </div>
+        </div>
+      )}
+      
+
+      
       <div className={styles.textContainer}>
-        {!isLoading && textLines.length > 0 ? (
+        {!isTextLoading && textLines.length > 0 ? (
           <div 
             data-testid="scrollable-text-container"
             style={{ 
@@ -2672,7 +2400,6 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
                 }
                 
                 if (currentIndex > 0 && currentIndex < textLines.length) {
-                  console.log('TextPanel: 📍 Scroll detected, saving bookmark for line:', currentIndex);
                   saveBookmarkDebounced(currentIndex);
                 }
               }
@@ -2684,6 +2411,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
                 const selectedText = selection.toString().trim();
                 if (selectedText && onTextSelection) {
                   onTextSelection(selectedText);
+                  setCurrentSelectedText(selectedText);
+                  setHasInteracted(true); // Mark that user has interacted
+                  // In single-panel mode, show the chat panel
+                  if (effectiveLayoutMode() === 'single-panel') {
+                    setShowChatPanel(true);
+                  }
                 }
               }
             }}
@@ -2695,6 +2428,12 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
                   const selectedText = selection.toString().trim();
                   if (selectedText && onTextSelection) {
                     onTextSelection(selectedText);
+                    setCurrentSelectedText(selectedText);
+                    setHasInteracted(true); // Mark that user has interacted
+                    // In single-panel mode, show the chat panel
+                    if (effectiveLayoutMode() === 'single-panel') {
+                      setShowChatPanel(true);
+                    }
                   }
                 }
               }, 100); // Small delay to ensure selection is complete
@@ -2740,8 +2479,57 @@ const TextPanel = forwardRef(({ width, onTextSelection, title = "Source Text", o
         </div>
       )}
     </div>
+    
+    {/* Slide Handle for Chat Panel */}
+    {effectiveLayoutMode() === 'single-panel' && !showChatPanel && (
+      <div 
+        className={styles.chatSlideHandle}
+        onClick={() => setShowChatPanel(true)}
+        title="Click or drag to open chat panel"
+      >
+        <MessageSquare size={20} />
+        <span className={styles.slideHandleText}>Chat</span>
+        {messages && messages.length > 0 && (
+          <span className={styles.slideHandleMessageCount}>{messages.length}</span>
+        )}
+      </div>
+    )}
+
+    {/* Slide Handle to Return to Text Panel */}
+    {effectiveLayoutMode() === 'single-panel' && showChatPanel && (
+      <div 
+        className={styles.textSlideHandle}
+        onClick={() => setShowChatPanel(false)}
+        title="Click or drag to return to text panel"
+      >
+        <span className={styles.slideHandleText}>Text</span>
+        <div className={styles.textIcon}>📖</div>
+      </div>
+    )}
+
+               {/* Slide-in Chat Panel for Single-Panel Mode */}
+           {effectiveLayoutMode() === 'single-panel' && showChatPanel && (
+             <div className={styles.slideInChatPanel}>
+               <div className={styles.chatPanelContent}>
+                 <ChatPanel
+                   width={100}
+                   messages={messages}
+                   isLoading={chatIsLoading}
+                   onFollowUpQuestion={onFollowUpQuestion}
+                   selectedText={currentSelectedText}
+                   scrollToText={scrollToText}
+                   bookTitle={title}
+                   scrollProgress={scrollProgress}
+                 />
+               </div>
+             </div>
+           )}
     </>
   );
 });
 
 export default TextPanel; 
+
+
+
+

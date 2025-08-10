@@ -210,19 +210,11 @@ ${educationalLevelInstruction}`;
         contextInfo.push(`Characters on stage: ${charactersOnStage.join(', ')}`);
       }
       
-      // Debug: Log the context being built
-      console.log('API: Context info:', contextInfo);
-      console.log('API: Speaker:', speaker);
-      console.log('API: Characters on stage:', charactersOnStage);
-      
       if (contextInfo.length > 0) {
         userPrompt = `Context:\n${contextInfo.join('\n')}\n\nPlease explain this text from \"${title}\":\n\n${text}`;
       } else {
         userPrompt = `Please explain this text from \"${title}\":\n\n${text}`;
       }
-      
-      // Debug: Log the final prompt
-      console.log('API: Final prompt:', userPrompt.substring(0, 200) + '...');
     }
 
     // Helper: get API key (user > env)

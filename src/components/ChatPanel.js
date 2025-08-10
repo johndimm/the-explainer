@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { Send, Save, MessageSquare, Settings, BookOpen } from 'lucide-react';
+import { Send, Save, MessageSquare } from 'lucide-react';
 import styles from '@/styles/ChatPanel.module.css';
 import { t, getUserLanguage } from '@/i18n';
 import { useSession, signIn, signOut } from 'next-auth/react';
@@ -80,22 +80,6 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
           <span className={styles.lineCount}>
             {scrollProgress !== undefined ? `${Math.round(scrollProgress * 100)}%` : 'Ready'}
           </span>
-          <a
-            href="/library"
-            className={styles.headerButton}
-            title="Browse and load books from our library of classic literature"
-          >
-            <BookOpen size={16} />
-            <span className={styles.buttonText}>{t('library', lang)}</span>
-          </a>
-          <a
-            href="/profile"
-            className={styles.headerButton}
-            title={t('profileSettings', lang)}
-          >
-            <Settings size={16} />
-            <span className={styles.buttonText}>Settings</span>
-          </a>
         </div>
       </div>
       
@@ -103,8 +87,6 @@ const ChatPanel = ({ width, messages, isLoading, onFollowUpQuestion, selectedTex
         {messages.length === 0 ? (
           <div className={styles.emptyState}>
             <MessageSquare size={48} />
-            <p>{t('selectTextPrompt', lang)}</p>
-
           </div>
         ) : (
           <div className={styles.messages}>

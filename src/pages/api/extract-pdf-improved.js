@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       });
     }
 
-    console.log('Starting improved PDF extraction...', 'Size:', pdfSizeMB.toFixed(1), 'MB');
+  
 
     // Try multiple parsing strategies
     const strategies = [
@@ -47,13 +47,10 @@ export default async function handler(req, res) {
 
     for (let i = 0; i < strategies.length; i++) {
       try {
-        console.log(`Trying strategy ${i + 1}:`, strategies[i]);
-        
         const data = await pdf(pdfBuffer, strategies[i]);
         const rawText = data.text;
         
         if (!rawText || rawText.length < 50) {
-          console.log(`Strategy ${i + 1} produced too little text:`, rawText?.length || 0);
           continue;
         }
 
@@ -69,7 +66,6 @@ export default async function handler(req, res) {
         // If too many question marks, apply aggressive cleaning
         let questionMarkRatio = (cleanedText.match(/\?/g) || []).length / cleanedText.length;
         if (questionMarkRatio > 0.1) {
-          console.log(`Strategy ${i + 1} has high question mark ratio:`, questionMarkRatio);
           cleanedText = rawText
             .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
             .replace(/[^\x20-\x7E]/g, ' ')
@@ -88,8 +84,6 @@ export default async function handler(req, res) {
         score += readableCharRatio * 30; // Readable character ratio
         score += (1 - questionMarkRatio) * 30; // Inverse question mark ratio
 
-        console.log(`Strategy ${i + 1} score:`, score, 'words:', wordCount, 'questionMarkRatio:', questionMarkRatio);
-
         if (score > bestScore) {
           bestScore = score;
           bestText = cleanedText;
@@ -97,13 +91,11 @@ export default async function handler(req, res) {
         }
 
       } catch (strategyError) {
-        console.log(`Strategy ${i + 1} failed:`, strategyError.message);
         continue;
       }
     }
 
     if (!bestText || bestText.length < 100) {
-      console.log('All strategies failed or produced insufficient text');
       return res.status(400).json({ 
         error: 'The PDF appears to be empty, unreadable, or contains no extractable text.' 
       });
@@ -121,15 +113,6 @@ export default async function handler(req, res) {
     // Final quality check
     const finalQuestionMarkRatio = (finalText.match(/\?/g) || []).length / finalText.length;
     const hasEncodingIssues = finalQuestionMarkRatio > 0.05;
-
-    console.log('Final extraction result:', {
-      strategy: bestStrategy,
-      score: bestScore,
-      length: finalText.length,
-      questionMarkRatio: finalQuestionMarkRatio,
-      hasEncodingIssues: hasEncodingIssues,
-      first100Chars: finalText.substring(0, 100)
-    });
 
     res.status(200).json({ 
       text: finalText,

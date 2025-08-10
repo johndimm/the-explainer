@@ -28,13 +28,9 @@ const PDFViewerNew = ({
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    console.log('ViewerNew: Starting library import...');
-    
     import('pdfjs-dist').then((module) => {
-      console.log('ViewerNew: Library module loaded');
       pdfjsLib = module;
       pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
-      console.log('ViewerNew: Library fully loaded and ready');
       setPdfjsLoaded(true);
     }).catch(error => {
       console.error('Failed to load PDF.js library:', error);
@@ -43,16 +39,8 @@ const PDFViewerNew = ({
 
   // Load PDF document
   useEffect(() => {
-    console.log('ViewerNew: useEffect triggered', { 
-      hasPdfData: !!pdfData, 
-      pdfDataLength: pdfData ? pdfData.length : 0,
-      hasPdfjsLib: !!pdfjsLib, 
-      pdfjsLoaded
-    });
-    
     // Clean up previous PDF state when pdfData changes or becomes null
     if (!pdfData) {
-      console.log('ViewerNew: No PDF data, cleaning up state');
       setPdfDocument(null);
       setCurrentPage(1);
       setNumPages(0);
@@ -79,7 +67,6 @@ const PDFViewerNew = ({
     }
     
     if (!pdfjsLib || !pdfjsLoaded) {
-      console.log('ViewerNew: Missing library or not loaded, returning');
       return;
     }
 
@@ -102,7 +89,6 @@ const PDFViewerNew = ({
         });
         
         const pdf = await loadingTask.promise;
-        console.log('ViewerNew: Document loaded successfully', { numPages: pdf.numPages });
         
         setPdfDocument(pdf);
         setNumPages(pdf.numPages);

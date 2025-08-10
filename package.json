@@ -12,7 +12,7 @@
     "canvas": "^3.1.2",
     "dotenv": "^17.1.0",
     "lucide-react": "^0.263.1",
-    "next": "15.3.5",
+    "next": "14.2.5",
     "next-auth": "^4.24.11",
     "node-fetch": "^3.3.2",
     "pdf-parse": "^1.1.1",

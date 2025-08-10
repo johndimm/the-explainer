@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logging System Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .demo-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
+        .command { background: #e8f4fd; padding: 10px; margin: 10px 0; border-left: 4px solid #2196F3; }
+    </style>
+</head>
+<body>
+    <h1>Console Logging System Demo</h1>
+    
+    <div class="demo-section">
+        <h2>Available Log Labels</h2>
+        <p>The following log labels are available:</p>
+        <ul>
+            <li><code>layout</code> - Layout mode changes and decisions</li>
+            <li><code>profile</code> - Profile loading and saving</li>
+            <li><code>storage</code> - localStorage operations</li>
+            <li><code>responsive</code> - Responsive layout changes</li>
+            <li><code>divider</code> - Divider position changes</li>
+            <li><code>general</code> - General app state</li>
+        </ul>
+    </div>
+
+    <div class="demo-section">
+        <h2>Console Commands</h2>
+        
+        <div class="command">
+            <strong>Show current logging status:</strong><br>
+            <code>showLoggingStatus()</code>
+        </div>
+        
+        <div class="command">
+            <strong>Enable logging for a specific label:</strong><br>
+            <code>setLogging('layout', true)</code><br>
+            <code>setLogging('profile', true)</code><br>
+            <code>setLogging('storage', true)</code>
+        </div>
+        
+        <div class="command">
+            <strong>Disable logging for a specific label:</strong><br>
+            <code>setLogging('layout', false)</code><br>
+            <code>setLogging('responsive', false)</code>
+        </div>
+        
+        <div class="command">
+            <strong>Enable all logging:</strong><br>
+            <code>Object.values(LOG_LABELS).forEach(label => setLogging(label, true))</code>
+        </div>
+        
+        <div class="command">
+            <strong>Disable all logging:</strong><br>
+            <code>Object.values(LOG_LABELS).forEach(label => setLogging(label, false))</code>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>Current Default Settings</h2>
+        <p>By default, the following labels are enabled:</p>
+        <ul>
+            <li><code>layout</code> - Layout mode changes</li>
+            <li><code>profile</code> - Profile loading/saving</li>
+        </ul>
+        <p>To see all available labels, run: <code>console.log(LOG_LABELS)</code></p>
+    </div>
+
+    <div class="demo-section">
+        <h2>Example Usage</h2>
+        <p>To debug layout issues, you might want to:</p>
+        <ol>
+            <li>Enable all layout-related logging: <code>setLogging('layout', true)</code></li>
+            <li>Enable responsive logging: <code>setLogging('responsive', true)</code></li>
+            <li>Enable storage logging: <code>setLogging('storage', true)</code></li>
+            <li>Try changing the layout mode in the app</li>
+            <li>Watch the console for labeled logs</li>
+        </ol>
+    </div>
+
+    <script>
+        // Simulate the logging system for demo purposes
+        const LOG_LABELS = {
+            LAYOUT: 'layout',
+            PROFILE: 'profile',
+            STORAGE: 'storage',
+            RESPONSIVE: 'responsive',
+            DIVIDER: 'divider',
+            GENERAL: 'general'
+        };
+
+        const ENABLED_LOGS = new Set([
+            LOG_LABELS.LAYOUT,
+            LOG_LABELS.PROFILE
+        ]);
+
+        function log(label, ...args) {
+            if (ENABLED_LOGS.has(label)) {
+                console.log(`[${label.toUpperCase()}]`, ...args);
+            }
+        }
+
+        function setLogging(label, enabled) {
+            if (enabled) {
+                ENABLED_LOGS.add(label);
+                console.log(`[LOGGING] Enabled logging for: ${label}`);
+            } else {
+                ENABLED_LOGS.delete(label);
+                console.log(`[LOGGING] Disabled logging for: ${label}`);
+            }
+        }
+
+        function showLoggingStatus() {
+            console.log('[LOGGING] Current enabled labels:', Array.from(ENABLED_LOGS));
+        }
+
+        // Make functions available globally
+        window.setLogging = setLogging;
+        window.showLoggingStatus = showLoggingStatus;
+        window.LOG_LABELS = LOG_LABELS;
+        window.log = log;
+
+        // Demo some logging
+        console.log('Demo logging system loaded. Try the commands above!');
+        log('layout', 'Demo layout log message');
+        log('profile', 'Demo profile log message');
+        log('storage', 'This storage log is disabled by default');
+    </script>
+</body>
+</html> 

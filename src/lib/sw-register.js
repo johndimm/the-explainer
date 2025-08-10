@@ -12,7 +12,6 @@ export function register() {
         .register(swUrl)
         .then((registration) => {
           clearTimeout(timeout);
-          console.log('Service worker registered successfully');
           
           // onupdatefound will let us know when there's a new service worker
           registration.onupdatefound = () => {
@@ -26,10 +25,6 @@ export function register() {
                   // At this point, the updated precached content has been fetched,
                   // but the previous service worker will still serve the older
                   // content until all client tabs are closed.
-                  console.log(
-                    'New content is available and will be used when all ' +
-                      'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
-                  );
 
                   // Optional: Show a notification to the user
                   if (window.confirm('New version available! Reload to update?')) {
@@ -39,7 +34,6 @@ export function register() {
                   // At this point, everything has been precached.
                   // It's the perfect time to display a
                   // "Content is cached for offline use." message.
-                  console.log('Content is cached for offline use.');
                 }
               }
             };
