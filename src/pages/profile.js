@@ -75,7 +75,7 @@ const OPENAI_MODELS = [
   { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Fast & Cheap)' },
   { value: 'gpt-4o', label: 'GPT-4o (Best Quality)' },
   { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' },
-  { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
+    { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
 ];
 
 const ANTHROPIC_MODELS = [
@@ -126,58 +126,58 @@ export default function Profile() {
 
   useEffect(() => {
     if (isClient) {
-      const checkMobile = () => {
-        setIsMobile(window.innerWidth <= 768);
-      };
-      
-      checkMobile();
-      window.addEventListener('resize', checkMobile);
-      
-      return () => window.removeEventListener('resize', checkMobile);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
     }
   }, [isClient]);
 
   useEffect(() => {
     if (isClient) {
-      setLang(getUserLanguage());
-      const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
-      setLanguage(profile.language || '');
-      setAge(profile.age || '');
-      setNationality(profile.nationality || '');
+    setLang(getUserLanguage());
+    const profile = JSON.parse(localStorage.getItem('explainer:profile') || '{}');
+    setLanguage(profile.language || '');
+    setAge(profile.age || '');
+    setNationality(profile.nationality || '');
       setEducationalLevel(profile.educationalLevel || '');
       setDefaultResponseLength(profile.defaultResponseLength || 'medium');
-      setFontFamily(profile.fontFamily || 'Georgia');
-      setFontSize(profile.fontSize || '17');
-      setFontWeight(profile.fontWeight || '400');
+    setFontFamily(profile.fontFamily || 'Georgia');
+    setFontSize(profile.fontSize || '17');
+    setFontWeight(profile.fontWeight || '400');
       
       // Load LLM settings
-      const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
+    const llm = JSON.parse(localStorage.getItem('explainer:llm') || '{}');
       setLlmProvider(llm.provider || 'openai');
       setLlmModel(llm.model || 'gpt-4o-mini');
       setLlmApiKey(llm.key || '');
-      setLlmEndpoint(llm.endpoint || '');
-      setLlmCustomModel(llm.customModel || '');
-      
+    setLlmEndpoint(llm.endpoint || '');
+    setLlmCustomModel(llm.customModel || '');
+
       loadTranslations();
     }
   }, [isClient]);
 
   useEffect(() => {
     if (isClient) {
-      async function fetchStats() {
-        if (session?.user?.email) {
-          try {
-            const res = await fetch(`/api/user-stats?email=${encodeURIComponent(session.user.email)}`);
-            if (res.ok) {
-              const stats = await res.json();
-              setUserStats(stats);
-            }
-          } catch (e) {
-            // ignore
+    async function fetchStats() {
+      if (session?.user?.email) {
+        try {
+          const res = await fetch(`/api/user-stats?email=${encodeURIComponent(session.user.email)}`);
+          if (res.ok) {
+            const stats = await res.json();
+            setUserStats(stats);
           }
+        } catch (e) {
+          // ignore
         }
       }
-      fetchStats();
+    }
+    fetchStats();
     }
   }, [isClient, session?.user?.email]);
 
@@ -350,7 +350,7 @@ export default function Profile() {
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Account</h2>
           {session ? (
             <div style={{
-              display: 'flex',
+          display: 'flex',
               flexDirection: isMobile ? 'column' : 'row',
               gap: 16,
               alignItems: isMobile ? 'stretch' : 'center',
@@ -464,86 +464,86 @@ export default function Profile() {
             gap: 16, 
             marginBottom: 24 
           }}>
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              {translations.language || 'Language'}
-              <select
-                value={language}
-                onChange={e => {
-                  setLanguage(e.target.value);
-                  autoSave({ language: e.target.value });
-                  setTimeout(() => loadTranslations(), 100);
-                }}
-                style={{
-                  width: '100%',
-                  marginTop: 8,
-                  padding: isMobile ? 12 : 10,
-                  borderRadius: 8,
-                  border: '1px solid #cbd5e1',
-                  fontSize: isMobile ? 18 : 16,
-                  background: '#fff',
-                  transition: 'border-color 0.2s'
-                }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-              >
-                <option value="">{translations.selectLanguage || 'Select language'}</option>
-                {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-              </select>
-            </label>
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                {translations.language || 'Language'}
+                <select
+                  value={language}
+                  onChange={e => {
+                    setLanguage(e.target.value);
+                    autoSave({ language: e.target.value });
+                    setTimeout(() => loadTranslations(), 100);
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                >
+                  <option value="">{translations.selectLanguage || 'Select language'}</option>
+                  {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+                </select>
+              </label>
             
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              {translations.age || 'Age'}
-              <input
-                type="number"
-                min="1"
-                max="120"
-                value={age}
-                onChange={e => {
-                  setAge(e.target.value);
-                  autoSave({ age: e.target.value });
-                }}
-                placeholder={translations.yourAge || 'Your age'}
-                style={{
-                  width: '100%',
-                  marginTop: 8,
-                  padding: isMobile ? 12 : 10,
-                  borderRadius: 8,
-                  border: '1px solid #cbd5e1',
-                  fontSize: isMobile ? 18 : 16,
-                  background: '#fff',
-                  transition: 'border-color 0.2s'
-                }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-              />
-            </label>
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                {translations.age || 'Age'}
+                <input
+                  type="number"
+                  min="1"
+                  max="120"
+                  value={age}
+                  onChange={e => {
+                    setAge(e.target.value);
+                    autoSave({ age: e.target.value });
+                  }}
+                  placeholder={translations.yourAge || 'Your age'}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                />
+              </label>
             
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              {translations.nationality || 'Nationality'}
-              <select
-                value={nationality}
-                onChange={e => {
-                  setNationality(e.target.value);
-                  autoSave({ nationality: e.target.value });
-                }}
-                style={{
-                  width: '100%',
-                  marginTop: 8,
-                  padding: isMobile ? 12 : 10,
-                  borderRadius: 8,
-                  border: '1px solid #cbd5e1',
-                  fontSize: isMobile ? 18 : 16,
-                  background: '#fff',
-                  transition: 'border-color 0.2s'
-                }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-              >
-                <option value="">{translations.selectNationality || 'Select nationality'}</option>
-                {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </label>
-            
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                {translations.nationality || 'Nationality'}
+                <select
+                  value={nationality}
+                  onChange={e => {
+                    setNationality(e.target.value);
+                    autoSave({ nationality: e.target.value });
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                >
+                  <option value="">{translations.selectNationality || 'Select nationality'}</option>
+                  {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </label>
+              
                         <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
               {translations.educationalLevel || 'Educational Level'}
               <select
@@ -594,7 +594,7 @@ export default function Profile() {
                 {RESPONSE_LENGTHS.map(length => <option key={length.value} value={length.value}>{length.label}</option>)}
               </select>
             </label>
-          </div>
+              </div>
         </section>
 
 
@@ -832,114 +832,114 @@ export default function Profile() {
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
             gap: 16 
           }}>
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              Font Family
-              <select
-                value={fontFamily}
-                onChange={e => {
-                  setFontFamily(e.target.value);
-                  autoSave({ fontFamily: e.target.value });
-                }}
-                style={{
-                  width: '100%',
-                  marginTop: 8,
-                  padding: isMobile ? 12 : 10,
-                  borderRadius: 8,
-                  border: '1px solid #cbd5e1',
-                  fontSize: isMobile ? 18 : 16,
-                  background: '#fff',
-                  transition: 'border-color 0.2s',
-                  fontFamily: fontFamily
-                }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-              >
-                {FONT_FAMILIES.map(f => (
-                  <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>
-                    {f.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              Font Size
-              <select
-                value={fontSize}
-                onChange={e => {
-                  setFontSize(e.target.value);
-                  autoSave({ fontSize: e.target.value });
-                }}
-                style={{
-                  width: '100%',
-                  marginTop: 8,
-                  padding: isMobile ? 12 : 10,
-                  borderRadius: 8,
-                  border: '1px solid #cbd5e1',
-                  fontSize: isMobile ? 18 : 16,
-                  background: '#fff',
-                  transition: 'border-color 0.2s'
-                }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-              >
-                {FONT_SIZES.map(s => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            
-            <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
-              Font Weight
-              <select
-                value={fontWeight}
-                onChange={e => {
-                  setFontWeight(e.target.value);
-                  autoSave({ fontWeight: e.target.value });
-                }}
-                style={{
-                  width: '100%',
-                  marginTop: 8,
-                  padding: isMobile ? 12 : 10,
-                  borderRadius: 8,
-                  border: '1px solid #cbd5e1',
-                  fontSize: isMobile ? 18 : 16,
-                  background: '#fff',
-                  transition: 'border-color 0.2s'
-                }}
-                onFocus={e => e.target.style.borderColor = '#3b82f6'}
-                onBlur={e => e.target.style.borderColor = '#cbd5e1'}
-              >
-                {FONT_WEIGHTS.map(w => (
-                  <option key={w.value} value={w.value}>
-                    {w.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Font Family
+                <select
+                  value={fontFamily}
+                  onChange={e => {
+                    setFontFamily(e.target.value);
+                    autoSave({ fontFamily: e.target.value });
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s',
+                    fontFamily: fontFamily
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                >
+                  {FONT_FAMILIES.map(f => (
+                    <option key={f.value} value={f.value} style={{ fontFamily: f.value }}>
+                      {f.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Font Size
+                <select
+                  value={fontSize}
+                  onChange={e => {
+                    setFontSize(e.target.value);
+                    autoSave({ fontSize: e.target.value });
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                >
+                  {FONT_SIZES.map(s => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              
+              <label style={{ display: 'block', fontWeight: 600, color: '#334155' }}>
+                Font Weight
+                <select
+                  value={fontWeight}
+                  onChange={e => {
+                    setFontWeight(e.target.value);
+                    autoSave({ fontWeight: e.target.value });
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: isMobile ? 12 : 10,
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: isMobile ? 18 : 16,
+                    background: '#fff',
+                    transition: 'border-color 0.2s'
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#3b82f6'}
+                  onBlur={e => e.target.style.borderColor = '#cbd5e1'}
+                >
+                  {FONT_WEIGHTS.map(w => (
+                    <option key={w.value} value={w.value}>
+                      {w.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
           </div>
-          
-          {/* Font Preview */}
-          <div style={{ 
-            marginTop: 16, 
-            padding: 12, 
-            backgroundColor: '#f8fafc', 
-            borderRadius: 8,
-            border: '1px solid #e2e8f0'
-          }}>
-            <div style={{ 
-              fontFamily: fontFamily, 
-              fontSize: fontSize + 'px',
-              fontWeight: fontWeight,
-              lineHeight: '1.5',
-              color: '#18181b'
-            }}>
-              Preview: "To be or not to be, that is the question"
+              
+              {/* Font Preview */}
+              <div style={{ 
+                marginTop: 16, 
+                padding: 12, 
+                backgroundColor: '#f8fafc', 
+                borderRadius: 8,
+                border: '1px solid #e2e8f0'
+              }}>
+                <div style={{ 
+                  fontFamily: fontFamily, 
+                  fontSize: fontSize + 'px',
+                  fontWeight: fontWeight,
+                  lineHeight: '1.5',
+                  color: '#18181b'
+                }}>
+                  Preview: "To be or not to be, that is the question"
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
         {/* History Section */}
         {userStats && (
@@ -953,7 +953,7 @@ export default function Profile() {
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>History</h2>
             
             {/* User stats summary - Two Columns */}
-            <div style={{
+                <div style={{
               display: 'grid',
               gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
               gap: 16,
@@ -962,22 +962,22 @@ export default function Profile() {
               <div style={{ fontSize: 16 }}>
                 <strong>First login:</strong><br />
                 {new Date(userStats.created_at).toLocaleDateString()}
-              </div>
+                </div>
               <div style={{ fontSize: 16 }}>
                 <strong>Total explanations:</strong><br />
                 {userStats.total_explanations}
-              </div>
+            </div>
               <div style={{ fontSize: 16 }}>
                 <strong>Today:</strong><br />
                 {userStats.todays_explanations}
               </div>
-            </div>
-
+        </div>
+        
             {/* Books List */}
             {userStats.books && userStats.books.length > 0 && (
               <div>
                 <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: '#334155' }}>
-                  Books you&apos;ve explored
+              Books you&apos;ve explored
                 </h3>
                 <ul style={{ 
                   margin: 0, 
@@ -986,35 +986,35 @@ export default function Profile() {
                   columns: isMobile ? 1 : 2, 
                   columnGap: 32 
                 }}>
-                  {userStats.books.map((book, idx) => (
-                    <li key={book.title + idx} style={{ marginBottom: 8, breakInside: 'avoid' }}>
-                      <button
-                        onClick={() => handleBookClick(book)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: 0,
-                          color: '#3b82f6',
-                          fontWeight: 500,
-                          cursor: 'pointer',
-                          textDecoration: 'underline',
-                          fontSize: 'inherit',
-                          fontFamily: 'inherit',
-                          textAlign: 'left'
-                        }}
-                        onMouseEnter={e => e.target.style.color = '#1d4ed8'}
-                        onMouseLeave={e => e.target.style.color = '#3b82f6'}
-                      >
-                        {book.title}
-                      </button>
-                      <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 8 }}>
-                        ({book.count} explanation{book.count !== 1 ? 's' : ''})
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+              {userStats.books.map((book, idx) => (
+                <li key={book.title + idx} style={{ marginBottom: 8, breakInside: 'avoid' }}>
+                  <button
+                    onClick={() => handleBookClick(book)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      color: '#3b82f6',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      fontSize: 'inherit',
+                      fontFamily: 'inherit',
+                      textAlign: 'left'
+                    }}
+                    onMouseEnter={e => e.target.style.color = '#1d4ed8'}
+                    onMouseLeave={e => e.target.style.color = '#3b82f6'}
+                  >
+                    {book.title}
+                  </button>
+                  <span style={{ color: '#64748b', fontWeight: 400, marginLeft: 8 }}>
+                    ({book.count} explanation{book.count !== 1 ? 's' : ''})
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
           </section>
         )}
 
@@ -1022,8 +1022,8 @@ export default function Profile() {
         <section style={{ 
           marginBottom: 32,
           padding: 24,
-          background: '#f8fafc',
-          border: '1px solid #e2e8f0',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
           borderRadius: 12
         }}>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: '#334155' }}>Help & Guide</h2>

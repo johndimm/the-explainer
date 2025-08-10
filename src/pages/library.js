@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { t, getUserLanguage } from '@/i18n';
 import { Clock, ArrowLeft } from 'lucide-react';
 import frenchCollection from '../tools/french-literature.json';
@@ -441,6 +441,7 @@ export default function Library() {
   const [fileUploadType, setFileUploadType] = useState(''); // Track file type for loading message
   const [fileUploadSize, setFileUploadSize] = useState(0); // Track file size for loading message
   const [recentBooks, setRecentBooks] = useState([]);
+  const [bookProgress, setBookProgress] = useState({}); // Track reading progress for all books
 
   useEffect(() => {
     setLang(getUserLanguage());
@@ -455,6 +456,27 @@ export default function Library() {
     } catch (e) {
       setRecentBooks([]);
     }
+  }, []);
+
+  // Load book progress from database
+  useEffect(() => {
+    const loadBookProgress = async () => {
+      try {
+        const response = await fetch('/api/book-progress');
+        if (response.ok) {
+          const progress = await response.json();
+          const progressMap = {};
+          progress.forEach(p => {
+            progressMap[p.book_title] = p;
+          });
+          setBookProgress(progressMap);
+        }
+      } catch (error) {
+        console.warn('Failed to load book progress:', error);
+      }
+    };
+
+    loadBookProgress();
   }, []);
 
 
@@ -802,6 +824,44 @@ export default function Library() {
   });
 
   // Reusable style object for item containers
+  // Helper function to render progress indicator
+  const renderProgressIndicator = (bookTitle) => {
+    const progress = bookProgress[bookTitle];
+    if (!progress) return null;
+
+    const percentage = progress.progress_percentage || 0;
+    const lastRead = new Date(progress.last_updated).toLocaleDateString();
+    
+    return (
+      <div style={{
+        fontSize: '12px',
+        color: '#6b7280',
+        marginTop: '4px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+      }}>
+        <div style={{
+          width: '60px',
+          height: '4px',
+          backgroundColor: '#e5e7eb',
+          borderRadius: '2px',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            width: `${percentage}%`,
+            height: '100%',
+            backgroundColor: '#3b82f6',
+            transition: 'width 0.3s ease'
+          }} />
+        </div>
+        <span>{Math.round(percentage)}%</span>
+        <span>•</span>
+        <span>Last read {lastRead}</span>
+      </div>
+    );
+  };
+
   const getItemContainerStyle = (isSelected, borderBottom) => ({
     padding: '6px 8px',
     borderBottom: borderBottom ? '1px solid #f1f5f9' : 'none',
@@ -947,41 +1007,48 @@ export default function Library() {
     <div style={{ minHeight: '100vh', background: '#f8fafc', padding: 0 }}>
       <div style={{ maxWidth: 1200, margin: 0, padding: '40px 16px 64px 16px' }}>
         {/* Recently Viewed Section */}
-        {recentBooks.length > 0 && (
-          <div style={{ marginBottom: 32 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-              <Clock size={18} style={{ color: '#3b82f6' }} />
-              <span style={{ fontWeight: 700, fontSize: 18, color: '#1e293b' }}>Recently Viewed</span>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              {recentBooks.map((book, i) => (
-                <button
-                  key={book.id + book.title}
-                  onClick={() => handlerMap[findCollectionKey(book)]?.(book)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    background: '#fff',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: 8,
-                    padding: '8px 14px',
-                    fontSize: 15,
-                    fontWeight: 500,
-                    color: '#2563eb',
-                    cursor: 'pointer',
-                    boxShadow: '0 1px 4px #0001',
-                    transition: 'background 0.15s',
-                  }}
-                  title={book.title + (book.author ? ' by ' + book.author : '')}
-                >
-                  <span style={{ fontSize: 16, marginRight: 4 }}>📖</span>
-                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180 }}>{book.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <div style={{ 
+          marginBottom: 32, 
+          maxHeight: recentBooks.length > 0 ? '200px' : '0px',
+          overflow: 'hidden',
+          transition: 'max-height 0.3s ease-in-out'
+        }}>
+          {recentBooks.length > 0 && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <Clock size={18} style={{ color: '#3b82f6' }} />
+                <span style={{ fontWeight: 700, fontSize: 18, color: '#1e293b' }}>Recently Viewed</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                {recentBooks.map((book, i) => (
+                  <button
+                    key={book.id + book.title}
+                    onClick={() => handlerMap[findCollectionKey(book)]?.(book)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      background: '#fff',
+                      border: '1px solid #cbd5e1',
+                      borderRadius: 8,
+                      padding: '8px 14px',
+                      fontSize: 15,
+                      fontWeight: 500,
+                      color: '#2563eb',
+                      cursor: 'pointer',
+                      boxShadow: '0 1px 4px #0001',
+                      transition: 'background 0.15s',
+                    }}
+                    title={book.title + (book.author ? ' by ' + book.author : '')}
+                  >
+                    <span style={{ fontSize: 16, marginRight: 4 }}>📖</span>
+                    <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 180 }}>{book.title}</span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
         <div style={{ marginBottom: 16 }}>
           <a href="/home" style={{ 
             display: 'inline-flex', 
@@ -1230,17 +1297,20 @@ export default function Library() {
                                   paddingLeft: '16px', // Indent books under author
                                 }}
                               >
-                                <span
-                                  onClick={() => handleItemClick(col.key, item, handlerMap[col.key])}
-                                  style={getClickableItemStyle(isSelected, isLoading)}
-                                  title={item.title}
-                                  onMouseOver={e => !isSelected && !isLoading && (e.target.style.color = '#666')}
-                                  onMouseOut={e => !isSelected && !isLoading && (e.target.style.color = 'black')}
-                                >
-                                  {isLoading
-                                    ? t('loading', lang)
-                                    : item.title}
-                                </span>
+                                <div>
+                                  <span
+                                    onClick={() => handleItemClick(col.key, item, handlerMap[col.key])}
+                                    style={getClickableItemStyle(isSelected, isLoading)}
+                                    title={item.title}
+                                    onMouseOver={e => !isSelected && !isLoading && (e.target.style.color = '#666')}
+                                    onMouseOut={e => !isSelected && !isLoading && (e.target.style.color = 'black')}
+                                  >
+                                    {isLoading
+                                      ? t('loading', lang)
+                                      : item.title}
+                                  </span>
+                                  {renderProgressIndicator(`${item.title} by William Shakespeare`)}
+                                </div>
                               </div>
                             );
                           })}
